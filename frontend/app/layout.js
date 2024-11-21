@@ -1,17 +1,24 @@
-import localFont from "next/font/local";
-import "./globals.css";
+import "./styles/barfiller.css";
+import "./styles/bootstrap.min.css";
+import "./styles/elegant-icons.css";
+import "./styles/flaticon.css";
+import "./styles/font-awesome.min.css";
+import "./styles/magnific-popup.css"
+import "./styles/nice-select.css";
+// import "./styles/owl.carousel.min.css";
+import "./styles/slicknav.min.css";
 import "./styles/style.css";
 
-const geistSans = localFont({
+
+
+import HeaderNav from "./components/header";
+
+/* const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+ */
 
 export const metadata = {
   title: "Create Next App",
@@ -19,9 +26,11 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={``}>
+      <HeaderNav itemsInCart={0}/>
         {children}
       </body>
     </html>
