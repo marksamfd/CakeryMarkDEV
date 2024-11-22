@@ -28,11 +28,8 @@ import { useEffect, useRef, useState } from "react";
                 <Image src={footer_logo} alt="" width={250} height={250}/>
             </a>
           </div>
-          <p>
-          <p>Welcome to our Cakery, where every cake is crafted with love and passion!
+          <p> Welcome to our Cakery, where every cake is crafted with love and passion!
             Explore our menu, and let us make your cake dreams come true!</p>
-
-          </p>
           <div className="footer__social">
             <a href="#">
               <i className="fa fa-facebook" />
