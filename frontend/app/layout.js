@@ -12,7 +12,7 @@ import "./styles/style.css";
 
 
 import HeaderNav from "./components/header";
-
+import FooterNav from "./components/footer";
 /* const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -32,6 +32,7 @@ export default function RootLayout({ children }) {
       <body className={``}>
       <HeaderNav itemsInCart={0}/>
         {children}
+        <FooterNav/>
       </body>
     </html>
   );
