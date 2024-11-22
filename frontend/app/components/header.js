@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from "react";
 function HeaderNav({ itemsInCart = 0 }) {
     const [buttonClicked, setButtonClicked] = useState(false)
     const iconSize = 25
+    const logoHeight = 85
+    const logoWidth = 150
     return<>
      <div className={`offcanvas-menu-overlay ${buttonClicked ? "active": ""}`} onClick={()=>{setButtonClicked(!buttonClicked)}}>
             <div className={`offcanvas-menu-wrapper ${buttonClicked ? "active": ""}`}>
@@ -19,7 +21,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                     </div>
                 </div>
                 <div className="offcanvas__logo">
-                    <a href="./index.html"><Image width={iconSize} height={iconSize} src={logo} alt=""/></a>
+                    <a href="./index.html"><Image width={logoWidth} height={logoHeight} src={logo} alt=""/></a>
                 </div>
                 <div id="mobile-menu-wrap"></div>
                 <div className="offcanvas__option">
@@ -29,7 +31,6 @@ function HeaderNav({ itemsInCart = 0 }) {
                 </div>
             </div>
         </div>
-
 
     <div className="header">
         <div className="header__top">
@@ -43,7 +44,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                                 </ul>
                             </div>
                             <div className="header__logo">
-                                <a href="./index.html"><Image width={iconSize} height={iconSize} src={logo} alt="" /></a>
+                                <a href="./index.html"><Image width={logoWidth} height={logoHeight} src={logo} alt="" /></a>
                             </div>
                             <div className="header__top__right">
                                
