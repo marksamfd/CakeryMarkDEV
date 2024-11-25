@@ -1,12 +1,22 @@
 from app.db import create_app, db  # Import the create_app function and db instance
-from app.routes.customer_routes import customer_routes  # import from the routes_file
+from app.routes.customer_routes import customer_routes  # import from the routes_file, this only customer as start
+from app.models import *  # all models from the models file
+
+''' 
+This file will run to make the flask app run, 
+it will create the app, register the blueprint, create the table in the database, 
+so add other blueprints here when ant to test 
+
+'''
 
 
 app = create_app()
-# register the customer_routes blueprint
+
+# Register the customer_routes blueprint
 app.register_blueprint(customer_routes)
+
 with app.app_context():
-    db.create_all()  # create the table in the database
+    db.create_all()  # Create the table in the database
 
 if __name__ == "__main__":
     app.run(debug=True)

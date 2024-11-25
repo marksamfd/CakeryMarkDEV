@@ -15,7 +15,7 @@ def shop():
 # get the product details
 @customer_routes.route('/Product/<int:product_id>', methods=['GET'])
 # @jwt_required()
-def product_details(product_id):
+def product_details(product_id):  # the data recived here from this endpoint will be a file with data came from the object of the product, we can slice it here for more specefic data for the final json reply for frontend
     # Fetch product details based on product_id
     product = get_product_details(product_id)
     if product:

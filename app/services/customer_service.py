@@ -1,16 +1,23 @@
-from app.db import db
+from  app.models import Inventory
 from sqlalchemy.sql import text
 
 def get_all_products():
-    # all products from the Inventory table
-    query = text("SELECT ProductID, Name, Price FROM Inventory")
-    results = db.session.execute(query).mappings().all()  # 
-    # debug statement
-    print(results)
-    return [dict(row) for row in results]
+    try: 
+        # all products from the Inventory table
+        products = Inventory.query.all()
+        return [product.as_dict() for product in products] # return a list of dictionaries, each is data of a product
 
+    except Exception as e:
+        print("all products error")
+        print(f"Error: {e}")
+        return None
+    
 def get_product_details(product_id):
-    # get all details of a product based on product_id
-    query = text("SELECT * FROM Inventory WHERE ProductID = :product_id")
-    result = db.session.execute(query, {"product_id": product_id}).mappings().first()  # Use mappings() and first()
-    return dict(result) if result else None
+    try: 
+        # get all details of a product based on product_id
+        product = Inventory.query.get(product_id)   # Use mappings() and first()
+        return product.as_dict() if product else None  
+    except Exception as e:
+        print("product details error")
+        print(f"Error: {e}")
+        return None

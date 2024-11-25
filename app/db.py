@@ -5,6 +5,11 @@ import secrets
 from dotenv import load_dotenv
 import os
 
+''' 
+connect to the database, and create the app, lower part and creation was for testing the database connection directly before model mapping
+'''
+
+
 load_dotenv() # load the secret key from .env file, to seperate secret code temporary, also database link is manually implemented to ease testing between us
 
 db = SQLAlchemy()
@@ -14,13 +19,16 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
-    # my configuration 
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:aabb1122@localhost:5432/Cakery" # manual connection to database
+    # Configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:aabb1122@localhost:5432/Cakery"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') # from .env file
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
     db.init_app(app)
 
+   
     return app
+
 
 
 if __name__ == "__main__":
