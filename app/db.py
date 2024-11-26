@@ -25,7 +25,9 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
     db.init_app(app)
-
+    
+    from Authentication import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint)
    
     return app
 

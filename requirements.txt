@@ -2,3 +2,5 @@ flask
 flask_sqlalchemy
 python-dotenv
 flask_jwt_extended
+argon2
+jwt
