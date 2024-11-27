@@ -1,15 +1,15 @@
 from flask import Blueprint,request,jsonify, make_response, current_app
+from app import db
 import jwt
 from argon2 import PasswordHasher
 from sqlalchemy.sql import text
-
+from app.models import *
 #from werkzeug.security import generate_password_hash, check_password_hash
-
 from datetime import datetime,timedelta
 from functools import wraps
 
 
-auth = Blueprint("auth",__name__)
+auth_routes = Blueprint("auth_routes",__name__)
 ph = PasswordHasher()
 
 # Hash password to be stored in database
@@ -28,10 +28,10 @@ def verify_password(stored_password, provided_password):
 
 
 # SignUp Route 
-@auth.route("/App/User/SignUp", methods=["POST"])
+@auth_routes.route("/App/User/SignUp", methods=["POST"])
 def sign_up():
     data = request.get_json() 
-    db = current_app.extensions['sqlalchemy'] 
+   # db = current_app.extensions['sqlalchemy'] 
     
     # Extract required fields
     email = data.get('email')
@@ -51,8 +51,7 @@ def sign_up():
 
     try:
         # Check if user already exists
-        query_check_user = text("SELECT 1 FROM customeruser WHERE customeremail = :email")
-        result = db.session.execute(query_check_user, {'email': email}).fetchone()
+        result = CustomerUser.query.filter_by(customeremail=email).first()
 
         if result:
             return jsonify({
@@ -64,19 +63,10 @@ def sign_up():
         hashed_password = hash_password(password)
 
         # If user is not present insert the new user
-        query_insert_user = text("""
-            INSERT INTO customeruser (customeremail, password, firstname, lastname, phonenum, addressgooglemapurl, createdat)
-            VALUES (:email, :password, :firstname, :lastname, :phonenum, :addressgooglemapurl, :createdat)
-        """)
-        db.session.execute(query_insert_user, {
-            'email': email,
-            'password': hashed_password,
-            'firstname': firstname,
-            'lastname': lastname,
-            'phonenum': phonenum,
-            'addressgooglemapurl': addressgooglemapurl,
-            'createdat': createdat
-        })
+        new_customer = CustomerUser(customeremail=email,password=hashed_password,firstname=firstname,
+        lastname=lastname,phonenum=phonenum,addressgooglemapurl=addressgooglemapurl)
+
+        db.session.add(new_customer)
         db.session.commit()
 
         return jsonify({
@@ -132,9 +122,8 @@ def token_required(f):
 
 
 # Sign in route 
-@auth.route("/App/User/SignIn", methods=["POST"])
+@auth_routes.route("/App/User/SignIn", methods=["POST"])
 def sign_in():
-    db = current_app.extensions['sqlalchemy']
     data = request.get_json()
 
     email = data.get("email")
@@ -149,22 +138,21 @@ def sign_in():
 
     domain = email.split("@")[1] # extract user domain 
 
-    user_query = None
+    #user_query = None
     role = None
 
     # Define the queries for different user roles
     if domain == "cakery_admin.com":
-        user_query = text("SELECT adminemail, password FROM admin WHERE adminemail = :email")
+        user = Admin.query.filter_by(adminemail=email).first()
         role = "admin"
     elif domain == "cakery_baker.com":
-        user_query = text("SELECT bakeryemail, password FROM bakeryuser WHERE bakeryemail = :email")
+        user = BakeryUser.query.filter_by(bakeryemail=email).first()
         role = "baker"
     elif domain == "gmail.com":
-        user_query = text("SELECT customeremail, password FROM customeruser WHERE customeremail = :email")
+        user = CustomerUser.query.filter_by(customeremail=email).first()
         role = "customer"
-
     elif domain == "cakery_delivery.com":
-        user_query = text("SELECT deliveryemail, password FROM deliveryuser WHERE deliveryemail = :email")
+        user = DeliveryUser.query.filter_by(deliveryemail=email).first()
         role = "delivery"
     else:
         return jsonify({
@@ -173,21 +161,17 @@ def sign_in():
         }), 400
 
     try:
-        # Execute the query to fetch user details
-        result = db.session.execute(user_query, {"email": email}).fetchone()
-
         # User is not found 
-        if not result:
+        if not user:
             return jsonify({
-                "message": "User not found or incorrect password",
+                "message": "User not found",
                 "status": "error"
             }), 401
 
-        db_email, db_password = result
 
-        # Encrypt the input password and compare
+        # Comapre the stored password and the input password
 
-        stored_password = result[1] # stored password for current user in database 
+        stored_password = user.password 
         
         # Verify the password using Argon2
         if verify_password(stored_password, password):
@@ -197,7 +181,7 @@ def sign_in():
             }), 200
         else:
             return jsonify({
-                "message": stored_password,
+                "message": "Wrong Password",
                 "status": "error"
             }), 401
     except Exception as e:

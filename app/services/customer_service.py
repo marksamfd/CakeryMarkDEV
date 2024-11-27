@@ -106,3 +106,5 @@ def remove_from_cart(customeremail, product_id):
         print(f"Error: {e}")
         print("Error during the deletion process in remove_from_cart")
         return {"error": "Error removing product from cart"}
+
+

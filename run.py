@@ -1,7 +1,8 @@
 from app.db import create_app, db  # Import the create_app function and db instance
 from app.routes.customer_routes import customer_routes  # import from the routes_file, this only customer as start
 from app.routes.baker_routes import baker_routes
-
+from app.Authentication import auth_routes
+from app.oAuth import google_oauth
 from app.models import *  # all models from the models file
 
 ''' 
@@ -17,6 +18,9 @@ app = create_app()
 # Register the customer_routes blueprint
 app.register_blueprint(customer_routes)
 app.register_blueprint(baker_routes)
+app.register_blueprint(auth_routes)
+app.register_blueprint(google_oauth)
+
 
 with app.app_context():
     db.create_all()  # Create the table in the database
