@@ -4435,3 +4435,17 @@ ol {
     display: block;
   }
 }
+
+.stepper-item {
+  width: 3%;
+  background-color: white;
+  border-width: 2px !important;
+  /* border-color: black !important; */
+}
+
+.stepper-item .active-step {
+  /* background-color: #f08632 !important; */
+  border-color: rebeccapurple !important;
+  border-width: 10px;
+  border-style: double;
+}
