@@ -224,6 +224,41 @@ CREATE TABLE public.customeruser (
 ALTER TABLE public.customeruser OWNER TO postgres;
 
 --
+-- Name: delivery_assignments; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.delivery_assignments (
+    id integer NOT NULL,
+    deliveryemail character varying(255),
+    orderid integer
+);
+
+
+ALTER TABLE public.delivery_assignments OWNER TO postgres;
+
+--
+-- Name: delivery_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.delivery_assignments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.delivery_assignments_id_seq OWNER TO postgres;
+
+--
+-- Name: delivery_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.delivery_assignments_id_seq OWNED BY public.delivery_assignments.id;
+
+
+--
 -- Name: deliveryuser; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -233,7 +268,6 @@ CREATE TABLE public.deliveryuser (
     firstname character varying(255),
     lastname character varying(255),
     phonenum character varying(15),
-    assignedorderid integer,
     createdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -471,6 +505,13 @@ ALTER TABLE ONLY public.customcake ALTER COLUMN customcakeid SET DEFAULT nextval
 
 
 --
+-- Name: delivery_assignments id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.delivery_assignments ALTER COLUMN id SET DEFAULT nextval('public.delivery_assignments_id_seq'::regclass);
+
+
+--
 -- Name: inventory productid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -550,10 +591,11 @@ COPY public.cart (cartid, customeremail) FROM stdin;
 --
 
 COPY public.cartitems (cartitemid, cartid, productid, customcakeid, quantity, price) FROM stdin;
-1	1	2	\N	4	3.00
 2	1	\N	1	1	60.00
 3	2	3	\N	3	4.50
 4	3	1	\N	1	25.00
+6	1	3	\N	2	4.50
+8	1	2	\N	2	3.00
 \.
 
 
@@ -578,12 +620,21 @@ tasneem.mohamed@gmail.com	passTasneem	Tasneem	Mohamed	0112233445	https://maps.go
 
 
 --
+-- Data for Name: delivery_assignments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.delivery_assignments (id, deliveryemail, orderid) FROM stdin;
+1	john.doe@cakery_delivery.com	2
+\.
+
+
+--
 -- Data for Name: deliveryuser; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.deliveryuser (deliveryemail, password, firstname, lastname, phonenum, assignedorderid, createdat) FROM stdin;
-sarah.lee@cakery_delivery.com	passSarah	Sarah	Lee	0556677889	2	2024-11-23 01:58:26.971613
-john.doe@cakery_delivery.com	passJohn	John	Doe	0445566778	3	2024-11-23 01:58:26.971613
+COPY public.deliveryuser (deliveryemail, password, firstname, lastname, phonenum, createdat) FROM stdin;
+sarah.lee@cakery_delivery.com	passSarah	Sarah	Lee	0556677889	2024-11-23 01:58:26.971613
+john.doe@cakery_delivery.com	passJohn	John	Doe	0445566778	2024-11-23 01:58:26.971613
 \.
 
 
@@ -615,9 +666,9 @@ COPY public.orderitems (orderitemid, orderid, productid, customcakeid, quantity,
 --
 
 COPY public.orders (orderid, customeremail, deliveryemail, totalprice, status, orderdate, deliverydate) FROM stdin;
-1	anas.ahmad@gmail.com	john.doe@cakery_delivery.com	72.00	Out for Delivery	2024-11-23 02:06:47.172561	\N
-2	mark.samuel@gmail.com	sarah.lee@cakery_delivery.com	13.50	Out for Delivery	2024-11-23 02:06:57.586371	\N
 3	tasneem.mohamed@gmail.com	john.doe@cakery_delivery.com	25.00	Out for Delivery	2024-11-23 02:07:02.387941	\N
+1	anas.ahmad@gmail.com	john.doe@cakery_delivery.com	72.00	Prepared	2024-11-23 02:06:47.172561	\N
+2	mark.samuel@gmail.com	sarah.lee@cakery_delivery.com	13.50	Prepared	2024-11-23 02:06:57.586371	\N
 \.
 
 
@@ -671,7 +722,7 @@ SELECT pg_catalog.setval('public.cart_cartid_seq', 3, true);
 -- Name: cartitems_cartitemid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cartitems_cartitemid_seq', 4, true);
+SELECT pg_catalog.setval('public.cartitems_cartitemid_seq', 8, true);
 
 
 --
@@ -679,6 +730,13 @@ SELECT pg_catalog.setval('public.cartitems_cartitemid_seq', 4, true);
 --
 
 SELECT pg_catalog.setval('public.customcake_customcakeid_seq', 1, true);
+
+
+--
+-- Name: delivery_assignments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.delivery_assignments_id_seq', 1, true);
 
 
 --
@@ -770,6 +828,14 @@ ALTER TABLE ONLY public.customcake
 
 ALTER TABLE ONLY public.customeruser
     ADD CONSTRAINT customeruser_pkey PRIMARY KEY (customeremail);
+
+
+--
+-- Name: delivery_assignments delivery_assignments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.delivery_assignments
+    ADD CONSTRAINT delivery_assignments_pkey PRIMARY KEY (id);
 
 
 --
@@ -885,11 +951,19 @@ ALTER TABLE ONLY public.cartitems
 
 
 --
--- Name: deliveryuser deliveryuser_assignedorderid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: delivery_assignments delivery_assignments_deliveryemail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.deliveryuser
-    ADD CONSTRAINT deliveryuser_assignedorderid_fkey FOREIGN KEY (assignedorderid) REFERENCES public.orders(orderid);
+ALTER TABLE ONLY public.delivery_assignments
+    ADD CONSTRAINT delivery_assignments_deliveryemail_fkey FOREIGN KEY (deliveryemail) REFERENCES public.deliveryuser(deliveryemail) ON DELETE CASCADE;
+
+
+--
+-- Name: delivery_assignments delivery_assignments_orderid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.delivery_assignments
+    ADD CONSTRAINT delivery_assignments_orderid_fkey FOREIGN KEY (orderid) REFERENCES public.orders(orderid) ON DELETE CASCADE;
 
 
 --
