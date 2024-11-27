@@ -4,7 +4,8 @@ from app.db import db
 is represented by a class, the class taking the db.model from the initialized db instance in the db.py file.
 The class has the table name, and the columns as attributes, and the relationships as attributes as well.
 The as_dict() method is used to convert the object to a dictionary (all attributes will be key and the vale ),
- to be used in the services file to return the data as a dictionary as this json format will be sent to frontend.
+ to be used in the services file to return the data as a dictionary as this json format will be sent to frontend. passwords are excluded from the dictionary response, 
+ but accsesed from the model
 .'''
 
 # Admin model
@@ -205,7 +206,6 @@ class DeliveryUser(db.Model):
     firstname = db.Column(db.String(255))
     lastname = db.Column(db.String(255))
     phonenum = db.Column(db.String(15))
-    assignedorderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def as_dict(self):
@@ -214,9 +214,32 @@ class DeliveryUser(db.Model):
             "firstname": self.firstname,
             "lastname": self.lastname,
             "phonenum": self.phonenum,
-            "assignedorderid": self.assignedorderid,
             "createdat": self.createdat.isoformat() if self.createdat else None
         }
+
+
+# Delivery assigments, which is spliitted table to have all orders the deliveryguy handles
+
+class DeliveryAssignments(db.Model):
+    __tablename__ = 'delivery_assignments'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    deliveryemail = db.Column(db.String(255), db.ForeignKey('deliveryuser.deliveryemail'), nullable=False)
+    orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'), nullable=False)
+
+    # Relationships
+    delivery_user = db.relationship('DeliveryUser', backref='assignments')
+    order = db.relationship('Orders', backref='assigned_delivery')
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "deliveryemail": self.deliveryemail,
+            "orderid": self.orderid
+        }
+
+
+
 
 
 # OrderItems model
