@@ -4,6 +4,7 @@ import { useState } from 'react';
 import StepperIndicatior from '../components/stepperIndicatior';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
+import Breadcrumb from '../components/breadcrumb';
 
 function Page() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -85,6 +86,9 @@ function Page() {
 
   return (
     <>
+    <div style={{ marginBottom: '50px' }} >
+    <Breadcrumb title="Make Your Own Cake"/>
+</div>
       <StepperIndicatior steps={steps} currentStep={currentStep} />
 
       {currentStep == 0 && (
