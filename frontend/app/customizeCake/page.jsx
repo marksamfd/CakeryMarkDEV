@@ -68,6 +68,21 @@ function Page() {
     setCakeLayers(newCakeLayers);
   };
 
+  const addNewLayer = () => {
+    setCakeLayers([
+      ...cakeLayers,
+      {
+        innerFillings: 'Nutella',
+        innerToppings: 'Chocolate Chips',
+        outerCoating: 'Butter Cream',
+        outerToppings: 'Fruits',
+      },
+    ]);
+  };
+  const changeCurrentLayer = (i) => {
+    setCakeCurrentLayer(i);
+  };
+
   return (
     <>
       <StepperIndicatior steps={steps} currentStep={currentStep} />
@@ -184,7 +199,7 @@ function Page() {
                     />
                     <label
                       className="btn mt-2 text-uppercase text-start"
-                      forhtml={`option-innerFillings-${+i}`}
+                      htmlFor={`option-innerFillings-${+i}`}
                     >
                       {filling}
                     </label>
@@ -284,29 +299,42 @@ function Page() {
       )}
       {currentStep == 2 && <div className="container">Step 3</div>}
 
-      <div className="d-lg-flex w-100" style={styles.bottomSection}>
-        <div className="w-50" style={styles.layersSummary}>
-          <h6>Layers</h6>
-
-          {cakeLayers.map((layer, i) => {
-            return i == cakeCurrentLayer ? (
-              <div className="d-flex justify-content-between">
-                <div key={`layer${i}`} style={{ ...styles.layersBase }}>
-                  Layer {i + 1}
-                </div>
-              </div>
-            ) : (
-              <div className="d-flex justify-content-between">
+      <div className="container d-lg-flex w-100" style={styles.bottomSection}>
+        {currentStep == 1 && (
+          <div
+            className="w-75"
+            style={{ ...styles.layersSummary, ...styles.layersBase }}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <h6>Layers</h6>
+              <span className="btn" onClick={addNewLayer}>
+                +
+              </span>
+            </div>
+            {cakeLayers.map((layer, i) => {
+              return i == cakeCurrentLayer ? (
                 <div
-                  key={`layer${i}`}
+                  className="d-flex justify-content-between mt-1"
                   style={{ ...styles.layersBase, ...styles.activeLayer }}
                 >
-                  /* Layer {i + 1}
+                  <div key={`layer${i}`}>
+                    <span>Layer {i + 1}</span>
+                  </div>
+                  <span>$699</span>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              ) : (
+                <div
+                  className="d-flex justify-content-between"
+                  onClick={() => changeCurrentLayer(i)}
+                  style={{ ...styles.layersBase }}
+                >
+                  <div key={`layer${i}`}>Layer {i + 1}</div>
+                  <span>$699</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
         <div style={styles.buttonContainer}>
           <Button
             onClick={() => {
@@ -340,8 +368,13 @@ const styles = {
     justifyContent: 'space-around',
   },
   layersSummary: {
-    padding: '10px',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingLeft: '5px',
+    paddingRight: '5px',
     marginLeft: '10%',
+    width: '30%',
+    backgroundColor: '#FDF3EA',
   },
   stepContainer: {
     marginTop: '2%',
@@ -359,14 +392,17 @@ const styles = {
     justifyContent: 'start',
   },
   bottomSection: {
-    marginTop: '10%',
+    marginTop: '5%',
+    marginBottom: '5%',
     flexDirection: 'row',
+
     alignItems: 'center',
     justifyContent: 'space-around',
   },
   layersBase: {
-    paddingRight: '10em',
+    width: '100%',
     paddingLeft: '2%',
+    paddingRight: '2%',
   },
   activeLayer: {
     borderColor: 'black',
