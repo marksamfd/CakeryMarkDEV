@@ -27,6 +27,8 @@
 /*----------------------------------------*/
 /* Template default CSS
 /*----------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 html,
 body {
   height: 100%;
@@ -166,15 +168,19 @@ ol {
 }
 
 .site-btn {
+  height: 65%;
+  width: 65%;
   font-size: 14px;
   color: #ffffff;
   background: #111111;
-  font-weight: 600;
-  border: none;
+  font-weight: 400;
+  border-radius: 4px;
   text-transform: uppercase;
   display: inline-block;
   letter-spacing: 2px;
   padding: 14px 30px;
+  line-height: 21px;
+  word-wrap: 'break-word';
 }
 
 /* Preloder */
@@ -1377,7 +1383,7 @@ ol {
 }
 
 .copyright__text a {
-  color: #f08632;
+  color: #000000;
 }
 
 .copyright__widget {
@@ -4421,9 +4427,9 @@ ol {
     height: auto;
   }
 
-  .breadcrumb__text h2 {
+  /* .breadcrumb__text h2 {
     font-size: 40px;
-  }
+  } */
 
   .checkout__total__products li span {
     float: none;
@@ -4434,4 +4440,30 @@ ol {
   .checkout__order__products span {
     display: block;
   }
+  
+.sign-up__form form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row .col-md-6, .row .col-md-12 {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-black {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.btn-black:hover {
+  background-color: #333;
+}
+
 }
