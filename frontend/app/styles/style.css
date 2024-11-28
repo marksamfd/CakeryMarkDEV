@@ -4440,30 +4440,30 @@ ol {
   .checkout__order__products span {
     display: block;
   }
-  
-.sign-up__form form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-.row .col-md-6, .row .col-md-12 {
-  display: flex;
-  flex-direction: column;
-}
+  .sign-up__form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-.btn-black {
-  background-color: black;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  text-transform: uppercase;
-}
+  .row .col-md-6, .row .col-md-12 {
+    display: flex;
+    flex-direction: column;
+  }
 
-.btn-black:hover {
-  background-color: #333;
-}
+  .btn-black {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  .btn-black:hover {
+    background-color: #333;
+  }
 
 }
