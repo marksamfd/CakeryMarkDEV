@@ -64,7 +64,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                   <div className="header__top__left">
                     <ul>
                       <li>
-                        <a href="#">Sign in</a>{' '}
+                        <a href="/signIn">Sign in</a>{' '}
                       </li>
                     </ul>
                   </div>
@@ -80,7 +80,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                   </div>
                   <div className="header__top__right">
                     <div className="header__top__right__cart">
-                      <a href="#">
+                      <a href="/cart">
                         <Image
                           width={iconSize - 2}
                           height={iconSize + 2}
@@ -119,36 +119,24 @@ function HeaderNav({ itemsInCart = 0 }) {
                     <a href="./about.html">About</a>
                   </li>
                   <li>
-                    <a href="./shop.html">Shop</a>
+                    <a href="/shop">Shop</a>
                   </li>
                   <li>
                     <a href="#">Pages</a>
                     <ul className="dropdown">
                       <li>
-                        <a href="./shop-details.html">Shop Details</a>
+                        <a href="/shopDetails">Shop Details</a>
                       </li>
                       <li>
-                        <a href="./shoping-cart.html">Shoping Cart</a>
+                        <a href="/cart">Shoping Cart</a>
                       </li>
                       <li>
-                        <a href="./checkout.html">Check Out</a>
-                      </li>
-                      <li>
-                        <a href="./wisslist.html">Wisslist</a>
-                      </li>
-                      <li>
-                        <a href="./className.html">className</a>
-                      </li>
-                      <li>
-                        <a href="./blog-details.html">Blog Details</a>
+                        <a href="/checkout">Check Out</a>
                       </li>
                     </ul>
-                  </li>
+                    </li>
                   <li>
-                    <a href="./blog.html">Blog</a>
-                  </li>
-                  <li>
-                    <a href="./contact.html">Contact</a>
+                    <a href="/contact">Contact</a>
                   </li>
                 </ul>
               </nav>
