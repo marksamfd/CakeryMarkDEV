@@ -4,7 +4,7 @@ const CheckoutInputField = React.forwardRef((props, ref) => {
   const requiredField = props.requiredField || true;
   console.log(props, { requiredField });
   return (
-    <div class="checkout__input">
+    <div className="checkout__input">
       <p>
         {props.label}
         {requiredField ? <span>*</span> : ''}

@@ -9,8 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 function HeaderNav({ itemsInCart = 0 }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   const iconSize = 25;
-  const logoHeight = 85;
-  const logoWidth = 150;
+  const logoHeight = 65;
+  const logoWidth = 120;
   return (
     <>
       <div
