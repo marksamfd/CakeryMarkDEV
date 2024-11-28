@@ -3,7 +3,7 @@ import Image from "next/image";
 import footer_bg from "@/img/footer_bg.jpg";
 import footer_logo from "@/img/footer_logo.png";
 import { useEffect, useRef, useState } from "react";
- import React from 'react'
+import React from 'react'
 
  function FooterNav(){
     const currentYear = new Date().getFullYear();
@@ -66,8 +66,6 @@ import { useEffect, useRef, useState } from "react";
         <div className="col-lg-7">
           <p className="copyright__text text-white">
             {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
-            Copyright © {currentYear} All rights reserved | This template is made with{""}
-            <i className="fa fa-heart" aria-hidden="true" /> by{" "}
             <a href="https://colorlib.com" target="_blank">
               Colorlib
             </a>
@@ -75,19 +73,7 @@ import { useEffect, useRef, useState } from "react";
           </p>
         </div>
         <div className="col-lg-5">
-          <div className="copyright__widget">
-            <ul>
-              <li>
-                <a href="#">Privacy Policy</a>
-              </li>
-              <li>
-                <a href="#">Terms &amp; Conditions</a>
-              </li>
-              <li>
-                <a href="#">Site Map</a>
-              </li>
-            </ul>
-          </div>
+          
         </div>
       </div>
     </div>
