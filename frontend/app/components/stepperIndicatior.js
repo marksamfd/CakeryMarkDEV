@@ -14,7 +14,11 @@ function StepperIndicatior({ steps, currentStep }) {
       <div
         className="progress"
         role="progressbar"
-        style={{ height: '10px', position: 'absolute', width: '50%' }}
+        style={{
+          height: '10px',
+          position: 'absolute',
+          width: `${50}%`,
+        }}
       >
         <div
           className="progress-bar"
