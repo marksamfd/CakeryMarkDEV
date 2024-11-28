@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
+from flask import Blueprint, request, jsonify
+from app.routes.checkout_routes import checkout
+from app.services.checkout_service import process_checkout
 from app.services.customer_service import (get_all_products, get_product_details, get_cart_items, add_to_cart, remove_from_cart)
+from app.routes.order_routes import my_orders  
 customer_routes = Blueprint('customer_routes', __name__)
 
 
@@ -64,3 +68,34 @@ def remove_cart_item():
 
     result = remove_from_cart(customeremail, product_id)
     return jsonify(result), 200
+
+
+
+
+
+''' ===================================== Checkout Endpoints ===================================== '''
+# ---------------------------- Process Checkout ----------------------------
+@customer_routes.route('/customer/checkout', methods=['POST'])
+def checkout():
+    try:
+        data = request.get_json()
+        customeremail = data.get('customeremail')
+
+        # Delegate checkout processing to the service layer
+        result = process_checkout(customeremail, data)
+
+        if "error" in result:
+            return jsonify(result), 400
+
+        return jsonify(result), 201
+    except Exception as e:
+        print(f"Error in /customer/checkout: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+''' ================================ Order Endpoints ================================= '''
+''' ===================================== Order Endpoints ===================================== '''
+# ---------------------------- Get Orders ----------------------------
+@customer_routes.route('/customer/orders', methods=['GET'])
+def orders():
+    return my_orders()
