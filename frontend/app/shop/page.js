@@ -77,7 +77,7 @@ function Shop() {
             </div>
           </div>
           <div className="row" style={{ justifyContent: 'center'}}>
-  <Link href="/customizecake">
+  <Link href="/customizeCake">
     <div style={{
         display: 'flex',
         justifyContent: 'center'
