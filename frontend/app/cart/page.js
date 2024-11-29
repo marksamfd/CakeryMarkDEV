@@ -75,13 +75,7 @@ export default function Cart() {
               </div>
             </div>
             <div className="col-lg-4">
-              <div className="cart__discount">
-                <h6>Discount codes</h6>
-                <form action="#">
-                  <input type="text" placeholder="Coupon code" />
-                  <button type="submit">Apply</button>
-                </form>
-              </div>
+            
               <div className="cart__total">
                 <h6>Cart total</h6>
                 <ul>
