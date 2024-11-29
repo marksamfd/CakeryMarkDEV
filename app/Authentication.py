@@ -175,9 +175,11 @@ def sign_in():
         
         # Verify the password using Argon2
         if verify_password(stored_password, password):
+            token = generate_jwt(email,role)
             return jsonify({
                 "message": "Sign-in successful",
-                "status": "success"
+                "status": "success",
+                "jwt_token":token
             }), 200
         else:
             return jsonify({
