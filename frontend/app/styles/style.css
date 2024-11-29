@@ -604,8 +604,7 @@ ol {
   font-style: italic;
   margin-bottom: 18px;
   position: relative;
-  top: 100px;
-  opacity: 0;
+
   -webkit-transition: all, 0.3s;
   -o-transition: all, 0.3s;
   transition: all, 0.3s;
@@ -613,8 +612,7 @@ ol {
 
 .hero__text .primary-btn {
   position: relative;
-  top: 100px;
-  opacity: 0;
+
   -webkit-transition: all, 0.6s;
   -o-transition: all, 0.6s;
   transition: all, 0.6s;
@@ -887,9 +885,9 @@ ol {
   width: 100%;
   opacity: 0;
   visibility: hidden;
-  -webkit-transition: all, 0.5s;
-  -o-transition: all, 0.5s;
-  transition: all, 0.5s;
+  -webkit-transition: all, opacity 0.5s;
+  -o-transition: all, opacity 0.5s;
+  transition: all, opacity 0.5s;
 }
 
 .team__item__text h6 {

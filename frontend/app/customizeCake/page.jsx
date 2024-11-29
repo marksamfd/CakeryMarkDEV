@@ -86,18 +86,18 @@ function Page() {
 
   return (
     <>
-    <div style={{ marginBottom: '50px' }} >
-    <Breadcrumb title="Make Your Own Cake"/>
-</div>
+      <div style={{ marginBottom: '50px' }}>
+        <Breadcrumb title="Make Your Own Cake" />
+      </div>
       <StepperIndicatior steps={steps} currentStep={currentStep} />
 
       {currentStep == 0 && (
         <div className="container" style={styles.stepContainer}>
           <div className="row mt-4">
-            <div className="col-2" style={styles.rowLabel}>
+            <div className="col-2 flex-wrap" style={styles.rowLabel}>
               Cake Shape
             </div>
-            <div className="col" style={styles.selectorContainer}>
+            <div className="col  flex-wrap" style={styles.selectorContainer}>
               {allShapes.map((shape) => {
                 return (
                   <div className="form-check form-check-inline">
@@ -120,7 +120,7 @@ function Page() {
             </div>
           </div>
           <div className="row mt-4">
-            <div className="col-2" style={styles.rowLabel}>
+            <div className="col-2 flex-wrap" style={styles.rowLabel}>
               Cake Size
             </div>
             <div className="col" style={styles.selectorContainer}>
@@ -146,10 +146,10 @@ function Page() {
             </div>
           </div>
           <div className="row mt-4">
-            <div className="col-2" style={styles.rowLabel}>
+            <div className="col-2 flex-wrap" style={styles.rowLabel}>
               Cake Flavour
             </div>
-            <div className="col" style={styles.selectorContainer}>
+            <div className="col flex-wrap" style={styles.selectorContainer}>
               {allFlavours.map((flavour) => {
                 return (
                   <div className="form-check form-check-inline">
