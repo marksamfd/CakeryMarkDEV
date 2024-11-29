@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.services.baker_service import (get_baker_orders,get_order_details, update_order_status)
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 baker_routes = Blueprint("baker_routes", __name__)
 

@@ -1,6 +1,8 @@
 from  app.models import Cart, CartItems, Inventory
 from sqlalchemy.sql import text
+
 from app.db import db
+
 
 ''' ===================================== Product Functions ===================================== '''
 
