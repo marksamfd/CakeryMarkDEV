@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import jwt
 from app.services.customer_service import (get_all_products, get_product_details, get_cart_items, add_to_cart, remove_from_cart)
 customer_routes = Blueprint('customer_routes', __name__)
-
 
 
 ''' ===================================== Product Endpoints ===================================== '''
 # ------------------------------------------ all products for "Shop" page ------------------------------------------
 @customer_routes.route('/customer/shop', methods=['GET'])
-# @jwt_required()  
+@jwt_required()  
 def shop():
     # a list of all products
     products = get_all_products()
@@ -16,7 +16,7 @@ def shop():
 
 # ------------------------------------------------ get the product details ------------------------------------------------
 @customer_routes.route('/Product/<int:product_id>', methods=['GET'])
-# @jwt_required()
+@jwt_required()
 def product_details(product_id):  # the data recived here from this endpoint will be a file with data came from the object of the product, we can slice it here for more specefic data for the final json reply for frontend
     # Fetch product details based on product_id
     product = get_product_details(product_id)
@@ -27,17 +27,21 @@ def product_details(product_id):  # the data recived here from this endpoint wil
 
 ''' ===================================== Cart Endpoints ===================================== '''
 # ---------------------------- Get cart items for a customer ----------------------------
-@customer_routes.route('/Cart/<string:customeremail>', methods=['GET'])
-def get_cart(customeremail):
-    items = get_cart_items(customeremail)
+@customer_routes.route('/Cart', methods=['GET'])
+@jwt_required()
+def get_cart():
+    customer_email = get_jwt_identity()
+    items = get_cart_items(customer_email)
     return jsonify(items), 200
+
 
 # -------------------------------------- Add product to cart --------------------------------------
 @customer_routes.route('/Cart/Add', methods=['POST'])
+@jwt_required()
 def add_cart_item():
     try: 
         data = request.get_json()
-        customeremail = data.get("customeremail")
+        customeremail = get_jwt_identity()
         product_id = data.get("product_id")
         quantity = data.get("quantity")
         print("customeremail:", customeremail)
@@ -54,9 +58,10 @@ def add_cart_item():
 
 # ------------------------- Remove product from cart -------------------------
 @customer_routes.route('/Cart/Remove', methods=['DELETE'])
+@jwt_required()
 def remove_cart_item():
     data = request.get_json()
-    customeremail = data.get("customeremail")
+    customeremail = get_jwt_identity()
     product_id = data.get("product_id")
 
     if not all([customeremail, product_id]):

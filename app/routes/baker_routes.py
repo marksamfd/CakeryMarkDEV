@@ -8,6 +8,7 @@ baker_routes = Blueprint("baker_routes", __name__)
 # ------------------------------------------ All orders to be baked ------------------------------------------
 
 @baker_routes.route("/user/baker/orders", methods=["GET"])
+@jwt_required()
 def baker_dashboard():
     try:
         orders = get_baker_orders()
@@ -20,6 +21,7 @@ def baker_dashboard():
 # -------------------------------- Get details of a specific order --------------------------------
 
 @baker_routes.route("/user/baker/orders/<int:orderID>/details", methods=["GET"])
+@jwt_required()
 def order_details(orderID):
     try:
         order_details = get_order_details(orderID)
@@ -34,14 +36,14 @@ def order_details(orderID):
 # -------------------------------- Update order status & assign delivery man  --------------------------------
 
 @baker_routes.route("/user/baker/orders/update_status", methods=["POST"])
+@jwt_required()
 def update_order_status_route():
     try:
         data = request.get_json()
         order_id = data.get("order_id")
         preparation_status = data.get("preparation_status")
-
         if not order_id or not preparation_status:
-            return jsonify({"error": "Order ID and preparation status are required"}), 400
+            return jsonify({"error": "input required"}), 400
 
         result = update_order_status(order_id, preparation_status)
         return jsonify(result), 200
