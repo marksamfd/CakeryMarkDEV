@@ -2,7 +2,7 @@ flask
 flask_sqlalchemy
 python-dotenv
 flask_jwt_extended
-pip install argon2-cffi-bindings
+argon2-cffi-bindings
 argon2-cffi
 jwt
 pyjwt
