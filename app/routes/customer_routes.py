@@ -77,7 +77,7 @@ def remove_cart_item():
 # ------------------------- Send all the raw materials data -------------------------
 
 @customer_routes.route("/App/User/Customer/Customize_Cake", methods=["GET"])
-#@jwt_required()
+@jwt_required()
 def cust_cakes_prices():
     try:
         # Call the service function to retrieve data
@@ -91,13 +91,13 @@ def cust_cakes_prices():
 
 # ------------------------- Add the customized cake to the database  -------------------------
 @customer_routes.route("/App/User/Customer/Customize_Cake/Create", methods=["POST"])
-#@jwt_required()
+@jwt_required()
 def cust_cakes_create():
     try:
         # Extract email from JWT and JSON data
-        #email = get_jwt_identity()
+        #email = data.get("email")
         data = request.get_json()
-        email = data.get("email")
+        email = get_jwt_identity()
         # Call the service function to handle logic
         result = create_customized_cake(email, data)
         
