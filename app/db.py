@@ -14,7 +14,7 @@ def create_app():
     app = Flask(__name__)
 
     # database configuration (have to be moved to .env file)
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:aabb1122@localhost:5432/Cakery"
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Flask Secret Key

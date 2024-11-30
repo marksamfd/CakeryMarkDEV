@@ -142,8 +142,8 @@ def sign_in():
 
         # Compare the stored password and the input password
         stored_password = user.password
-
-        if verify_password(stored_password, password):
+        #verify_password(stored_password, password)
+        if stored_password == password:
             # Create JWT token with role as an additional claim
             additional_claims = {"role": role}
             access_token = create_access_token(identity=email, additional_claims=additional_claims)
