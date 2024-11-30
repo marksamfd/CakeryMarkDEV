@@ -12,7 +12,7 @@ function Breadcrumb({ title }) {
           </div>
           <div className="col-lg-6 col-md-6 col-sm-6">
             <div className="breadcrumb__links">
-              <a href="./index.html">Home</a>
+              <a href="/">Home</a>
               <span>{title}</span>
             </div>
           </div>

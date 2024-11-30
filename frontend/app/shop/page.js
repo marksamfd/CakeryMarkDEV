@@ -1,9 +1,10 @@
 'use client';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProductCard from '../components/productCard';
 import Breadcrumb from '../components/breadcrumb';
+// imgs:
 import customize from '../img/shop/customize.png';
 import product1 from '../img/shop/product1.jpg';
 import product2 from '../img/shop/product2.jpg';
@@ -19,22 +20,51 @@ import product11 from '../img/shop/product11.jpg';
 import product12 from '../img/shop/product12.jpg';
 
 
-
 function Shop() {
-  const products = [
-    { name: 'Dozen Cupcakes', image: product1, category: 'Cupcake', price: 10.0, rating: 5 },
-    { name: 'Cookies and Cream', image: product2, category: 'Cupcake', price: 30.0, rating: 4 },
-    { name: 'Gluten Free Mini Dozen', image: product3, category: 'Cupcake', price: 31.0, rating: 5 },
-    { name: 'Cookie Dough', image: product4, category: 'Cupcake', price: 25.0, rating: 4 },
-    { name: 'Vanilla Salted Caramel', image: product5, category: 'Cupcake', price: 5.00, rating: 4 },
-    { name: 'German Chocolate', image: product6, category: 'Cupcake', price: 14.00, rating: 5 },
-    { name: 'Dulce De Leche', image: product7, category: 'Cupcake', price: 32.00, rating: 5 },
-    { name: 'Mississippi Mud', image: product8, category: 'Cupcake', price: 8.00, rating: 3 },
-    { name: 'VEGAN/GLUTEN FREE', image: product9, category: 'Cupcake', price: 98.85, rating: 5 },
-    { name: 'SWEET CELTICS', image: product10, category: 'Cupcake', price: 5.77, rating: 4 },
-    { name: 'SWEET AUTUMN LEAVES', image: product11, category: 'Cupcake', price: 26.41, rating: 4 },
-    { name: 'PALE YELLOW SWEET', image: product12, category: 'Cupcake', price: 22.47, rating: 5 },
-  ];
+  const[product, setProducts] = useState([]);
+  // const products = [
+  //   { name: 'Dozen Cupcakes', image: product1, category: 'Cupcake', price: 10.0, rating: 5 },
+  //   { name: 'Cookies and Cream', image: product2, category: 'Cupcake', price: 30.0, rating: 4 },
+  //   { name: 'Gluten Free Mini Dozen', image: product3, category: 'Cupcake', price: 31.0, rating: 5 },
+  //   { name: 'Cookie Dough', image: product4, category: 'Cupcake', price: 25.0, rating: 4 },
+  //   { name: 'Vanilla Salted Caramel', image: product5, category: 'Cupcake', price: 5.00, rating: 4 },
+  //   { name: 'German Chocolate', image: product6, category: 'Cupcake', price: 14.00, rating: 5 },
+  //   { name: 'Dulce De Leche', image: product7, category: 'Cupcake', price: 32.00, rating: 5 },
+  //   { name: 'Mississippi Mud', image: product8, category: 'Cupcake', price: 8.00, rating: 3 },
+  //   { name: 'VEGAN/GLUTEN FREE', image: product9, category: 'Cupcake', price: 98.85, rating: 5 },
+  //   { name: 'SWEET CELTICS', image: product10, category: 'Cupcake', price: 5.77, rating: 4 },
+  //   { name: 'SWEET AUTUMN LEAVES', image: product11, category: 'Cupcake', price: 26.41, rating: 4 },
+  //   { name: 'PALE YELLOW SWEET', image: product12, category: 'Cupcake', price: 22.47, rating: 5 },
+  // ];
+  // test json file in frontend\public\data\products.json
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        
+        const res = await fetch('/data/products.json'); 
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await res.json();
+        if (Array.isArray(data.products)) {
+          const productsData = data.products.map((product) => ({
+            name: product.name,
+            image: product.image, 
+            category: product.category,
+            price: product.price,
+            rating: product.rating,
+          }));
+          setProducts(productsData);
+        }
+      }catch (error) {
+        console.error('Error fetching products:', error.message);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  
   return (
     <>
       <Breadcrumb title="Shop" />
@@ -76,46 +106,44 @@ function Shop() {
               </div>
             </div>
           </div>
-          <div className="row" style={{ justifyContent: 'center'}}>
-  <Link href="/customizeCake">
-    <div style={{
-        display: 'flex',
-        justifyContent: 'center'
-      
-      }}
-    >
-      <div className="product__item">
-        <div
-          className="product__item__pic set-bg"
-          style={{ backgroundImage: `url(${customize.src})`,width: '350px', height: '300px' }}
-        >
-        </div>
-        <div className="product__item__text">
-          <h6
-            style={{
-              color: '#F08632',
-              fontSize: '25px',
-              fontFamily: 'Montserrat',
-              fontWeight: '800',
-              textTransform: 'uppercase',
-              lineHeight: '19.20px',
-              wordWrap: 'break-word',
-            }}
-          >
-            Customize Your<br /><br /> Cake!
-          </h6>
-        </div>
-      </div>
-    </div>
-  </Link>
-</div>
-
-
-<div className="row">
-            {products.map((product, index) => (
+          <div className="row">
+            <div className="col-lg-3 col-md-6 col-sm-6">
+              <Link href="/customizeCake">
+                <div className="product__item">
+                  <div
+                    className="product__item__pic set-bg"
+                    style={{
+                      backgroundImage: `url(${customize.src})`,
+                      height: '250px', 
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  ></div>
+                  <div className="product__item__text">
+                    <h6
+                      style={{
+                        color: '#F08632',
+                        fontSize: '25px',
+                        fontFamily: 'Montserrat',
+                        fontWeight: '800',
+                        textTransform: 'uppercase',
+                        lineHeight: '19.20px',
+                        wordWrap: 'break-word',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Customize Your<br />
+                      Cake!
+                    </h6>
+                  </div>
+                </div>
+              </Link>
+            </div>
+            {product.map((product, index) => (
               <ProductCard key={index} {...product} />
             ))}
           </div>
+
           <div className="shop__last__option">
             <div className="row">
               <div className="col-lg-6 col-md-6 col-sm-6">

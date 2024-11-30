@@ -1,13 +1,31 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Breadcrumb from '../components/breadcrumb';
 import CartItem from '../components/cartItem';
 
 export default function Cart() {
+  
   const [cartItems, setCartItems] = useState([
-    { cartItemId: 1, productId: 1, customCakeId: null, price: 30.0, quantity: 2 },
-    { cartItemId: 2, productId: 2, customCakeId: null, price: 47.0, quantity: 1 },
+    // { cartItemId: 1, productId: 1, customCakeId: null, price: 30.0, quantity: 2 },
+    // { cartItemId: 2, productId: 2, customCakeId: null, price: 47.0, quantity: 1 },
   ]);
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const res = await fetch('/Cart');
+        if (!res.ok) {
+          throw new Error('Failed to fetch cart items');
+        }
+        const data = await res.json();
+        if (Array.isArray(data.cartItems)) {
+          setCartItems(data.cartItems);
+        }
+      } catch (error) {
+        console.error('error while fetching cart items:', error.message);
+      }
+    };
+    fetchCartItems();
+  }, []);
 
   function RemoveItem(cartItemId) {
     const updatedCart = [];
@@ -65,13 +83,7 @@ export default function Cart() {
                     <a href="/shop">Continue Shopping</a>
                   </div>
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-6">
-                  <div className="continue__btn update__btn">
-                    <a href="#">
-                      <i className="fa fa-spinner" /> Update cart
-                    </a>
-                  </div>
-                </div>
+               
               </div>
             </div>
             <div className="col-lg-4">

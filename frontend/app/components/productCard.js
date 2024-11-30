@@ -1,13 +1,18 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+// const imgLoader = ({ src, width, quality }) => {
+//   return `https://example.com/${src}?w=${width}&q=${quality || 75}`
+// }
 
 const ProductCard = ({ name, image, category, price, rating }) => {
+
   return (
     <div className="col-lg-3 col-md-6 col-sm-6 ">
       <div className="product__item">
         <div className="product__item__pic">
           <Image
+            // loader={}
             src={image}
             alt={name}
             width={300}
