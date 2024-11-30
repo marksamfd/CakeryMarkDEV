@@ -1,0 +1,4 @@
+# Flask Configuration
+SECRET_KEY=your_key  
+FLASK_ENV=development
+JWT_SECRET_KEY=your_key
