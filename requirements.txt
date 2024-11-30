@@ -4,3 +4,10 @@ python-dotenv
 flask_jwt_extended
 argon2
 jwt
+flask
+pyjwt
+argon2-cffi
+psycopg2
+flask_cors
+requests
+
