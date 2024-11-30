@@ -1,4 +1,4 @@
-from  app.models import Cart, CartItems, Inventory
+from  app.models import Cart, CartItems, Inventory,CustomizeCake,Customize_Cake_Layers,Rawmaterials
 from sqlalchemy.sql import text
 
 from app.db import db
@@ -110,3 +110,61 @@ def remove_from_cart(customeremail, product_id):
         return {"error": "Error removing product from cart"}
 
 
+''' ===================================== Customize Cake Functions ===================================== '''
+# -------------------------------------- Add the customized cake data to the database --------------------------------------
+def create_customized_cake(email, data):
+    cake_shape = data.get("cakeshape")
+    cake_size = data.get("cakesize")
+    cake_flavor = data.get("caketype")
+    message = data.get("message", "")
+    layers = data.get("layers", [])
+    num_layers = len(layers)
+
+    # Create the parent CustomizeCake record
+    new_customized_cake = CustomizeCake(
+        numlayers=num_layers,
+        customeremail=email,
+        cakeshape=cake_shape,
+        cakesize=cake_size,
+        cakeflavor=cake_flavor,
+        message=message
+    )
+    db.session.add(new_customized_cake)
+    db.session.commit()  # Commit to generate ID
+
+    # Add layers
+    for i, layer in enumerate(layers):
+        inner_fillings = layer.get("innerfillings", "")
+        inner_toppings = layer.get("innertoppings", "")
+        outer_coating = layer.get("outercoating", "")
+        outer_toppings = layer.get("outertoppings", "")
+
+        new_layer = Customize_Cake_Layers(
+            customizecakeid=new_customized_cake.customizecakeid,
+            layer=i + 1,
+            innerfillings=inner_fillings,
+            innertoppings=inner_toppings,
+            outercoating=outer_coating,
+            outertoppings=outer_toppings
+        )
+        db.session.add(new_layer)
+
+    # Final commit
+    db.session.commit()
+
+    return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}
+
+# -------------------------------------- Send all the raw materials data --------------------------------------
+
+def get_raw_materials():
+    """
+    Fetches all raw materials and their prices from the database.
+    Returns a list of serialized raw material objects.
+    """
+    # Query all raw materials
+    raw_materials = Rawmaterials.query.all()
+
+    # Serialize raw materials into dictionaries
+    serialized_data = [material.as_dict() for material in raw_materials]
+
+    return serialized_data

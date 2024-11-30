@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import jwt
-from app.services.customer_service import (get_all_products, get_product_details, get_cart_items, add_to_cart, remove_from_cart)
+from app.services.customer_service import (get_all_products, get_product_details, get_cart_items, add_to_cart, remove_from_cart,create_customized_cake,get_raw_materials)
 customer_routes = Blueprint('customer_routes', __name__)
 
 
@@ -69,3 +69,37 @@ def remove_cart_item():
 
     result = remove_from_cart(customeremail, product_id)
     return jsonify(result), 200
+
+''' ===================================== Cake Customization ===================================== '''
+# ------------------------- Send all the raw materials data -------------------------
+
+@customer_routes.route("/App/User/Customer/Customize_Cake", methods=["GET"])
+#@jwt_required()
+def cust_cakes_prices():
+    try:
+        # Call the service function to retrieve data
+        data = get_raw_materials()
+        return jsonify({"data": data}), 200
+
+    except Exception as e:
+        # Return error response
+        return jsonify({"error": str(e)}), 500
+
+
+# ------------------------- Add the customized cake to the database  -------------------------
+@customer_routes.route("/App/User/Customer/Customize_Cake/Create", methods=["POST"])
+#@jwt_required()
+def cust_cakes_create():
+    try:
+        # Extract email from JWT and JSON data
+        #email = get_jwt_identity()
+        data = request.get_json()
+        email = data.get("email")
+        # Call the service function to handle logic
+        result = create_customized_cake(email, data)
+        
+        return result, 200
+
+    except Exception as e:
+        return {"error": str(e)}, 500
+
