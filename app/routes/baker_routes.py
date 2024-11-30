@@ -20,7 +20,7 @@ def baker_dashboard():
 '''=================================== Baker | View order ===================================='''
 # -------------------------------- Get details of a specific order --------------------------------
 
-@baker_routes.route("/baker/orders/<int:orderID>/details", methods=["GET"])
+@baker_routes.route("/user/baker/orders/<int:orderID>/details", methods=["GET"])
 @jwt_required()
 def order_details(orderID):
     try:
@@ -35,7 +35,7 @@ def order_details(orderID):
 '''=================================== Baker | View order ===================================='''
 # -------------------------------- Update order status & assign delivery man  --------------------------------
 
-@baker_routes.route("/baker/orders/update_status", methods=["POST"])
+@baker_routes.route("/user/baker/orders/update_status", methods=["POST"])
 @jwt_required()
 def update_order_status_route():
     try:

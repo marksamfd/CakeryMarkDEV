@@ -1,51 +1,35 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
-from flask import Blueprint, request, jsonify
-from app.routes.checkout_routes import checkout
-from app.services.checkout_service import process_checkout
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.customer_service import (
     get_all_products,
     get_product_details,
     get_cart_items,
     add_to_cart,
     remove_from_cart,
+    create_customized_cake,
+    get_raw_materials,
+    process_checkout,
+    get_customer_orders,
 )
-from app.routes.order_routes import my_orders
 
-customer_routes = Blueprint("customer_routes", __name__)
-
+customer_routes = Blueprint('customer_routes', __name__)
 
 """ ===================================== Product Endpoints ===================================== """
-
-
-# ------------------------------------------ all products for "Shop" page ------------------------------------------
 @customer_routes.route("/customer/shop", methods=["GET"])
 @jwt_required()
 def shop():
-    # a list of all products
     products = get_all_products()
     return jsonify(products), 200
 
-
-# ------------------------------------------------ get the product details ------------------------------------------------
 @customer_routes.route("/Product/<int:product_id>", methods=["GET"])
 @jwt_required()
-def product_details(
-    product_id,
-):  # the data recived here from this endpoint will be a file with data came from the object of the product, we can slice it here for more specefic data for the final json reply for frontend
-    # Fetch product details based on product_id
+def product_details(product_id):
     product = get_product_details(product_id)
     if product:
         return jsonify(product), 200
     return jsonify({"error": "Product not found"}), 404
 
-
-""" ------------------------------------------------------------------------------------------ """
-
 """ ===================================== Cart Endpoints ===================================== """
-
-
-# ---------------------------- Get cart items for a customer ----------------------------
 @customer_routes.route("/customer/Cart", methods=["GET"])
 @jwt_required()
 def get_cart():
@@ -53,8 +37,6 @@ def get_cart():
     items = get_cart_items(customer_email)
     return jsonify(items), 200
 
-
-# -------------------------------------- Add product to cart --------------------------------------
 @customer_routes.route("/customer/Cart/Add", methods=["POST"])
 @jwt_required()
 def add_cart_item():
@@ -63,61 +45,63 @@ def add_cart_item():
         customeremail = get_jwt_identity()
         product_id = data.get("product_id")
         quantity = data.get("quantity")
-        print("customeremail:", customeremail)
-        print("----test----")
+        result = add_to_cart(customeremail, product_id, quantity)
+        return jsonify(result), 200
     except Exception as e:
-        print("Error in add_cart_item")
-        print(f"Error: {e}")
-        return jsonify({"error": "Invalid input"}), 400
-    # if not all([customeremail, product_id, quantity]):
-    #     return jsonify({"error": "Invalid input ya anas"}), 400
+        return jsonify({"error": f"Error: {e}"}), 400
 
-    result = add_to_cart(customeremail, product_id, quantity)
-    return jsonify(result), 200
-
-
-# ------------------------- Remove product from cart -------------------------
 @customer_routes.route("/customer/Cart/Remove", methods=["DELETE"])
 @jwt_required()
 def remove_cart_item():
     data = request.get_json()
     customeremail = get_jwt_identity()
     product_id = data.get("product_id")
-
-    if not all([customeremail, product_id]):
-        return jsonify({"error": "Invalid input"}), 400
-
     result = remove_from_cart(customeremail, product_id)
     return jsonify(result), 200
 
+""" ===================================== Cake Customization ===================================== """
+@customer_routes.route("/App/User/Customer/Customize_Cake", methods=["GET"])
+@jwt_required()
+def cust_cakes_prices():
+    try:
+        data = get_raw_materials()
+        return jsonify({"data": data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-""" ===================================== Checkout Endpoints ===================================== """
+@customer_routes.route("/App/User/Customer/Customize_Cake/Create", methods=["POST"])
+@jwt_required()
+def cust_cakes_create():
+    try:
+        data = request.get_json()
+        email = get_jwt_identity()
+        result = create_customized_cake(email, data)
+        return result, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
 
-
-# ---------------------------- Process Checkout ----------------------------
-@customer_routes.route("/customer/checkout", methods=["POST"])
+""" ===================================== Checkout Endpoint ===================================== """
+@customer_routes.route('/customer/checkout', methods=['POST'])
+@jwt_required()
 def checkout():
     try:
         data = request.get_json()
-        customeremail = data.get("customeremail")
-
-        # Delegate checkout processing to the service layer
-        result = process_checkout(customeremail, data)
-
+        voucher_code = data.get("voucher")  
+        customer_email = get_jwt_identity()
+        result = process_checkout(customer_email, voucher_code)
         if "error" in result:
             return jsonify(result), 400
-
-        return jsonify(result), 201
+        return jsonify(result), 200
     except Exception as e:
-        print(f"Error in /customer/checkout: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify({"error": f"Error during checkout: {e}"}), 500
 
-
-""" ================================ Order Endpoints ================================= """
-""" ===================================== Order Endpoints ===================================== """
-
-
-# ---------------------------- Get Orders ----------------------------
-@customer_routes.route("/customer/orders", methods=["GET"])
-def orders():
-    return my_orders()
+""" ===================================== My Orders Endpoint ===================================== """
+@customer_routes.route('/customer/orders', methods=['GET'])
+@jwt_required()
+def my_orders():
+    customer_email = get_jwt_identity()
+    try:
+        orders = get_customer_orders(customer_email)
+        return jsonify(orders), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching orders: {e}"}), 500
