@@ -2,6 +2,12 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import jwt
 from app.services.customer_service import (get_all_products, get_product_details, get_cart_items, add_to_cart, remove_from_cart)
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import jwt
+from app.services.customer_service import (get_all_products, get_product_details, get_cart_items, add_to_cart, remove_from_cart)
+from app.services.customer_service import process_checkout
+from app.services.customer_service import get_customer_orders
 customer_routes = Blueprint('customer_routes', __name__)
 
 
@@ -27,7 +33,7 @@ def product_details(product_id):  # the data recived here from this endpoint wil
 
 ''' ===================================== Cart Endpoints ===================================== '''
 # ---------------------------- Get cart items for a customer ----------------------------
-@customer_routes.route('/Cart', methods=['GET'])
+@customer_routes.route('/customer/Cart', methods=['GET'])
 @jwt_required()
 def get_cart():
     customer_email = get_jwt_identity()
@@ -36,7 +42,7 @@ def get_cart():
 
 
 # -------------------------------------- Add product to cart --------------------------------------
-@customer_routes.route('/Cart/Add', methods=['POST'])
+@customer_routes.route('/customer/Cart/Add', methods=['POST'])
 @jwt_required()
 def add_cart_item():
     try: 
@@ -57,7 +63,7 @@ def add_cart_item():
     return jsonify(result), 200
 
 # ------------------------- Remove product from cart -------------------------
-@customer_routes.route('/Cart/Remove', methods=['DELETE'])
+@customer_routes.route('/customer/Cart/Remove', methods=['DELETE'])
 @jwt_required()
 def remove_cart_item():
     data = request.get_json()
@@ -69,3 +75,32 @@ def remove_cart_item():
 
     result = remove_from_cart(customeremail, product_id)
     return jsonify(result), 200
+
+'''=================================== Checkout Endpoint ==================================='''
+@customer_routes.route('/customer/checkout', methods=['POST'])
+@jwt_required()
+def checkout():
+    try:
+        data = request.get_json() # data
+        voucher_code = data.get("voucher")  
+        customer_email = get_jwt_identity() 
+        result = process_checkout(customer_email, voucher_code)
+        if "error" in result:
+            return jsonify(result), 400
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error during checkout: {e}"}), 500
+
+'''=================================== My Orders Endpoint ==================================='''
+# ---------------------------- Get all orders for a customer ----------------------------
+@customer_routes.route('/customer/orders', methods=['GET'])
+@jwt_required()
+def my_orders():
+    customer_email = get_jwt_identity()
+
+    try:
+        orders = get_customer_orders(customer_email)
+        return jsonify(orders), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching orders: {e}"}), 500
