@@ -1,12 +1,10 @@
 const nextConfig = {
   rewrites: async () => {
+    console.log(process.env.NODE_ENV);
     return [
       {
         source: '/api/:path*',
-        destination:
-          process.env.NODE_ENV === 'DEV'
-            ? 'http://127.0.0.1:5000/api/:path*'
-            : '/api/', // to be edited on deployment
+        destination: 'http://127.0.0.1:5000/:path*',
       },
     ];
   },

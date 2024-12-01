@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import StepperIndicatior from '../components/stepperIndicatior';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
@@ -10,6 +10,7 @@ function Page() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cakeShape, setCakeShape] = useState(`Circle`);
   const [cakeSize, setCakeSize] = useState(`Small 16 cm`);
+  const [cakeFlavour, setCakeFlavour] = useState(`Chocolate`);
   const [cakeLayers, setCakeLayers] = useState([
     {
       innerFillings: 'Nutella',
@@ -19,50 +20,78 @@ function Page() {
     },
   ]);
   const [cakeCurrentLayer, setCakeCurrentLayer] = useState(0);
-  const [cakeType, setCakeType] = useState(`Chocolate`);
   const steps = ['Structure', 'Layers', 'Summary'];
-  const allSizes = ['Small 16 cm', 'Medium 20 cm', 'Large 24 cm'];
-  const allShapes = ['Circle', 'Rectangle', 'Square', 'Heart'];
-  const allFlavours = [
-    'Chocolate',
-    'Vanilla',
-    'Half Chocolate Half Vanilla',
-    'Red Velvet',
-    'Carrot Cake',
-    'Ice Cream',
-  ];
-  const innerFillings = [
-    'None',
-    'Chocolate Ganache',
-    'Strawberry Jam',
-    'Nutella',
-    'Cream Chease',
-    'Salted Carame',
-  ];
-  const innerToppings = [
-    'None',
-    'Strawberries',
-    'Mango',
-    'Berries',
-    'Chocolate Chips',
-    'Nuts',
-  ];
-  const outerCoating = [
-    'None',
-    'Froasting',
-    'Butter Cream',
-    'Cream Chease',
-    'White Sugar Paste',
-    'White Fondant',
-  ];
-  const outerToppings = [
-    'None',
-    'Fruits',
-    'Sprinkles',
-    'Candies (M&Ms)',
-    'Gold/Silver Beads',
-    'Chocolate Chips',
-  ];
+  const [allSizes, setAllSizes] = useState([]);
+  const [allShapes, setAllShapes] = useState([]);
+  const [allFlavours, setAllFlavours] = useState([]);
+  const [innerFillings, setInnerFillings] = useState([]);
+  const [innerToppings, setInnerToppings] = useState([]);
+  const [outerCoating, setOuterCoating] = useState([]);
+  const [outerToppings, setOuterToppings] = useState([]);
+  const [layersSum, setLayersSum] = useState([]);
+  const [rawItemsPricing, setRawItemsPricing] = useState([]);
+  useEffect(() => {
+    cookieStore
+      .get('token')
+      .then((cookie) => {
+        return fetch(`/api/App/User/Customer/Customize_Cake`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        });
+      })
+      .then((res) => res.json())
+      .then((objectsPrices) => {
+        setRawItemsPricing(objectsPrices.data);
+        let cakeShapes = objectsPrices.data.filter(
+          (obj) => obj.category === 'Cake Shape',
+        );
+        setAllShapes(cakeShapes);
+        setCakeShape(cakeShapes[0].item);
+
+        let cakeSizes = objectsPrices.data.filter(
+          (obj) => obj.category === 'Cake Size',
+        );
+        setAllSizes(cakeSizes);
+        setCakeSize(cakeSizes[0].item);
+        let cakeFlavours = objectsPrices.data.filter(
+          (obj) => obj.category === 'Cake Type',
+        );
+        setAllFlavours(cakeFlavours);
+        setCakeFlavour(cakeFlavours[0].item);
+
+        let innerFillings = objectsPrices.data.filter(
+          (obj) => obj.category === 'Inner Fillings',
+        );
+        setInnerFillings(innerFillings);
+        let innerToppings = objectsPrices.data.filter(
+          (obj) => obj.category === 'Inner Toppings',
+        );
+        setInnerToppings(innerToppings);
+
+        let outerToppings = objectsPrices.data.filter(
+          (obj) => obj.category === 'Outer Toppings',
+        );
+        setOuterToppings(outerToppings);
+        let outerCoatings = objectsPrices.data.filter(
+          (obj) => obj.category === 'Outer Coating',
+        );
+        setOuterCoating(outerCoatings);
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    let layers = cakeLayers.map((layer) => {
+      let sum = 0;
+      for (let key in layer) {
+        sum += rawItemsPricing.find((obj) => obj.item === layer[key])?.price;
+      }
+      return sum;
+    });
+    setLayersSum(layers);
+  }, [cakeLayers]);
+
   const changeLayerProps = (prop, value) => {
     const newCakeLayers = [...cakeLayers];
     newCakeLayers[cakeCurrentLayer][prop] = value;
@@ -74,7 +103,7 @@ function Page() {
       ...cakeLayers,
       {
         innerFillings: 'Nutella',
-        innerToppings: 'Chocolate Chips',
+        innerToppings: 'Mango',
         outerCoating: 'Butter Cream',
         outerToppings: 'Fruits',
       },
@@ -97,79 +126,103 @@ function Page() {
             <div className="col-2 flex-wrap" style={styles.rowLabel}>
               Cake Shape
             </div>
-            <div className="col  flex-wrap" style={styles.selectorContainer}>
-              {allShapes.map((shape) => {
-                return (
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="cakeShape"
-                      key={shape}
-                      id={shape}
-                      value={shape}
-                      checked={cakeShape === shape}
-                      onChange={(e) => setCakeShape(e.target.value)}
-                    />
-                    <label className="form-check-label" htmlFor={shape}>
-                      {shape}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
+            <Suspense>
+              <div
+                key={'sh'}
+                className="col  flex-wrap"
+                style={styles.selectorContainer}
+              >
+                {allShapes?.map((shape) => {
+                  return (
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="cakeShape"
+                        key={`shape-${shape.item}`}
+                        id={`shape-${shape.item}`}
+                        value={shape.item}
+                        checked={cakeShape === shape.item}
+                        onChange={(e) => setCakeShape(e.target.value)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor={`shape-${shape.item}`}
+                      >
+                        {shape.item}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </Suspense>
           </div>
           <div className="row mt-4">
             <div className="col-2 flex-wrap" style={styles.rowLabel}>
               Cake Size
             </div>
-            <div className="col" style={styles.selectorContainer}>
-              {allSizes.map((size) => {
-                return (
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="cakeSize"
-                      key={size}
-                      id={size}
-                      value={size}
-                      checked={cakeSize === size}
-                      onChange={(e) => setCakeSize(e.target.value)}
-                    />
-                    <label className="form-check-label" htmlFor={size}>
-                      {size}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
+
+            <Suspense>
+              <div key="s" className="col" style={styles.selectorContainer}>
+                {allSizes?.map((size) => {
+                  return (
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="cakeSizes"
+                        key={`size-${size.item}`}
+                        id={`size-${size.item}`}
+                        value={size.item}
+                        checked={cakeSize === size.item}
+                        onChange={(e) => setCakeSize(e.target.value)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor={`size-${size.item}`}
+                      >
+                        {size.item}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </Suspense>
           </div>
           <div className="row mt-4">
             <div className="col-2 flex-wrap" style={styles.rowLabel}>
               Cake Flavour
             </div>
-            <div className="col flex-wrap" style={styles.selectorContainer}>
-              {allFlavours.map((flavour) => {
-                return (
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="cakeFlavour"
-                      key={flavour}
-                      id={flavour}
-                      value={flavour}
-                      checked={cakeType === flavour}
-                      onChange={(e) => setCakeType(e.target.value)}
-                    />
-                    <label className="form-check-label" htmlFor={flavour}>
-                      {flavour}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
+            <Suspense>
+              <div
+                key={'f'}
+                className="col flex-wrap"
+                style={styles.selectorContainer}
+              >
+                {allFlavours?.map((flavour) => {
+                  return (
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="cakeFlavour"
+                        key={`flavour-${flavour.item}`}
+                        id={`flavour-${flavour.item}`}
+                        value={flavour.item}
+                        checked={cakeFlavour === flavour.item}
+                        onChange={(e) => setCakeFlavour(e.target.value)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor={`flavour-${flavour.item}`}
+                      >
+                        {flavour.item}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </Suspense>
           </div>
           <div className="row mt-4">
             <CheckoutInputField
@@ -191,21 +244,22 @@ function Page() {
                       type="radio"
                       className="btn-check"
                       name="innerFillings"
-                      key={filling}
+                      key={filling.item}
                       id={`option-innerFillings-${+i}`}
                       autoComplete="off"
                       checked={
-                        cakeLayers[cakeCurrentLayer].innerFillings === filling
+                        cakeLayers[cakeCurrentLayer].innerFillings ===
+                        filling.item
                       }
                       onChange={(e) =>
-                        changeLayerProps('innerFillings', filling)
+                        changeLayerProps('innerFillings', filling.item)
                       }
                     />
                     <label
                       className="btn mt-2 text-uppercase text-start"
                       htmlFor={`option-innerFillings-${+i}`}
                     >
-                      {filling}
+                      {filling.item}
                     </label>
                   </>
                 );
@@ -220,21 +274,22 @@ function Page() {
                       type="radio"
                       className="btn-check"
                       name="innerToppings"
-                      key={filling}
+                      key={filling.item}
                       id={`option-innerToppings-${+i}`}
                       autoComplete="off"
                       checked={
-                        cakeLayers[cakeCurrentLayer].innerToppings === filling
+                        cakeLayers[cakeCurrentLayer].innerToppings ===
+                        filling.item
                       }
                       onChange={(e) =>
-                        changeLayerProps('innerToppings', filling)
+                        changeLayerProps('innerToppings', filling.item)
                       }
                     />
                     <label
                       className="btn mt-2 text-uppercase text-start"
                       htmlFor={`option-innerToppings-${+i}`}
                     >
-                      {filling}
+                      {filling.item}
                     </label>
                   </>
                 );
@@ -249,21 +304,22 @@ function Page() {
                       type="radio"
                       className="btn-check"
                       name="outerCoating"
-                      key={filling}
+                      key={filling.item}
                       id={`option-outerCoating-${+i}`}
                       autoComplete="off"
                       checked={
-                        cakeLayers[cakeCurrentLayer].outerCoating === filling
+                        cakeLayers[cakeCurrentLayer].outerCoating ===
+                        filling.item
                       }
                       onChange={(e) =>
-                        changeLayerProps('outerCoating', filling)
+                        changeLayerProps('outerCoating', filling.item)
                       }
                     />
                     <label
                       className="btn mt-2 text-uppercase text-start"
                       htmlFor={`option-outerCoating-${+i}`}
                     >
-                      {filling}
+                      {filling.item}
                     </label>
                   </>
                 );
@@ -278,21 +334,22 @@ function Page() {
                       type="radio"
                       className="btn-check"
                       name="outerTopping"
-                      key={filling}
+                      key={filling.item}
                       id={`option-outerTopping-${+i}`}
                       autoComplete="off"
                       checked={
-                        cakeLayers[cakeCurrentLayer].outerToppings === filling
+                        cakeLayers[cakeCurrentLayer].outerToppings ===
+                        filling.item
                       }
                       onChange={(e) =>
-                        changeLayerProps('outerToppings', filling)
+                        changeLayerProps('outerToppings', filling.item)
                       }
                     />
                     <label
                       className="btn mt-2 text-uppercase text-start"
                       htmlFor={`option-outerTopping-${+i}`}
                     >
-                      {filling}
+                      {filling.item}
                     </label>
                   </>
                 );
@@ -301,7 +358,12 @@ function Page() {
           </div>
         </div>
       )}
-      {currentStep == 2 && <div className="container">Step 3</div>}
+      {currentStep == 2 && (
+        <div className="container" style={styles.stepContainer}>
+          Your Custom Cake is total at $
+          {layersSum.reduce((partialSum, a) => partialSum + a, 0)}
+        </div>
+      )}
 
       <div className="container d-lg-flex w-100" style={styles.bottomSection}>
         {currentStep == 1 && (
@@ -324,7 +386,7 @@ function Page() {
                   <div key={`layer${i}`}>
                     <span>Layer {i + 1}</span>
                   </div>
-                  <span>$699</span>
+                  <span>${layersSum[i]}</span>
                 </div>
               ) : (
                 <div
@@ -333,7 +395,7 @@ function Page() {
                   style={{ ...styles.layersBase }}
                 >
                   <div key={`layer${i}`}>Layer {i + 1}</div>
-                  <span>$699</span>
+                  <span>${layersSum[i]}</span>
                 </div>
               );
             })}

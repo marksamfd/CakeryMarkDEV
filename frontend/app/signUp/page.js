@@ -3,33 +3,72 @@ import '../styles/style.css';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';
+import { useActionState } from 'react';
+import { useSearchParams } from 'next/navigation';
+
+import { signUp as register } from '@/app/lib/actions';
 
 function SignUp() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+
+  const [state, formAction, isPending] = useActionState(register, {
+    callbackUrl,
+  });
+  console.log(state);
   return (
     <section className="sign-up spad">
       <div className="container">
-<Title>Create an Account</Title>  
-      <div className="sign-up__form">
-          <form action="#">
+        <Title>Create an Account</Title>
+        <div> {state?.error}</div>
+        <div className="sign-up__form">
+          <form action={formAction}>
             <div className="row justify-content-center">
               <div className="col-lg-11 col-md-6">
                 <div className="row ">
                   <div className="col-md-6 mb-3">
-                    <CheckoutInputField type="text" label="First Name" />
+                    <CheckoutInputField
+                      name="FirstName"
+                      type="text"
+                      label="First Name"
+                    />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <CheckoutInputField type="text" label="Last Name" />
+                    <CheckoutInputField
+                      type="text"
+                      label="LastName"
+                      name="LastName"
+                    />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <CheckoutInputField type="email" label="Email" />
+                    <CheckoutInputField
+                      type="email"
+                      label="Email"
+                      name="Email"
+                    />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <CheckoutInputField type="tel" label="Phone" />
+                    <CheckoutInputField type="tel" label="Phone" name="Phone" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <CheckoutInputField
+                      type="password"
+                      label="Password"
+                      name="password"
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <CheckoutInputField
+                      type="password"
+                      label="Confirm Password"
+                      name="confirmPassword"
+                    />
                   </div>
                   <div className="col-md-12 mb-3">
                     <CheckoutInputField
                       type="text"
                       label="Location (Google Maps link)"
+                      name="Location"
                     />
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import ProductCard from '../productCard';
+
 import product1 from '../../img/shop/product1.jpg';
 import product2 from '../../img/shop/product2.jpg';
 import product3 from '../../img/shop/product3.jpg';
@@ -13,65 +14,11 @@ import product10 from '../../img/shop/product10.jpg';
 import product11 from '../../img/shop/product11.jpg';
 import product12 from '../../img/shop/product12.jpg';
 
-function ProductSection() {
-  const products = [
-    {
-      name: 'Dozen Cupcakes',
-      image: product1,
-      category: 'Cupcake',
-      price: 10.0,
-      rating: 5,
-    },
-    {
-      name: 'Cookies and Cream',
-      image: product2,
-      category: 'Cupcake',
-      price: 30.0,
-      rating: 4,
-    },
-    {
-      name: 'Gluten Free Mini Dozen',
-      image: product3,
-      category: 'Cupcake',
-      price: 31.0,
-      rating: 5,
-    },
-    {
-      name: 'Cookie Dough',
-      image: product4,
-      category: 'Cupcake',
-      price: 25.0,
-      rating: 4,
-    },
-    {
-      name: 'Vanilla Salted Caramel',
-      image: product5,
-      category: 'Cupcake',
-      price: 5.0,
-      rating: 4,
-    },
-    {
-      name: 'German Chocolate',
-      image: product6,
-      category: 'Cupcake',
-      price: 14.0,
-      rating: 5,
-    },
-    {
-      name: 'Dulce De Leche',
-      image: product7,
-      category: 'Cupcake',
-      price: 32.0,
-      rating: 5,
-    },
-    {
-      name: 'Mississippi Mud',
-      image: product8,
-      category: 'Cupcake',
-      price: 8.0,
-      rating: 3,
-    },
-  ];
+async function ProductSection() {
+  console.log('backend', process.env.BACKEND);
+  const productsReq = await fetch(`${process.env.BACKEND}/customer/shop`);
+  const products = await productsReq.json();
+
   return (
     <section className="product spad">
       <div className="container">

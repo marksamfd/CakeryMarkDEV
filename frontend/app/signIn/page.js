@@ -5,8 +5,13 @@ import googleIcon from '@/img/icon/googleIcon.svg';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';
+import { useActionState } from 'react';
+import { authenticate } from '@/app/lib/actions';
+import { useSearchParams } from 'next/navigation';
 
 export default function SignIn() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
   const googleStyle = {
     width: '500px',
     height: '60px',
@@ -22,37 +27,57 @@ export default function SignIn() {
     fontSize: '20px',
     gap: '10px',
   };
+
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined,
+  );
   return (
     <section className="checkout spad">
       <div className="container">
-        <Title>Sign In</Title>       
-         <div className="checkout__form">
-          <form action="#">
+        <Title>Sign In</Title>
+        <div className="checkout__form">
+          <form action={formAction}>
             <div className="row justify-content-center">
               <div className="col-lg-8 col-md-6">
                 <div className="row">
                   <div className="col-8 mx-auto mb-3">
-                    <CheckoutInputField type="email" label="Email" />
+                    <CheckoutInputField
+                      type="email"
+                      name="email"
+                      label="Email"
+                    />
                   </div>
                   <div className="col-8 mx-auto mb-3">
-                    <CheckoutInputField type="password" label="Password" />
+                    <CheckoutInputField
+                      type="password"
+                      name="password"
+                      label="Password"
+                    />
+                    <input
+                      type="hidden"
+                      name="callbackUrl"
+                      value={callbackUrl}
+                    />
                   </div>
                 </div>
                 <div className="d-flex flex-column align-items-center mt-4">
                   <Button type="submit">Log In</Button>
+                  {errorMessage}
+                  {/*   <button type="button" style={googleStyle}>
+                    <Image width={20} height={20} src={googleIcon} alt="" />
+                    Continue with Google {isPending}
+                  </button> */}
 
-                  <button
-                    type="button"
-                    style={googleStyle} >
-              <Image width={20} height={20} src={googleIcon} alt="" />
-                    Continue with Google
-                  </button>
-
-                  <p style={{fontFamily:'Montserrat', textTransform:'uppercase'}}>Don't have an account? </p>
-                  <a
-                    href="/signUp"
-                    className="text-primary "
+                  <p
+                    style={{
+                      fontFamily: 'Montserrat',
+                      textTransform: 'uppercase',
+                    }}
                   >
+                    Don't have an account?{' '}
+                  </p>
+                  <a href="/signUp" className="text-primary ">
                     SIGN UP
                   </a>
                 </div>

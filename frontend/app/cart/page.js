@@ -4,39 +4,41 @@ import Breadcrumb from '../components/breadcrumb';
 import CartItem from '../components/cartItem';
 
 export default function Cart() {
-  
   const [cartItems, setCartItems] = useState([
     // { cartItemId: 1, productId: 1, customCakeId: null, price: 30.0, quantity: 2 },
     // { cartItemId: 2, productId: 2, customCakeId: null, price: 47.0, quantity: 1 },
   ]);
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const res = await fetch('/Cart');
-        if (!res.ok) {
-          throw new Error('Failed to fetch cart items');
-        }
-        const data = await res.json();
-        if (Array.isArray(data.cartItems)) {
-          setCartItems(data.cartItems);
-        }
-      } catch (error) {
-        console.error('error while fetching cart items:', error.message);
-      }
-    };
-    fetchCartItems();
+    cookieStore
+      .get('token')
+      .then((cookie) => {
+        console.log(cookie);
+        return fetch(`/api/customer/Cart`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        });
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setCartItems(data.cartItems);
+      })
+      .catch((error) => {
+        console.error;
+      });
   }, []);
 
   function RemoveItem(cartItemId) {
     const updatedCart = [];
     for (let i = 0; i < cartItems.length; i++) {
       if (cartItems[i].cartItemId !== cartItemId) {
-        updatedCart.push(cartItems[i]); 
+        updatedCart.push(cartItems[i]);
       }
     }
-    setCartItems(updatedCart); 
+    setCartItems(updatedCart);
   }
-  
+
   const calculateTotal = () => {
     let total = 0;
     for (let i = 0; i < cartItems.length; i++) {
@@ -83,11 +85,9 @@ export default function Cart() {
                     <a href="/shop">Continue Shopping</a>
                   </div>
                 </div>
-               
               </div>
             </div>
             <div className="col-lg-4">
-            
               <div className="cart__total">
                 <h6>Cart total</h6>
                 <ul>

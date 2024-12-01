@@ -12,14 +12,17 @@ from app.services.customer_service import (
     get_customer_orders,
 )
 
-customer_routes = Blueprint('customer_routes', __name__)
+customer_routes = Blueprint("customer_routes", __name__)
 
 """ ===================================== Product Endpoints ===================================== """
+
+
 @customer_routes.route("/customer/shop", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def shop():
     products = get_all_products()
     return jsonify(products), 200
+
 
 @customer_routes.route("/Product/<int:product_id>", methods=["GET"])
 @jwt_required()
@@ -29,13 +32,17 @@ def product_details(product_id):
         return jsonify(product), 200
     return jsonify({"error": "Product not found"}), 404
 
+
 """ ===================================== Cart Endpoints ===================================== """
+
+
 @customer_routes.route("/customer/Cart", methods=["GET"])
 @jwt_required()
 def get_cart():
     customer_email = get_jwt_identity()
     items = get_cart_items(customer_email)
     return jsonify(items), 200
+
 
 @customer_routes.route("/customer/Cart/Add", methods=["POST"])
 @jwt_required()
@@ -50,6 +57,7 @@ def add_cart_item():
     except Exception as e:
         return jsonify({"error": f"Error: {e}"}), 400
 
+
 @customer_routes.route("/customer/Cart/Remove", methods=["DELETE"])
 @jwt_required()
 def remove_cart_item():
@@ -59,7 +67,10 @@ def remove_cart_item():
     result = remove_from_cart(customeremail, product_id)
     return jsonify(result), 200
 
+
 """ ===================================== Cake Customization ===================================== """
+
+
 @customer_routes.route("/App/User/Customer/Customize_Cake", methods=["GET"])
 @jwt_required()
 def cust_cakes_prices():
@@ -68,6 +79,7 @@ def cust_cakes_prices():
         return jsonify({"data": data}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @customer_routes.route("/App/User/Customer/Customize_Cake/Create", methods=["POST"])
 @jwt_required()
@@ -80,13 +92,16 @@ def cust_cakes_create():
     except Exception as e:
         return {"error": str(e)}, 500
 
+
 """ ===================================== Checkout Endpoint ===================================== """
-@customer_routes.route('/customer/checkout', methods=['POST'])
+
+
+@customer_routes.route("/customer/checkout", methods=["POST"])
 @jwt_required()
 def checkout():
     try:
         data = request.get_json()
-        voucher_code = data.get("voucher")  
+        voucher_code = data.get("voucher")
         customer_email = get_jwt_identity()
         result = process_checkout(customer_email, voucher_code)
         if "error" in result:
@@ -95,8 +110,11 @@ def checkout():
     except Exception as e:
         return jsonify({"error": f"Error during checkout: {e}"}), 500
 
+
 """ ===================================== My Orders Endpoint ===================================== """
-@customer_routes.route('/customer/orders', methods=['GET'])
+
+
+@customer_routes.route("/customer/orders", methods=["GET"])
 @jwt_required()
 def my_orders():
     customer_email = get_jwt_identity()
