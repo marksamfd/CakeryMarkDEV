@@ -124,7 +124,7 @@ class CartItems(db.Model):
             "cartitemid": self.cartitemid,
             "cartid": self.cartid,
             "productid": self.productid,
-            "customizecakeid": self.customizecakeid,
+            "customcakeid": self.customcakeid,
             "quantity": self.quantity,
             "price": self.price
         }
