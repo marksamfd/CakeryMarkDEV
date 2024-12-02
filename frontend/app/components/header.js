@@ -5,12 +5,16 @@ import heart from '@/img/icon/heart.png';
 import cart from '@/img/icon/cart.png';
 import search from '@/img/icon/search.png';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 function HeaderNav({ itemsInCart = 0 }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   const iconSize = 25;
   const logoHeight = 65;
   const logoWidth = 120;
+  const pathname = usePathname();
+  console.log('pathname', pathname);
   return (
     <>
       <div
@@ -64,7 +68,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                   <div className="header__top__left">
                     <ul>
                       <li>
-                        <a href="#">Sign in</a>{' '}
+                        <a href="/signIn">Sign in</a>{' '}
                       </li>
                     </ul>
                   </div>
@@ -80,7 +84,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                   </div>
                   <div className="header__top__right">
                     <div className="header__top__right__cart">
-                      <a href="#">
+                      <a href="/cart">
                         <Image
                           width={iconSize - 2}
                           height={iconSize + 2}
@@ -112,43 +116,16 @@ function HeaderNav({ itemsInCart = 0 }) {
             <div className="col-lg-12">
               <nav className="header__menu mobile-menu">
                 <ul>
-                  <li className="active">
-                    <a href="./index.html">Home</a>
+                  <li className={`${pathname == '/' ? 'active' : ''}`}>
+                    <Link href="./">Home</Link>
                   </li>
-                  <li>
-                    <a href="./about.html">About</a>
+
+                  <li className={`${pathname == '/shop' ? 'active' : ''}`}>
+                    <Link href="/shop">Shop</Link>
                   </li>
+
                   <li>
-                    <a href="./shop.html">Shop</a>
-                  </li>
-                  <li>
-                    <a href="#">Pages</a>
-                    <ul className="dropdown">
-                      <li>
-                        <a href="./shop-details.html">Shop Details</a>
-                      </li>
-                      <li>
-                        <a href="./shoping-cart.html">Shoping Cart</a>
-                      </li>
-                      <li>
-                        <a href="./checkout.html">Check Out</a>
-                      </li>
-                      <li>
-                        <a href="./wisslist.html">Wisslist</a>
-                      </li>
-                      <li>
-                        <a href="./className.html">className</a>
-                      </li>
-                      <li>
-                        <a href="./blog-details.html">Blog Details</a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a href="./blog.html">Blog</a>
-                  </li>
-                  <li>
-                    <a href="./contact.html">Contact</a>
+                    <a href="/contact">Contact</a>
                   </li>
                 </ul>
               </nav>

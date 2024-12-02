@@ -1,0 +1,458 @@
+swagger: '2.0'
+info:
+  title: Cakery server API
+  version: '1.0'
+  description: API documentation for Cakery Website
+basePath: /
+produces:
+  - application/json
+consumes:
+  - application/json
+paths:
+  # Customer API paths
+  /customer/shop:
+    get:
+      summary: Fetch all available products from the shop
+      tags:
+        - Customer
+      responses:
+        '200':
+          description: Returns a list of products
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /Product/{product_id}:
+    get:
+      summary: Fetch product details
+      tags:
+        - Customer
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          type: integer
+          description: The product identifier
+      responses:
+        '200':
+          description: Returns product details
+          schema:
+            $ref: '#/definitions/Product'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Product not found
+
+  /customer/Cart:
+    get:
+      summary: Fetch items in the user's cart
+      tags:
+        - Customer
+      responses:
+        '200':
+          description: Returns the list of items in the user's cart
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CartItem'
+        '401':
+          description: Unauthorized
+
+  /customer/Cart/Add:
+    post:
+      summary: Add a product to the user's cart
+      tags:
+        - Customer
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CartAdd'
+      responses:
+        '200':
+          description: Successfully added the item to the cart
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /customer/Cart/Remove:
+    delete:
+      summary: Remove a product from the user's cart
+      tags:
+        - Customer
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CartRemove'
+      responses:
+        '200':
+          description: Successfully removed the item from the cart
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /App/User/Customer/Customize_Cake:
+    get:
+      summary: Fetch all raw materials available for cake customization
+      tags:
+        - Customer
+      responses:
+        '200':
+          description: Returns raw materials
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RawMaterial'
+        '500':
+          description: Internal server error
+
+  /App/User/Customer/Customize_Cake/Create:
+    post:
+      summary: Create a customized cake
+      tags:
+        - Customer
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CustomizeCake'
+      responses:
+        '200':
+          description: Successfully created a customized cake
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Success message
+              customizecakeid:
+                type: integer
+                description: ID of the created customized cake
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+
+  /customer/checkout:
+    post:
+      summary: Process the checkout for the cart, including applying vouchers
+      tags:
+        - Customer
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Checkout'
+      responses:
+        '200':
+          description: Successfully processed the checkout
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /customer/orders:
+    get:
+      summary: Fetch customer's order history
+      tags:
+        - Customer
+      responses:
+        '200':
+          description: Successfully retrieved order history
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      priceAtOrder:
+                        type: number
+                        format: float
+                        description: The price of the product at the time of order
+                      productID:
+                        type: integer
+                        description: The product identifier
+                      quantity:
+                        type: integer
+                        description: Quantity of the product ordered
+                orderDate:
+                  type: string
+                  format: date-time
+                  description: The date the order was placed
+                orderID:
+                  type: integer
+                  description: The unique identifier for the order
+                status:
+                  type: string
+                  description: The status of the order (e.g., prepared, preparing)
+                totalPrice:
+                  type: number
+                  format: float
+                  description: Total price of the order
+          examples:
+            application/json:
+              - items:
+                  - priceAtOrder: integer
+                    productID: integer
+                    quantity: integer
+                orderDate: "2024-11-23T02:06:57.586371"
+                orderID: integer
+                status: string
+                totalPrice: integer
+              - items:
+                  - priceAtOrder: integer
+                    productID: integer
+                    quantity: integer
+                orderDate: "2024-11-30T20:33:11.998282"
+                orderID: integer
+                status: string
+                totalPrice: integer
+        '500':
+          description: Internal server error
+
+  # Baker API paths
+  /user/baker/orders:
+    get:
+      summary: Get all orders to be baked
+      description: Fetch all orders that need to be baked by the baker
+      tags:
+        - Baker
+      responses:
+        '200':
+          description: Successful
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /user/baker/orders/{orderID}/details:
+    get:
+      summary: Get order details
+      description: Fetch details of a specific order
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          type: integer
+          description: The ID of the order
+      tags:
+        - Baker
+      responses:
+        '200':
+          description: Order details found
+          schema:
+            $ref: '#/definitions/OrderDetails'
+        '404':
+          description: Order not found
+        '401':
+          description: Unauthorized
+
+  /user/baker/orders/update_status:
+    post:
+      summary: Update order status
+      description: Update the preparation status of an order
+      tags:
+        - Baker
+      parameters:
+        - name: order_id
+          in: body
+          description: The ID of the order to update
+          required: true
+          schema:
+            $ref: '#/definitions/OrderUpdate'
+      responses:
+        '200':
+          description: Order status updated successfully
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+definitions:
+  # Customer Definitions
+  Product:
+    type: object
+    properties:
+      productid:
+        type: integer
+        description: Product identifier
+      name:
+        type: string
+        description: Product name
+      price:
+        type: string
+        description: Product price (formatted as a string)
+      description:
+        type: string
+        description: Product description
+      category:
+        type: string
+        description: Product category
+      createdat:
+        type: string
+        format: date-time
+        description: Timestamp of when the product was created
+
+  CartItem:
+    type: object
+    properties:
+      cartid:
+        type: integer
+        description: Cart identifier
+      cartitemid:
+        type: integer
+        description: Cart item identifier
+      customcakeid:
+        type: integer
+        description: Customized cake identifier, if applicable
+#        nullable: true
+      price:
+        type: string
+        description: Product price (formatted as a string)
+      productid:
+        type: integer
+        description: Product identifier
+      quantity:
+        type: integer
+        description: Quantity in cart
+
+  CartAdd:
+    type: object
+    properties:
+      product_id:
+        type: integer
+        description: Product identifier
+      quantity:
+        type: integer
+        description: Quantity to add
+
+  CartRemove:
+    type: object
+    properties:
+      product_id:
+        type: integer
+        description: Product identifier to remove
+
+  RawMaterial:
+    type: object
+    properties:
+      category:
+        type: string
+        description: Raw material category
+      item:
+        type: string
+        description: Material name
+      price:
+        type: number
+        format: float
+        description: Material price
+
+  CustomizeCake:
+    type: object
+    properties:
+      cakeShape:
+        type: string
+        description: Cake shape (e.g., Circular)
+      cakeSize:
+        type: string
+        description: Cake size (e.g., 16 Cm)
+      cakeType:
+        type: string
+        description: Type of the cake (e.g., chocolate, vanilla)
+      ingredients:
+        type: array
+        items:
+          type: string
+        description: List of ingredients used
+      specialRequest:
+        type: string
+        description: Special request for cake customization
+
+  Checkout:
+    type: object
+    properties:
+      cartItems:
+        type: array
+        items:
+          $ref: '#/definitions/CartItem'
+      voucherCode:
+        type: string
+        description: Voucher code for discount, if applicable
+      shippingAddress:
+        type: string
+        description: Shipping address
+      paymentMethod:
+        type: string
+        description: Payment method used
+
+  Order:
+    type: object
+    properties:
+      orderID:
+        type: integer
+        description: The unique identifier for the order
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/CartItem'
+      orderDate:
+        type: string
+        format: date-time
+        description: The date the order was placed
+      status:
+        type: string
+        description: The current status of the order
+
+  OrderUpdate:
+    type: object
+    properties:
+      order_id:
+        type: integer
+        description: The ID of the order to update
+      status:
+        type: string
+        description: New status of the order
+
+  OrderDetails:
+    type: object
+    properties:
+      orderID:
+        type: integer
+        description: The unique identifier for the order
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/CartItem'
+      totalPrice:
+        type: number
+        format: float
+        description: Total price of the order
+      status:
+        type: string
+        description: The status of the order

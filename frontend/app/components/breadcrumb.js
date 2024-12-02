@@ -1,19 +1,19 @@
 import React from 'react';
 
-function Breadcrumb() {
+function Breadcrumb({ title }) {
   return (
-    <div class="breadcrumb-option">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 col-md-6 col-sm-6">
-            <div class="breadcrumb__text">
-              <h2>Checkout</h2>
+    <div className="breadcrumb-option">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-6">
+            <div className="breadcrumb__text">
+              <h2>{title}</h2>
             </div>
           </div>
-          <div class="col-lg-6 col-md-6 col-sm-6">
-            <div class="breadcrumb__links">
-              <a href="./index.html">Home</a>
-              <span>Checkout</span>
+          <div className="col-lg-6 col-md-6 col-sm-6">
+            <div className="breadcrumb__links">
+              <a href="/">Home</a>
+              <span>{title}</span>
             </div>
           </div>
         </div>

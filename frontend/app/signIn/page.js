@@ -50,7 +50,7 @@ export default function SignIn() {
 
                   <p style={{fontFamily:'Montserrat', textTransform:'uppercase'}}>Don't have an account? </p>
                   <a
-                    href="/sign-up"
+                    href="/signUp"
                     className="text-primary "
                   >
                     SIGN UP
