@@ -24,10 +24,11 @@ export const { auth, signIn, signOut } = NextAuth({
             method: 'POST',
           });
           const res = await user.json();
+          console.error(res);
+          if (res.status !== 'success') return null;
           const cookieStore = await cookies();
           await cookieStore.set('token', res.access_token);
-
-          if (res.status !== 'success') return null;
+          await cookieStore.set('role', res.role);
 
           return res;
         }

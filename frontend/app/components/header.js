@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-function HeaderNav({ itemsInCart = 0 }) {
+function HeaderNav({ itemsInCart = 0, token }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   const iconSize = 25;
   const logoHeight = 65;
@@ -68,7 +68,11 @@ function HeaderNav({ itemsInCart = 0 }) {
                   <div className="header__top__left">
                     <ul>
                       <li>
-                        <a href="/signIn">Sign in</a>{' '}
+                        {token === undefined ? (
+                          <a href="/signIn">Sign in</a>
+                        ) : (
+                          <a href="/customerOrders">Hello</a>
+                        )}
                       </li>
                     </ul>
                   </div>

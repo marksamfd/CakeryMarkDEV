@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import product3 from '../img/shop/product3.jpg';
-
+import Link from 'next/link';
 
 export const addBtnStyle = {
   fontsize: '14px',
@@ -12,14 +12,14 @@ export const addBtnStyle = {
   color: 'white',
   height: '30px',
   width: '100px',
-fontFamily: "Montserrat-Regular , sans-serif, Helvetica",
+  fontFamily: 'Montserrat-Regular , sans-serif, Helvetica',
   position: 'relative',
 };
 
 export const AddToCart = async (productid, quantity = 1) => {
   const product = {
     product_id: productid,
-    quantity: quantity
+    quantity: quantity,
   };
 
   try {
@@ -34,9 +34,9 @@ export const AddToCart = async (productid, quantity = 1) => {
     });
 
     const data = await response.json();
-    console.log(data.message); 
+    console.log(data.message);
   } catch (error) {
-    console.error(error); 
+    console.error(error);
   }
 };
 /**
@@ -51,8 +51,14 @@ export const AddToCart = async (productid, quantity = 1) => {
  * @param {number} [rating=5] - The rating of the product. Defaults to 5.
  * @returns {ReactElement} The product card component.
  */
-const ProductCard = ({ name, productid, image = product3, category, price, rating=5 }) => {
-
+const ProductCard = ({
+  name,
+  productid,
+  image = product3,
+  category,
+  price,
+  rating = 5,
+}) => {
   return (
     <div className="col-lg-3 col-md-6 col-sm-6 ">
       <div className="product__item">
@@ -71,7 +77,7 @@ const ProductCard = ({ name, productid, image = product3, category, price, ratin
         </div>
         <div className="product__item__text">
           <h6>
-            <a href="#">{name}</a>
+            <Link href={`/product/${productid}`}>{name}</Link>
           </h6>
 
           <div className="product__item__price">${price} </div>
@@ -82,8 +88,14 @@ const ProductCard = ({ name, productid, image = product3, category, price, ratin
             ))}
           </div>
           <div className="d-flex flex-row"></div>
-          <div className="cart_add" >
-            <button style={addBtnStyle} onClick={() => AddToCart(productid, 1)} href="/cart">Add to cart</button>
+          <div className="cart_add">
+            <button
+              style={addBtnStyle}
+              onClick={() => AddToCart(productid, 1)}
+              href="/cart"
+            >
+              Add to cart
+            </button>
           </div>
         </div>
       </div>

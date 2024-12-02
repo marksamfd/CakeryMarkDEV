@@ -8,10 +8,10 @@ import './styles/nice-select.css';
 // import "./styles/owl.carousel.min.css";
 import './styles/slicknav.min.css';
 import './styles/style.css';
+import { cookies } from 'next/headers';
 
 import HeaderNav from './components/header';
 import FooterNav from './components/footer';
-import { SessionProvider } from 'next-auth/react';
 /* const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -23,11 +23,14 @@ export const metadata = {
   title: 'Cakery',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const cookieStore = await cookies();
+
+  let cookie = await cookieStore.get('token');
   return (
     <html lang="en">
       <body className={``}>
-        <HeaderNav itemsInCart={0} />
+        <HeaderNav itemsInCart={0} token={cookie.value} />
         {children}
         <FooterNav />
       </body>
