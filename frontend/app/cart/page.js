@@ -74,7 +74,7 @@ export default function Cart() {
                       <th>Product</th>
                       <th>Price</th>
                       <th>Quantity</th>
-                      {/* <th>Total</th> */}
+                      <th>Total</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -82,6 +82,7 @@ export default function Cart() {
                   {Array.isArray(cartItems) && cartItems.map((item) => (
                       <CartItem
                         key={item.productid}
+                        productname={item.productname}
                         productId={item.productid}
                         customCakeId={item.customcakeid}
                         price={item.price}

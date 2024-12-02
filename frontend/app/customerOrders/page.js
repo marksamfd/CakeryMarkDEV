@@ -6,6 +6,7 @@ import OrderItem from '../components/orderItem';
 
 export default function CustomerOrders() {
   const [orderItems, setOrderItems] = useState([]);
+
   useEffect(() => {
     cookieStore
       .get('token')
@@ -18,7 +19,7 @@ export default function CustomerOrders() {
       )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.orderItems);
+        console.log(data);
         setOrderItems(data);
       })
       .catch((error) => console.error('Error fetching orders:', error));
@@ -32,22 +33,23 @@ export default function CustomerOrders() {
           <div className="row">
             <div className="col-lg-8">
               <div className="shopping_cart_table">
-                <table>
+                <table className="order-table">
                   <thead>
                     <tr>
                       <th>Order</th>
                       <th>Status</th>
                       <th>Total</th>
-                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {orderItems.map((item) => (
                       <OrderItem
-                        key={item.orderId}
-                        orderId={item.orderId}
+                        key={item.orderID}
+                        productName={item.items[0].productName}
+                        orderId={item.orderID}
+                        quantity={item.items[0].quantity}
                         totalPrice={item.totalPrice}
-                        status={item.status } 
+                        status={item.status}
                         orderDate={item.orderDate}
                       />
                     ))}

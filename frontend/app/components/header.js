@@ -43,7 +43,7 @@ function HeaderNav({ itemsInCart = 0 }) {
             </div>
           </div>
           <div className="offcanvas__logo">
-            <a href="./index.html">
+            <a href="/">
               <Image width={logoWidth} height={logoHeight} src={logo} alt="" />
             </a>
           </div>
@@ -73,7 +73,7 @@ function HeaderNav({ itemsInCart = 0 }) {
                     </ul>
                   </div>
                   <div className="header__logo">
-                    <a href="./index.html">
+                    <a href="/">
                       <Image
                         width={logoWidth}
                         height={logoHeight}
