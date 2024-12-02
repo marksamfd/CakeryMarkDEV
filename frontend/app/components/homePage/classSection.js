@@ -1,5 +1,11 @@
 import React from 'react';
 
+/**
+ * ClassSection - A component for displaying a section on the homepage
+ * that contains a form for signing up for a class, and a video.
+ *
+ * @return {ReactElement} The ClassSection component
+ */
 function ClassSection() {
   return (
     <section className="class spad">

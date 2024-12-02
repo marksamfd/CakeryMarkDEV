@@ -5,6 +5,19 @@ import ta2 from '../../img/testimonial/ta-2.jpg';
 import { Carousel, CarouselItem, Row } from 'react-bootstrap';
 import Testimonial from '../testimonial';
 
+/**
+ * A React component that renders a section of the page containing a carousel
+ * of testimonials from clients. The component expects a prop called
+ * `testimonials` which is an array of objects with the keys `name`, `text`,
+ * `location`, and `rating`. The component will render each testimonial in a
+ * carousel item, with the name, text, location, and rating displayed in a
+ * `Testimonial` component.
+ *
+ * @param {Object[]} testimonials - An array of objects with the keys `name`,
+ *   `text`, `location`, and `rating`.
+ * @returns {React.ReactElement} A React element representing the section of
+ *   the page containing the testimonial carousel.
+ */
 function TestmonialSection({ testimonials }) {
   const allTestmonialsRendered = [];
   for (let i = 0; i < testimonials?.length; i += 2) {

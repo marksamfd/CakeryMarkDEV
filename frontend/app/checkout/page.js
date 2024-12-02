@@ -1,5 +1,13 @@
 import CheckoutInputField from '../components/checkoutInput';
 import CheckoutSummary from '../components/checkoutSummary';
+/**
+ * The checkout page.
+ *
+ * This page renders a form with fields for billing and card information, and
+ * a summary of the order.
+ *
+ * @returns {JSX.Element} The checkout page component.
+ */
 export default function checkout() {
   return (
     <section className="checkout spad">

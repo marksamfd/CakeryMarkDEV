@@ -9,6 +9,14 @@ import { useActionState } from 'react';
 import { authenticate } from '@/app/lib/actions';
 import { useSearchParams } from 'next/navigation';
 
+/**
+ * Renders a sign in form with email and password fields, and a button to
+ * authenticate the user.
+ *
+ * Also renders a link to sign up if the user doesn't have an account yet.
+ *
+ * @returns {JSX.Element} The sign in form component.
+ */
 export default function SignIn() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';

@@ -1,6 +1,13 @@
 import CheckoutInputField from './checkoutInput';
 import AllProducts from './allProducts';
 
+/**
+ * Displays a summary of the cart items and their total cost.
+ * The summary also includes a form to input a voucher code, and a button to place the order.
+ * @returns {JSX.Element} A JSX element representing the checkout summary.
+ * @example
+ * <CheckoutSummary />
+ */
 function CheckoutSummary() {
   const items = [{ name: 'Red Velvet', price: '500' }];
   let total = 0;

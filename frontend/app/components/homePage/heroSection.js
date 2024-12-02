@@ -1,6 +1,12 @@
 import React from 'react';
 import hero1 from '../../img/hero/hero-1.jpg';
 
+/**
+ * The HeroSection component is a section of the homepage that displays
+ * a hero image of a cake with a heading and a link to the cakes page.
+ *
+ * @return {ReactElement} The hero section component.
+ */
 function HeroSection() {
   return (
     <section className="hero">

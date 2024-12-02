@@ -1,3 +1,8 @@
+/**
+ * A custom navigation bar for the Baker pages.
+ *
+ * @returns {React.ReactElement} A custom navigation bar
+ */
 function BakerHeader() {
   return (
     <nav

@@ -7,6 +7,31 @@ import CheckoutInputField from '../components/checkoutInput';
 import Breadcrumb from '../components/breadcrumb';
 import { redirect } from 'next/navigation';
 
+/**
+ * This is the main component of the "Make Your Own Cake" page.
+ *
+ * It renders a stepper component that allows the user to navigate
+ * through the different steps of the customization process.
+ *
+ * The first step allows the user to choose the cake shape, size, and
+ * flavor.
+ *
+ * The second step allows the user to choose the inner fillings, inner
+ * toppings, outer coating, and outer toppings for the cake.
+ *
+ * The third step shows the user a summary of their customizations
+ * and the total price of the cake.
+ *
+ * The user can go back and forth between the different steps using
+ * the Previous and Next buttons.
+ *
+ * When the user clicks the Submit button, the component submits a
+ * POST request to the server with the customization data and
+ * redirects the user to the shop page.
+ *
+ * @returns {ReactElement} The main component of the "Make Your Own
+ *   Cake" page.
+ */
 function Page() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cakeShape, setCakeShape] = useState(`Circle`);

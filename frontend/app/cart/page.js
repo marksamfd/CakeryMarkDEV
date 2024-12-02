@@ -3,6 +3,16 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../components/breadcrumb';
 import CartItem from '../components/cartItem';
 
+/**
+ * Cart component.
+ *
+ * This component is responsible for displaying the shopping cart of the user.
+ * It fetches the cart items from the server using a token for authentication,
+ * and allows the user to view, remove items, and see the total cost.
+ *
+ * @returns {ReactElement} The Cart component.
+ */
+
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   useEffect(() => {
@@ -13,7 +23,7 @@ export default function Cart() {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
-        })
+        }),
       )
       .then((res) => res.json())
       .then((data) => {
@@ -79,23 +89,21 @@ export default function Cart() {
                     </tr>
                   </thead>
                   <tbody>
-                  {Array.isArray(cartItems) && cartItems.map((item) => (
-                      <CartItem
-                        key={item.productid}
-                        productname={item.productname}
-                        productId={item.productid}
-                        customCakeId={item.customcakeid}
-                        price={item.price}
-                        quantity={item.quantity}
-                        total={item.price * item.quantity}
-                        onRemove={() =>
-                          RemoveItem(
-                            item.productid,
-                            item.quantity
-                          )
-                        }
-                      />
-                    ))}
+                    {Array.isArray(cartItems) &&
+                      cartItems.map((item) => (
+                        <CartItem
+                          key={item.productid}
+                          productname={item.productname}
+                          productId={item.productid}
+                          customCakeId={item.customcakeid}
+                          price={item.price}
+                          quantity={item.quantity}
+                          total={item.price * item.quantity}
+                          onRemove={() =>
+                            RemoveItem(item.productid, item.quantity)
+                          }
+                        />
+                      ))}
                   </tbody>
                 </table>
               </div>

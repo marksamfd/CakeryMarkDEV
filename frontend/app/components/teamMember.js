@@ -1,5 +1,14 @@
 import React from 'react';
 
+/**
+ * @function TeamMember
+ * @description A React component for a team member.
+ * @param {Object} props Component props.
+ * @param {Image} props.img The image of the team member.
+ * @param {string} props.bakerName The name of the team member.
+ * @param {string} props.positionBaker The position of the team member.
+ * @return {ReactElement} The TeamMember component.
+ */
 function TeamMember({ img, bakerName, positionBaker }) {
   return (
     <div

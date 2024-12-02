@@ -1,5 +1,11 @@
 import React from 'react';
 
+/**
+ * Displays an ordered list of all items in the cart.
+ * @param {object} props
+ * @param {array} props.items - an array of objects with name and price
+ * @returns {ReactElement} - an ordered list
+ */
 function AllProducts(props) {
   return (
     <ol className="checkout__total__products">

@@ -4,6 +4,13 @@ import { useSession } from 'next-auth/react';
 import Breadcrumb from '../components/breadcrumb';
 import OrderItem from '../components/orderItem';
 
+/**
+ * CustomerOrders component.
+ *
+ * This component is used to display the list of orders made by the customer.
+ *
+ * @returns {ReactElement} The CustomerOrders component.
+ */
 export default function CustomerOrders() {
   const [orderItems, setOrderItems] = useState([]);
 
@@ -15,7 +22,7 @@ export default function CustomerOrders() {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
-        })
+        }),
       )
       .then((res) => res.json())
       .then((data) => {

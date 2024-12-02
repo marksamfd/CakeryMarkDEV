@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Renders an "About" section on the homepage, including a short paragraph
+ * describing the company and a set of three progress bars representing the
+ * company's expertise in cake design, cake classes, and cake recipes.
+ */
 function CategoriesSection() {
   return (
     <section className="about spad">

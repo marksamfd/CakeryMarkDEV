@@ -5,6 +5,13 @@ import baker3 from '../../img/team/team-3.jpg';
 import baker4 from '../../img/team/team-4.jpg';
 import TeamMember from '../teamMember';
 
+/**
+ * The TeamSection component is a section of the homepage that displays a
+ * team of bakers as a list of TeamMember components. The section has a
+ * title and a button that says 'Join Us'.
+ *
+ * @return {ReactElement} The team section component.
+ */
 function TeamSection() {
   const bakers = [
     { bakerName: 'Randy Butler', positionBaker: 'Decorater', img: baker1 },

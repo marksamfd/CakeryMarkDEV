@@ -1,5 +1,12 @@
-import React from "react";
+import React from 'react';
 
+/**
+ * A Title component.
+ *
+ * @param {Object} props - Component props
+ * @param {*} props.children - The content of the title
+ * @returns {ReactElement} A React element representing the title
+ */
 function Title({ children }) {
   const titleStyle = {
     marginBottom: '50px',
@@ -12,11 +19,7 @@ function Title({ children }) {
     wordWrap: 'break-word',
   };
 
-  return (
-    <div style={titleStyle}>
-      {children}
-    </div>
-  );
+  return <div style={titleStyle}>{children}</div>;
 }
 
 export default Title;

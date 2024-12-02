@@ -1,4 +1,5 @@
 import React from 'react';
+
 const CheckoutInputField = React.forwardRef((props, ref) => {
   const inputType = props.type || `text`;
   const requiredField = props.requiredField || true;

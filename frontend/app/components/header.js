@@ -8,6 +8,17 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+/**
+ * A header navigation component that includes a logo, cart icon,
+ * and links to various pages such as Home, Shop, and Contact.
+ * It also provides an off-canvas menu for mobile view.
+ *
+ * @param {Object} props - The component properties.
+ * @param {number} props.itemsInCart - The number of items in the cart.
+ * @param {string} [props.token] - The authentication token to determine user login status.
+ *
+ * @returns {React.ReactElement} The rendered header navigation component.
+ */
 function HeaderNav({ itemsInCart = 0, token }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   const iconSize = 25;

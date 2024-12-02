@@ -8,6 +8,13 @@ import { useSearchParams } from 'next/navigation';
 
 import { signUp as register } from '@/app/lib/actions';
 
+/**
+ * Renders a form to sign up a new user.
+ *
+ * The form includes fields for first name, last name, email, phone, password, confirm password, and location.
+ *
+ * @returns {JSX.Element} The sign up form component.
+ */
 function SignUp() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
