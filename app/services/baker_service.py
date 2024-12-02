@@ -3,6 +3,7 @@ from app.db import db
 
 
 
+
 '''=================================== Baker HomePage ===================================='''
 # ------------------------------------------ All orders to be baked ------------------------------------------
 def get_baker_orders():
@@ -75,8 +76,7 @@ def assign_delivery_user(orderid):
 def update_order_status(orderid, status):
     order = Orders.query.get(orderid)
     if not order:
-        return {'Order not found'}
-    
+        return {'error': 'Order not found'}      
     # update status
     order.status = status
 
@@ -86,5 +86,5 @@ def update_order_status(orderid, status):
         if "error" in assignment_result:
             return assignment_result
     db.session.commit()
-    return {f'Order status updated to {status}'}
+    return {'message': f'Order status updated to {status}'}
 
