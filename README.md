@@ -1,5 +1,3 @@
-
-```markdown
 # Cakery
 An online bakery platform where customers can browse, customize, and order cakes and pastries, with features for store staff to manage logistics and operations.
 
@@ -72,4 +70,3 @@ An online bakery platform where customers can browse, customize, and order cakes
 6. Open the application in your browser:
    - Frontend: [http://localhost:3000](http://localhost:3000)
    - Backend: [http://127.0.0.1:5000](http://127.0.0.1:5000)
-```
