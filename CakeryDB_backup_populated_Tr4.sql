@@ -5,7 +5,7 @@
 -- Dumped from database version 17.1
 -- Dumped by pg_dump version 17.1
 
--- Started on 2024-11-27 18:43:56
+-- Started on 2024-11-29 14:40:35
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -65,49 +65,7 @@ CREATE TABLE public.bakeryuser (
 ALTER TABLE public.bakeryuser OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 24594)
--- Name: cakelayer; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.cakelayer (
-    layerid integer NOT NULL,
-    customcakeid integer,
-    level integer NOT NULL,
-    flavor character varying(255),
-    innerfilling character varying(255),
-    nuts character varying(255)
-);
-
-
-ALTER TABLE public.cakelayer OWNER TO postgres;
-
---
--- TOC entry 221 (class 1259 OID 24599)
--- Name: cakelayer_layerid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.cakelayer_layerid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.cakelayer_layerid_seq OWNER TO postgres;
-
---
--- TOC entry 5008 (class 0 OID 0)
--- Dependencies: 221
--- Name: cakelayer_layerid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.cakelayer_layerid_seq OWNED BY public.cakelayer.layerid;
-
-
---
--- TOC entry 222 (class 1259 OID 24600)
+-- TOC entry 220 (class 1259 OID 24600)
 -- Name: cart; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -120,7 +78,7 @@ CREATE TABLE public.cart (
 ALTER TABLE public.cart OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 24603)
+-- TOC entry 221 (class 1259 OID 24603)
 -- Name: cart_cartid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -136,8 +94,8 @@ CREATE SEQUENCE public.cart_cartid_seq
 ALTER SEQUENCE public.cart_cartid_seq OWNER TO postgres;
 
 --
--- TOC entry 5009 (class 0 OID 0)
--- Dependencies: 223
+-- TOC entry 5010 (class 0 OID 0)
+-- Dependencies: 221
 -- Name: cart_cartid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -145,7 +103,7 @@ ALTER SEQUENCE public.cart_cartid_seq OWNED BY public.cart.cartid;
 
 
 --
--- TOC entry 224 (class 1259 OID 24604)
+-- TOC entry 222 (class 1259 OID 24604)
 -- Name: cartitems; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -162,7 +120,7 @@ CREATE TABLE public.cartitems (
 ALTER TABLE public.cartitems OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 24607)
+-- TOC entry 223 (class 1259 OID 24607)
 -- Name: cartitems_cartitemid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -178,8 +136,8 @@ CREATE SEQUENCE public.cartitems_cartitemid_seq
 ALTER SEQUENCE public.cartitems_cartitemid_seq OWNER TO postgres;
 
 --
--- TOC entry 5010 (class 0 OID 0)
--- Dependencies: 225
+-- TOC entry 5011 (class 0 OID 0)
+-- Dependencies: 223
 -- Name: cartitems_cartitemid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -187,23 +145,25 @@ ALTER SEQUENCE public.cartitems_cartitemid_seq OWNED BY public.cartitems.cartite
 
 
 --
--- TOC entry 226 (class 1259 OID 24608)
--- Name: customcake; Type: TABLE; Schema: public; Owner: postgres
+-- TOC entry 224 (class 1259 OID 24608)
+-- Name: customize_cake; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.customcake (
-    customcakeid integer NOT NULL,
-    numlayers integer NOT NULL,
-    sugarpaste character varying(255),
-    coating character varying(255),
-    topping character varying(255)
+CREATE TABLE public.customize_cake (
+    customizecakeid integer NOT NULL,
+    numlayers integer DEFAULT 1 NOT NULL,
+    customeremail character varying(255) NOT NULL,
+    cakeshape character varying(255) NOT NULL,
+    cakesize character varying(255) NOT NULL,
+    cakeflavor character varying DEFAULT 'chocolate'::character varying NOT NULL,
+    message character varying(500)
 );
 
 
-ALTER TABLE public.customcake OWNER TO postgres;
+ALTER TABLE public.customize_cake OWNER TO postgres;
 
 --
--- TOC entry 227 (class 1259 OID 24613)
+-- TOC entry 225 (class 1259 OID 24613)
 -- Name: customcake_customcakeid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -219,16 +179,16 @@ CREATE SEQUENCE public.customcake_customcakeid_seq
 ALTER SEQUENCE public.customcake_customcakeid_seq OWNER TO postgres;
 
 --
--- TOC entry 5011 (class 0 OID 0)
--- Dependencies: 227
+-- TOC entry 5012 (class 0 OID 0)
+-- Dependencies: 225
 -- Name: customcake_customcakeid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.customcake_customcakeid_seq OWNED BY public.customcake.customcakeid;
+ALTER SEQUENCE public.customcake_customcakeid_seq OWNED BY public.customize_cake.customizecakeid;
 
 
 --
--- TOC entry 228 (class 1259 OID 24614)
+-- TOC entry 226 (class 1259 OID 24614)
 -- Name: customeruser; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -246,7 +206,24 @@ CREATE TABLE public.customeruser (
 ALTER TABLE public.customeruser OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 24620)
+-- TOC entry 242 (class 1259 OID 24818)
+-- Name: customize_cake_layer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customize_cake_layer (
+    customizecakeid integer NOT NULL,
+    layer integer NOT NULL,
+    innerfillings character varying NOT NULL,
+    innertoppings character varying NOT NULL,
+    outercoating character varying NOT NULL,
+    outertoppings character varying NOT NULL
+);
+
+
+ALTER TABLE public.customize_cake_layer OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 24620)
 -- Name: delivery_assignments; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -260,7 +237,7 @@ CREATE TABLE public.delivery_assignments (
 ALTER TABLE public.delivery_assignments OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1259 OID 24623)
+-- TOC entry 228 (class 1259 OID 24623)
 -- Name: delivery_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -276,8 +253,8 @@ CREATE SEQUENCE public.delivery_assignments_id_seq
 ALTER SEQUENCE public.delivery_assignments_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5012 (class 0 OID 0)
--- Dependencies: 230
+-- TOC entry 5013 (class 0 OID 0)
+-- Dependencies: 228
 -- Name: delivery_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -285,7 +262,7 @@ ALTER SEQUENCE public.delivery_assignments_id_seq OWNED BY public.delivery_assig
 
 
 --
--- TOC entry 231 (class 1259 OID 24624)
+-- TOC entry 229 (class 1259 OID 24624)
 -- Name: deliveryuser; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -302,7 +279,7 @@ CREATE TABLE public.deliveryuser (
 ALTER TABLE public.deliveryuser OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1259 OID 24630)
+-- TOC entry 230 (class 1259 OID 24630)
 -- Name: inventory; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -319,7 +296,7 @@ CREATE TABLE public.inventory (
 ALTER TABLE public.inventory OWNER TO postgres;
 
 --
--- TOC entry 233 (class 1259 OID 24636)
+-- TOC entry 231 (class 1259 OID 24636)
 -- Name: inventory_productid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -335,8 +312,8 @@ CREATE SEQUENCE public.inventory_productid_seq
 ALTER SEQUENCE public.inventory_productid_seq OWNER TO postgres;
 
 --
--- TOC entry 5013 (class 0 OID 0)
--- Dependencies: 233
+-- TOC entry 5014 (class 0 OID 0)
+-- Dependencies: 231
 -- Name: inventory_productid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -344,7 +321,7 @@ ALTER SEQUENCE public.inventory_productid_seq OWNED BY public.inventory.producti
 
 
 --
--- TOC entry 234 (class 1259 OID 24637)
+-- TOC entry 232 (class 1259 OID 24637)
 -- Name: orderitems; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -361,7 +338,7 @@ CREATE TABLE public.orderitems (
 ALTER TABLE public.orderitems OWNER TO postgres;
 
 --
--- TOC entry 235 (class 1259 OID 24640)
+-- TOC entry 233 (class 1259 OID 24640)
 -- Name: orderitems_orderitemid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -377,8 +354,8 @@ CREATE SEQUENCE public.orderitems_orderitemid_seq
 ALTER SEQUENCE public.orderitems_orderitemid_seq OWNER TO postgres;
 
 --
--- TOC entry 5014 (class 0 OID 0)
--- Dependencies: 235
+-- TOC entry 5015 (class 0 OID 0)
+-- Dependencies: 233
 -- Name: orderitems_orderitemid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -386,7 +363,7 @@ ALTER SEQUENCE public.orderitems_orderitemid_seq OWNED BY public.orderitems.orde
 
 
 --
--- TOC entry 236 (class 1259 OID 24641)
+-- TOC entry 234 (class 1259 OID 24641)
 -- Name: orders; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -404,7 +381,7 @@ CREATE TABLE public.orders (
 ALTER TABLE public.orders OWNER TO postgres;
 
 --
--- TOC entry 237 (class 1259 OID 24647)
+-- TOC entry 235 (class 1259 OID 24647)
 -- Name: orders_orderid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -420,8 +397,8 @@ CREATE SEQUENCE public.orders_orderid_seq
 ALTER SEQUENCE public.orders_orderid_seq OWNER TO postgres;
 
 --
--- TOC entry 5015 (class 0 OID 0)
--- Dependencies: 237
+-- TOC entry 5016 (class 0 OID 0)
+-- Dependencies: 235
 -- Name: orders_orderid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -429,7 +406,7 @@ ALTER SEQUENCE public.orders_orderid_seq OWNED BY public.orders.orderid;
 
 
 --
--- TOC entry 238 (class 1259 OID 24648)
+-- TOC entry 236 (class 1259 OID 24648)
 -- Name: payment; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -445,7 +422,7 @@ CREATE TABLE public.payment (
 ALTER TABLE public.payment OWNER TO postgres;
 
 --
--- TOC entry 239 (class 1259 OID 24652)
+-- TOC entry 237 (class 1259 OID 24652)
 -- Name: payment_paymentid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -461,8 +438,8 @@ CREATE SEQUENCE public.payment_paymentid_seq
 ALTER SEQUENCE public.payment_paymentid_seq OWNER TO postgres;
 
 --
--- TOC entry 5016 (class 0 OID 0)
--- Dependencies: 239
+-- TOC entry 5017 (class 0 OID 0)
+-- Dependencies: 237
 -- Name: payment_paymentid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -470,20 +447,21 @@ ALTER SEQUENCE public.payment_paymentid_seq OWNED BY public.payment.paymentid;
 
 
 --
--- TOC entry 243 (class 1259 OID 24785)
+-- TOC entry 241 (class 1259 OID 24785)
 -- Name: rawmaterials; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.rawmaterials (
     item character varying(100) NOT NULL,
-    price integer NOT NULL
+    price integer NOT NULL,
+    category character varying NOT NULL
 );
 
 
 ALTER TABLE public.rawmaterials OWNER TO postgres;
 
 --
--- TOC entry 240 (class 1259 OID 24653)
+-- TOC entry 238 (class 1259 OID 24653)
 -- Name: review; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -500,7 +478,7 @@ CREATE TABLE public.review (
 ALTER TABLE public.review OWNER TO postgres;
 
 --
--- TOC entry 241 (class 1259 OID 24658)
+-- TOC entry 239 (class 1259 OID 24658)
 -- Name: review_reviewid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -516,8 +494,8 @@ CREATE SEQUENCE public.review_reviewid_seq
 ALTER SEQUENCE public.review_reviewid_seq OWNER TO postgres;
 
 --
--- TOC entry 5017 (class 0 OID 0)
--- Dependencies: 241
+-- TOC entry 5018 (class 0 OID 0)
+-- Dependencies: 239
 -- Name: review_reviewid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -525,7 +503,7 @@ ALTER SEQUENCE public.review_reviewid_seq OWNED BY public.review.reviewid;
 
 
 --
--- TOC entry 242 (class 1259 OID 24659)
+-- TOC entry 240 (class 1259 OID 24659)
 -- Name: voucher; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -538,15 +516,7 @@ CREATE TABLE public.voucher (
 ALTER TABLE public.voucher OWNER TO postgres;
 
 --
--- TOC entry 4766 (class 2604 OID 24662)
--- Name: cakelayer layerid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cakelayer ALTER COLUMN layerid SET DEFAULT nextval('public.cakelayer_layerid_seq'::regclass);
-
-
---
--- TOC entry 4767 (class 2604 OID 24663)
+-- TOC entry 4765 (class 2604 OID 24663)
 -- Name: cart cartid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -554,7 +524,7 @@ ALTER TABLE ONLY public.cart ALTER COLUMN cartid SET DEFAULT nextval('public.car
 
 
 --
--- TOC entry 4768 (class 2604 OID 24664)
+-- TOC entry 4766 (class 2604 OID 24664)
 -- Name: cartitems cartitemid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -562,11 +532,11 @@ ALTER TABLE ONLY public.cartitems ALTER COLUMN cartitemid SET DEFAULT nextval('p
 
 
 --
--- TOC entry 4769 (class 2604 OID 24665)
--- Name: customcake customcakeid; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4767 (class 2604 OID 24665)
+-- Name: customize_cake customizecakeid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.customcake ALTER COLUMN customcakeid SET DEFAULT nextval('public.customcake_customcakeid_seq'::regclass);
+ALTER TABLE ONLY public.customize_cake ALTER COLUMN customizecakeid SET DEFAULT nextval('public.customcake_customcakeid_seq'::regclass);
 
 
 --
@@ -618,7 +588,7 @@ ALTER TABLE ONLY public.review ALTER COLUMN reviewid SET DEFAULT nextval('public
 
 
 --
--- TOC entry 4977 (class 0 OID 24583)
+-- TOC entry 4980 (class 0 OID 24583)
 -- Dependencies: 218
 -- Data for Name: admin; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -629,7 +599,7 @@ admin@cakery_admin.com	adminPass123
 
 
 --
--- TOC entry 4978 (class 0 OID 24588)
+-- TOC entry 4981 (class 0 OID 24588)
 -- Dependencies: 219
 -- Data for Name: bakeryuser; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -641,20 +611,8 @@ ahmad.fouda@cakery_baker.com	passAhmad	Ahmad	Fouda	0334455667	456 Pastry Avenue,
 
 
 --
--- TOC entry 4979 (class 0 OID 24594)
+-- TOC entry 4982 (class 0 OID 24600)
 -- Dependencies: 220
--- Data for Name: cakelayer; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.cakelayer (layerid, customcakeid, level, flavor, innerfilling, nuts) FROM stdin;
-1	1	1	Red Velvet	Cream Cheese	Pecans
-2	1	2	Lemon	Lemon Curd	Almonds
-\.
-
-
---
--- TOC entry 4981 (class 0 OID 24600)
--- Dependencies: 222
 -- Data for Name: cart; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -666,8 +624,8 @@ COPY public.cart (cartid, customeremail) FROM stdin;
 
 
 --
--- TOC entry 4983 (class 0 OID 24604)
--- Dependencies: 224
+-- TOC entry 4984 (class 0 OID 24604)
+-- Dependencies: 222
 -- Data for Name: cartitems; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -681,19 +639,8 @@ COPY public.cartitems (cartitemid, cartid, productid, customcakeid, quantity, pr
 
 
 --
--- TOC entry 4985 (class 0 OID 24608)
+-- TOC entry 4988 (class 0 OID 24614)
 -- Dependencies: 226
--- Data for Name: customcake; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.customcake (customcakeid, numlayers, sugarpaste, coating, topping) FROM stdin;
-1	2	Fondant	Buttercream	Mixed Berries
-\.
-
-
---
--- TOC entry 4987 (class 0 OID 24614)
--- Dependencies: 228
 -- Data for Name: customeruser; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -701,12 +648,34 @@ COPY public.customeruser (customeremail, password, firstname, lastname, phonenum
 anas.ahmad@gmail.com	passAnas	Anas	Ahmad	0123456789	https://maps.google.com/?q=AnasAddress	2024-11-23 01:58:44.668676
 mark.samuel@gmail.com	passMark	Mark	Samuel	0987654321	https://maps.google.com/?q=MarkAddress	2024-11-23 01:58:44.668676
 tasneem.mohamed@gmail.com	passTasneem	Tasneem	Mohamed	0112233445	https://maps.google.com/?q=TasneemAddress	2024-11-23 01:58:44.668676
+medo.foda@gmail.com	$argon2id$v=19$m=65536,t=3,p=4$cjQVEJ6KDIPQrKfo1Tsd/Q$wsyfL8nNpETFWmB8fV0scOQiExv10KSn1pEtHSJSl8g	medo	foda	01278539395	benha	2024-11-27 20:12:15.763942
 \.
 
 
 --
--- TOC entry 4988 (class 0 OID 24620)
--- Dependencies: 229
+-- TOC entry 4986 (class 0 OID 24608)
+-- Dependencies: 224
+-- Data for Name: customize_cake; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customize_cake (customizecakeid, numlayers, customeremail, cakeshape, cakesize, cakeflavor, message) FROM stdin;
+1	2	anas.ahmad@gmail.com	Circle	16 cm	chocolate	\N
+\.
+
+
+--
+-- TOC entry 5004 (class 0 OID 24818)
+-- Dependencies: 242
+-- Data for Name: customize_cake_layer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customize_cake_layer (customizecakeid, layer, innerfillings, innertoppings, outercoating, outertoppings) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4989 (class 0 OID 24620)
+-- Dependencies: 227
 -- Data for Name: delivery_assignments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -716,8 +685,8 @@ COPY public.delivery_assignments (id, deliveryemail, orderid) FROM stdin;
 
 
 --
--- TOC entry 4990 (class 0 OID 24624)
--- Dependencies: 231
+-- TOC entry 4991 (class 0 OID 24624)
+-- Dependencies: 229
 -- Data for Name: deliveryuser; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -728,8 +697,8 @@ john.doe@cakery_delivery.com	passJohn	John	Doe	0445566778	2024-11-23 01:58:26.97
 
 
 --
--- TOC entry 4991 (class 0 OID 24630)
--- Dependencies: 232
+-- TOC entry 4992 (class 0 OID 24630)
+-- Dependencies: 230
 -- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -741,8 +710,8 @@ COPY public.inventory (productid, name, description, price, category, createdat)
 
 
 --
--- TOC entry 4993 (class 0 OID 24637)
--- Dependencies: 234
+-- TOC entry 4994 (class 0 OID 24637)
+-- Dependencies: 232
 -- Data for Name: orderitems; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -755,8 +724,8 @@ COPY public.orderitems (orderitemid, orderid, productid, customcakeid, quantity,
 
 
 --
--- TOC entry 4995 (class 0 OID 24641)
--- Dependencies: 236
+-- TOC entry 4996 (class 0 OID 24641)
+-- Dependencies: 234
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -768,8 +737,8 @@ COPY public.orders (orderid, customeremail, deliveryemail, totalprice, status, o
 
 
 --
--- TOC entry 4997 (class 0 OID 24648)
--- Dependencies: 238
+-- TOC entry 4998 (class 0 OID 24648)
+-- Dependencies: 236
 -- Data for Name: payment; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -781,51 +750,51 @@ COPY public.payment (paymentid, orderid, deposit, restofprice, paymentdate) FROM
 
 
 --
--- TOC entry 5002 (class 0 OID 24785)
--- Dependencies: 243
+-- TOC entry 5003 (class 0 OID 24785)
+-- Dependencies: 241
 -- Data for Name: rawmaterials; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rawmaterials (item, price) FROM stdin;
-Circle	200
-Rectangle	200
-Square	200
-Heart	200
-small 16 CM	100
-Meduim 20 CM	200
-Large 25 CM	300
-Chocolate	100
-Vanilla	100
-Half Chocolate Half vanilla	100
-Red Velvet	150
-Carrot Cake	150
-Ice Cream	150
-Chocolate Ganache	50
-Strawberry Jam	50
-Nutella	50
-Cream Cheese	50
-Salted Caramel	70
-Strawberries	50
-Mango	80
-Berries	100
-Chocolate chips	50
-Nuts	150
-Frosting	150
-Butter Cream	150
-Cream Cheeses	150
-White Sugar Paste	150
-White Fondant	150
-Fruits	100
-Sprinkles	100
-Candies(M&Ms)	100
-Gold/Silver Beads	300
-Chocolate Ships	80
+COPY public.rawmaterials (item, price, category) FROM stdin;
+Butter Cream	150	Outer Coating
+Candies(M&Ms)	100	Outer Toppings
+Carrot Cake	150	Cake Type
+Chocolate	100	Cake Type
+Circle	200	Cake Shape
+Frosting	150	Outer Coating
+Half Chocolate Half vanilla	100	Cake Type
+Heart	200	Cake Shape
+Ice Cream	150	Cake Type
+Large 25 CM	300	Cake Size
+Meduim 20 CM	200	Cake Size
+Nuts	150	Inner Toppings
+Rectangle	200	Cake Shape
+Red Velvet	150	Cake Type
+small 16 CM	100	Cake Size
+Square	200	Cake Shape
+Strawberry Jam	50	Inner Fillings
+Vanilla	100	Cake Type
+White Fondant	150	Outer Coating
+White Sugar Paste	150	Outer Coating
+Berries	100	Inner Toppings\n
+Chocolate chips	50	Inner Toppings
+Chocolate Ganache	50	Inner Fillings
+Chocolate Ships	80	Outer Toppings
+Cream Cheese	50	Inner Fillings\n
+Cream Cheesee	150	Outer Coating
+Fruits	100	Outer Toppings
+Gold/Silver Beads	300	Outer Toppings
+Mango	80	Inner Toppings
+Nutella	50	Inner Fillings
+Salted Caramel	70	Inner Fillings
+Sprinkles	100	Outer Toppings
+Strawberries	50	Inner Toppings
 \.
 
 
 --
--- TOC entry 4999 (class 0 OID 24653)
--- Dependencies: 240
+-- TOC entry 5000 (class 0 OID 24653)
+-- Dependencies: 238
 -- Data for Name: review; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -837,8 +806,8 @@ COPY public.review (reviewid, orderid, customeremail, rating, createdat) FROM st
 
 
 --
--- TOC entry 5001 (class 0 OID 24659)
--- Dependencies: 242
+-- TOC entry 5002 (class 0 OID 24659)
+-- Dependencies: 240
 -- Data for Name: voucher; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -849,17 +818,8 @@ SUMMER15	15.00
 
 
 --
--- TOC entry 5018 (class 0 OID 0)
--- Dependencies: 221
--- Name: cakelayer_layerid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.cakelayer_layerid_seq', 2, true);
-
-
---
 -- TOC entry 5019 (class 0 OID 0)
--- Dependencies: 223
+-- Dependencies: 221
 -- Name: cart_cartid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -868,7 +828,7 @@ SELECT pg_catalog.setval('public.cart_cartid_seq', 3, true);
 
 --
 -- TOC entry 5020 (class 0 OID 0)
--- Dependencies: 225
+-- Dependencies: 223
 -- Name: cartitems_cartitemid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -877,7 +837,7 @@ SELECT pg_catalog.setval('public.cartitems_cartitemid_seq', 8, true);
 
 --
 -- TOC entry 5021 (class 0 OID 0)
--- Dependencies: 227
+-- Dependencies: 225
 -- Name: customcake_customcakeid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -886,7 +846,7 @@ SELECT pg_catalog.setval('public.customcake_customcakeid_seq', 1, true);
 
 --
 -- TOC entry 5022 (class 0 OID 0)
--- Dependencies: 230
+-- Dependencies: 228
 -- Name: delivery_assignments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -895,7 +855,7 @@ SELECT pg_catalog.setval('public.delivery_assignments_id_seq', 1, true);
 
 --
 -- TOC entry 5023 (class 0 OID 0)
--- Dependencies: 233
+-- Dependencies: 231
 -- Name: inventory_productid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -904,7 +864,7 @@ SELECT pg_catalog.setval('public.inventory_productid_seq', 3, true);
 
 --
 -- TOC entry 5024 (class 0 OID 0)
--- Dependencies: 235
+-- Dependencies: 233
 -- Name: orderitems_orderitemid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -913,7 +873,7 @@ SELECT pg_catalog.setval('public.orderitems_orderitemid_seq', 4, true);
 
 --
 -- TOC entry 5025 (class 0 OID 0)
--- Dependencies: 237
+-- Dependencies: 235
 -- Name: orders_orderid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -922,7 +882,7 @@ SELECT pg_catalog.setval('public.orders_orderid_seq', 3, true);
 
 --
 -- TOC entry 5026 (class 0 OID 0)
--- Dependencies: 239
+-- Dependencies: 237
 -- Name: payment_paymentid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -931,7 +891,7 @@ SELECT pg_catalog.setval('public.payment_paymentid_seq', 3, true);
 
 --
 -- TOC entry 5027 (class 0 OID 0)
--- Dependencies: 241
+-- Dependencies: 239
 -- Name: review_reviewid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -957,16 +917,7 @@ ALTER TABLE ONLY public.bakeryuser
 
 
 --
--- TOC entry 4788 (class 2606 OID 24677)
--- Name: cakelayer cakelayer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cakelayer
-    ADD CONSTRAINT cakelayer_pkey PRIMARY KEY (layerid);
-
-
---
--- TOC entry 4790 (class 2606 OID 24679)
+-- TOC entry 4788 (class 2606 OID 24679)
 -- Name: cart cart_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -975,7 +926,7 @@ ALTER TABLE ONLY public.cart
 
 
 --
--- TOC entry 4794 (class 2606 OID 24681)
+-- TOC entry 4792 (class 2606 OID 24681)
 -- Name: cartitems cartitems_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -984,16 +935,16 @@ ALTER TABLE ONLY public.cartitems
 
 
 --
--- TOC entry 4796 (class 2606 OID 24683)
--- Name: customcake customcake_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4794 (class 2606 OID 24683)
+-- Name: customize_cake customcake_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.customcake
-    ADD CONSTRAINT customcake_pkey PRIMARY KEY (customcakeid);
+ALTER TABLE ONLY public.customize_cake
+    ADD CONSTRAINT customcake_pkey PRIMARY KEY (customizecakeid);
 
 
 --
--- TOC entry 4798 (class 2606 OID 24685)
+-- TOC entry 4796 (class 2606 OID 24685)
 -- Name: customeruser customeruser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1002,7 +953,16 @@ ALTER TABLE ONLY public.customeruser
 
 
 --
--- TOC entry 4800 (class 2606 OID 24687)
+-- TOC entry 4818 (class 2606 OID 24824)
+-- Name: customize_cake_layer customize_cakeid_layer_pkeys; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customize_cake_layer
+    ADD CONSTRAINT customize_cakeid_layer_pkeys PRIMARY KEY (customizecakeid, layer);
+
+
+--
+-- TOC entry 4798 (class 2606 OID 24687)
 -- Name: delivery_assignments delivery_assignments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1011,7 +971,7 @@ ALTER TABLE ONLY public.delivery_assignments
 
 
 --
--- TOC entry 4802 (class 2606 OID 24689)
+-- TOC entry 4800 (class 2606 OID 24689)
 -- Name: deliveryuser deliveryuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1020,7 +980,7 @@ ALTER TABLE ONLY public.deliveryuser
 
 
 --
--- TOC entry 4804 (class 2606 OID 24691)
+-- TOC entry 4802 (class 2606 OID 24691)
 -- Name: inventory inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1029,7 +989,7 @@ ALTER TABLE ONLY public.inventory
 
 
 --
--- TOC entry 4808 (class 2606 OID 24693)
+-- TOC entry 4806 (class 2606 OID 24693)
 -- Name: orderitems orderitems_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1038,7 +998,7 @@ ALTER TABLE ONLY public.orderitems
 
 
 --
--- TOC entry 4810 (class 2606 OID 24695)
+-- TOC entry 4808 (class 2606 OID 24695)
 -- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1047,7 +1007,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 4812 (class 2606 OID 24697)
+-- TOC entry 4810 (class 2606 OID 24697)
 -- Name: payment payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1056,7 +1016,16 @@ ALTER TABLE ONLY public.payment
 
 
 --
--- TOC entry 4814 (class 2606 OID 24699)
+-- TOC entry 4816 (class 2606 OID 24806)
+-- Name: rawmaterials rawmaterials_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.rawmaterials
+    ADD CONSTRAINT rawmaterials_pkey PRIMARY KEY (item);
+
+
+--
+-- TOC entry 4812 (class 2606 OID 24699)
 -- Name: review review_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1065,7 +1034,7 @@ ALTER TABLE ONLY public.review
 
 
 --
--- TOC entry 4792 (class 2606 OID 24701)
+-- TOC entry 4790 (class 2606 OID 24701)
 -- Name: cart unique_customer_email; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1074,7 +1043,7 @@ ALTER TABLE ONLY public.cart
 
 
 --
--- TOC entry 4806 (class 2606 OID 24703)
+-- TOC entry 4804 (class 2606 OID 24703)
 -- Name: inventory unique_name_category; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1083,7 +1052,7 @@ ALTER TABLE ONLY public.inventory
 
 
 --
--- TOC entry 4816 (class 2606 OID 24705)
+-- TOC entry 4814 (class 2606 OID 24705)
 -- Name: voucher voucher_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1092,16 +1061,7 @@ ALTER TABLE ONLY public.voucher
 
 
 --
--- TOC entry 4817 (class 2606 OID 24706)
--- Name: cakelayer cakelayer_customcakeid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cakelayer
-    ADD CONSTRAINT cakelayer_customcakeid_fkey FOREIGN KEY (customcakeid) REFERENCES public.customcake(customcakeid);
-
-
---
--- TOC entry 4818 (class 2606 OID 24711)
+-- TOC entry 4819 (class 2606 OID 24711)
 -- Name: cart cart_customeremail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1110,7 +1070,7 @@ ALTER TABLE ONLY public.cart
 
 
 --
--- TOC entry 4819 (class 2606 OID 24716)
+-- TOC entry 4820 (class 2606 OID 24716)
 -- Name: cartitems cartitems_cartid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1119,16 +1079,16 @@ ALTER TABLE ONLY public.cartitems
 
 
 --
--- TOC entry 4820 (class 2606 OID 24721)
+-- TOC entry 4821 (class 2606 OID 24721)
 -- Name: cartitems cartitems_customcakeid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.cartitems
-    ADD CONSTRAINT cartitems_customcakeid_fkey FOREIGN KEY (customcakeid) REFERENCES public.customcake(customcakeid);
+    ADD CONSTRAINT cartitems_customcakeid_fkey FOREIGN KEY (customcakeid) REFERENCES public.customize_cake(customizecakeid);
 
 
 --
--- TOC entry 4821 (class 2606 OID 24726)
+-- TOC entry 4822 (class 2606 OID 24726)
 -- Name: cartitems cartitems_productid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1137,7 +1097,25 @@ ALTER TABLE ONLY public.cartitems
 
 
 --
--- TOC entry 4822 (class 2606 OID 24731)
+-- TOC entry 4823 (class 2606 OID 24830)
+-- Name: customize_cake customeremail_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customize_cake
+    ADD CONSTRAINT customeremail_fk FOREIGN KEY (customeremail) REFERENCES public.customeruser(customeremail) NOT VALID;
+
+
+--
+-- TOC entry 4834 (class 2606 OID 24825)
+-- Name: customize_cake_layer customizecakeid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customize_cake_layer
+    ADD CONSTRAINT customizecakeid FOREIGN KEY (customizecakeid) REFERENCES public.customize_cake(customizecakeid);
+
+
+--
+-- TOC entry 4824 (class 2606 OID 24731)
 -- Name: delivery_assignments delivery_assignments_deliveryemail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1146,7 +1124,7 @@ ALTER TABLE ONLY public.delivery_assignments
 
 
 --
--- TOC entry 4823 (class 2606 OID 24736)
+-- TOC entry 4825 (class 2606 OID 24736)
 -- Name: delivery_assignments delivery_assignments_orderid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1155,7 +1133,7 @@ ALTER TABLE ONLY public.delivery_assignments
 
 
 --
--- TOC entry 4827 (class 2606 OID 24741)
+-- TOC entry 4829 (class 2606 OID 24741)
 -- Name: orders fk_orders_deliveryuser; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1164,16 +1142,16 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 4824 (class 2606 OID 24746)
+-- TOC entry 4826 (class 2606 OID 24746)
 -- Name: orderitems orderitems_customcakeid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.orderitems
-    ADD CONSTRAINT orderitems_customcakeid_fkey FOREIGN KEY (customcakeid) REFERENCES public.customcake(customcakeid);
+    ADD CONSTRAINT orderitems_customcakeid_fkey FOREIGN KEY (customcakeid) REFERENCES public.customize_cake(customizecakeid);
 
 
 --
--- TOC entry 4825 (class 2606 OID 24751)
+-- TOC entry 4827 (class 2606 OID 24751)
 -- Name: orderitems orderitems_orderid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1182,7 +1160,7 @@ ALTER TABLE ONLY public.orderitems
 
 
 --
--- TOC entry 4826 (class 2606 OID 24756)
+-- TOC entry 4828 (class 2606 OID 24756)
 -- Name: orderitems orderitems_productid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1191,7 +1169,7 @@ ALTER TABLE ONLY public.orderitems
 
 
 --
--- TOC entry 4828 (class 2606 OID 24761)
+-- TOC entry 4830 (class 2606 OID 24761)
 -- Name: orders orders_customeremail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1200,7 +1178,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 4829 (class 2606 OID 24766)
+-- TOC entry 4831 (class 2606 OID 24766)
 -- Name: payment payment_orderid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1209,7 +1187,7 @@ ALTER TABLE ONLY public.payment
 
 
 --
--- TOC entry 4830 (class 2606 OID 24771)
+-- TOC entry 4832 (class 2606 OID 24771)
 -- Name: review review_customeremail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1218,7 +1196,7 @@ ALTER TABLE ONLY public.review
 
 
 --
--- TOC entry 4831 (class 2606 OID 24776)
+-- TOC entry 4833 (class 2606 OID 24776)
 -- Name: review review_orderid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1226,7 +1204,7 @@ ALTER TABLE ONLY public.review
     ADD CONSTRAINT review_orderid_fkey FOREIGN KEY (orderid) REFERENCES public.orders(orderid);
 
 
--- Completed on 2024-11-27 18:43:56
+-- Completed on 2024-11-29 14:40:36
 
 --
 -- PostgreSQL database dump complete

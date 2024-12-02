@@ -1,12 +1,12 @@
 from app.db import db
 
-''' The main differnce here is that we are dealing with the database as models, where each table
+''' The main difference here is that we are dealing with the database as models, where each table
 is represented by a class, the class taking the db.model from the initialized db instance in the db.py file.
 The class has the table name, and the columns as attributes, and the relationships as attributes as well.
-The as_dict() method is used to convert the object to a dictionary (all attributes will be key and the vale ),
- to be used in the services file to return the data as a dictionary as this json format will be sent to frontend. passwords are excluded from the dictionary response, 
- but accsesed from the model
-.'''
+The as_dict() method is used to convert the object to a dictionary (all attributes will be key and the value),
+to be used in the services file to return the data as a dictionary as this JSON format will be sent to the frontend. Passwords are excluded from the dictionary response,
+but accessed from the model.
+'''
 
 # Admin model
 class Admin(db.Model):
@@ -14,6 +14,8 @@ class Admin(db.Model):
 
     adminemail = db.Column(db.String(255), primary_key=True)
     password = db.Column(db.String(255), nullable=False)
+
+
 
 # BakeryUser model
 class BakeryUser(db.Model):
@@ -26,14 +28,16 @@ class BakeryUser(db.Model):
     phonenum = db.Column(db.String(15))
     addresstext = db.Column(db.Text)
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
+
     def as_dict(self):
-     return {
+        return {
             "bakeryemail": self.bakeryemail,
             "firstname": self.firstname,
             "lastname": self.lastname,
             "phonenum": self.phonenum,
             "addresstext": self.addresstext,
-            "createdat": self.createdat.isoformat() if self.createdat else None}
+            "createdat": self.createdat.isoformat() if self.createdat else None
+        }
 
 
 # CustomerUser model
@@ -52,6 +56,7 @@ class CustomerUser(db.Model):
     carts = db.relationship('Cart', backref='customer', cascade='all, delete-orphan')
     orders = db.relationship('Orders', backref='customer', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='customer', cascade='all, delete-orphan')
+
     def as_dict(self):
         return {
             "customeremail": self.customeremail,
@@ -62,6 +67,29 @@ class CustomerUser(db.Model):
             "createdat": self.createdat.isoformat() if self.createdat else None
         }
 
+# CustomCake model
+class CustomizeCake(db.Model):
+
+    customizecakeid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    numlayers = db.Column(db.Integer, nullable=False)
+    customeremail = db.Column(db.String(255), db.ForeignKey('customeruser.customeremail'))
+    cakeshape = db.Column(db.String(255), nullable=False)
+    cakesize = db.Column(db.String(255), nullable=False)
+    cakeflavor = db.Column(db.String(255), nullable=False)
+    message = db.Column(db.String(500))
+
+    # Relationships
+    layers = db.relationship('Customize_Cake_Layers', backref='custom_cake', cascade='all, delete-orphan')
+
+    def as_dict(self):
+        return {
+            "customcakeid": self.customcakeid,
+            "numlayers": self.numlayers,
+            "cakeshape": self.cakeshape,
+            "cakesize": self.cakesize,
+            "cakeflavor": self.cakeflavor,
+            "message": self.message,
+        }
 
 # Cart model
 class Cart(db.Model):
@@ -72,6 +100,7 @@ class Cart(db.Model):
 
     # Relationships
     cart_items = db.relationship('CartItems', backref='cart', cascade='all, delete-orphan')
+
     def as_dict(self):
         return {
             "cartid": self.cartid,
@@ -86,7 +115,7 @@ class CartItems(db.Model):
     cartitemid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cartid = db.Column(db.Integer, db.ForeignKey('cart.cartid'))
     productid = db.Column(db.Integer, db.ForeignKey('inventory.productid'))
-    customcakeid = db.Column(db.Integer, db.ForeignKey('customcake.customcakeid'))
+    customcakeid = db.Column(db.Integer, db.ForeignKey('customize_cake.customizecakeid'))
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
 
@@ -95,54 +124,37 @@ class CartItems(db.Model):
             "cartitemid": self.cartitemid,
             "cartid": self.cartid,
             "productid": self.productid,
-            "customcakeid": self.customcakeid,
+            "customizecakeid": self.customizecakeid,
             "quantity": self.quantity,
             "price": self.price
         }
 
 
-# CustomCake model
-class CustomCake(db.Model):
-    __tablename__ = 'customcake'
 
-    customcakeid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    numlayers = db.Column(db.Integer, nullable=False)
-    sugarpaste = db.Column(db.String(255))
-    coating = db.Column(db.String(255))
-    topping = db.Column(db.String(255))
 
-    # Relationships
-    layers = db.relationship('CakeLayer', backref='custom_cake', cascade='all, delete-orphan')
-
-    def as_dict(self):
-        return {
-            "customcakeid": self.customcakeid,
-            "numlayers": self.numlayers,
-            "sugarpaste": self.sugarpaste,
-            "coating": self.coating,
-            "topping": self.topping
-        }
 
 
 # CakeLayer model
-class CakeLayer(db.Model):
-    __tablename__ = 'cakelayer'
+class Customize_Cake_Layers(db.Model):
+    __tablename__ = 'customize_cake_layer'
 
-    layerid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customcakeid = db.Column(db.Integer, db.ForeignKey('customcake.customcakeid'))
-    level = db.Column(db.Integer, nullable=False)
-    flavor = db.Column(db.String(255))
-    innerfilling = db.Column(db.String(255))
-    nuts = db.Column(db.String(255))
+    customizecakeid = db.Column(db.Integer, db.ForeignKey('customize_cake.customizecakeid'), primary_key=True)
+    layer = db.Column(db.Integer, primary_key=True)
+    innerfillings = db.Column(db.String(255), nullable=False)
+    innertoppings = db.Column(db.String(255), nullable=False)
+    outercoating = db.Column(db.String(255), nullable=False)
+    outertoppings = db.Column(db.String(255), nullable=False)
+
     def as_dict(self):
         return {
-            "layerid": self.layerid,
-            "customcakeid": self.customcakeid,
-            "level": self.level,
-            "flavor": self.flavor,
-            "innerfilling": self.innerfilling,
-            "nuts": self.nuts
+            "customizecakeid": self.customizecakeid,
+            "layer": self.layer,
+            "innerfillings": self.innerfillings,
+            "innertoppings": self.innertoppings,
+            "outercoating": self.outercoating,
+            "outertoppings": self.outertoppings,
         }
+
 
 
 # Inventory model
@@ -156,7 +168,6 @@ class Inventory(db.Model):
     category = db.Column(db.String(255))
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-
     def as_dict(self):
         return {
             "productid": self.productid,
@@ -167,6 +178,20 @@ class Inventory(db.Model):
             "createdat": self.createdat.isoformat() if self.createdat else None
         }
 
+# Raw Materials Model
+class Rawmaterials(db.Model):
+    __tablename__ = 'rawmaterials'
+
+    item = db.Column(db.String, primary_key=True, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    category = db.Column(db.String, nullable=False)
+
+    def as_dict(self):
+        return {
+            "item": self.item,
+            "price": self.price,
+            "category": self.category,
+        }
 
 # Orders model
 class Orders(db.Model):
@@ -218,8 +243,7 @@ class DeliveryUser(db.Model):
         }
 
 
-# Delivery assigments, which is spliitted table to have all orders the deliveryguy handles
-
+# DeliveryAssignments model
 class DeliveryAssignments(db.Model):
     __tablename__ = 'delivery_assignments'
 
@@ -241,27 +265,26 @@ class DeliveryAssignments(db.Model):
 
 
 
-
 # OrderItems model
 class OrderItems(db.Model):
     __tablename__ = 'orderitems'
-
     orderitemid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
     productid = db.Column(db.Integer, db.ForeignKey('inventory.productid'))
-    customcakeid = db.Column(db.Integer, db.ForeignKey('customcake.customcakeid'))
+    customcakeid = db.Column(db.Integer, db.ForeignKey('customize_cake.customizecakeid'))  # Correct column
     quantity = db.Column(db.Integer, nullable=False)
     priceatorder = db.Column(db.Numeric(10, 2))
-    
+
     def as_dict(self):
         return {
             "orderitemid": self.orderitemid,
             "orderid": self.orderid,
             "productid": self.productid,
-            "customcakeid": self.customcakeid,
+            "customizecakeid": self.customizecakeid,
             "quantity": self.quantity,
             "priceatorder": self.priceatorder
         }
+
 
 # Payment model
 class Payment(db.Model):
@@ -274,6 +297,7 @@ class Payment(db.Model):
     paymentdate = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 
+
     def as_dict(self):
         return {
             "paymentid": self.paymentid,
@@ -282,6 +306,7 @@ class Payment(db.Model):
             "restofprice": self.restofprice,
             "paymentdate": self.paymentdate.isoformat() if self.paymentdate else None
         }
+
 
 # Review model
 class Review(db.Model):

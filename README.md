@@ -40,5 +40,5 @@ List the technologies, frameworks, and libraries used in the project. Example:
    ```
 4. Run the application:
    ```bash
-   flask run
+   run run.py
    ```
