@@ -140,6 +140,7 @@ def sign_in():
                 "status": "error"
             }), 401
 
+
         # Compare the stored password and the input password
         stored_password = user.password
         #verify_password(stored_password, password)
@@ -151,6 +152,7 @@ def sign_in():
                 "message": "Sign-in successful",
                 "status": "success",
                 "access_token": access_token
+
             }), 200
         else:
             return jsonify({
