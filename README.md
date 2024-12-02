@@ -1,6 +1,3 @@
-Here's the updated description with instructions to run the frontend server on port 3000 alongside the backend server on 127.0.0.1:5000:
-
----
 
 # Cakery  
 An online bakery platform where customers can browse, customize, and order cakes and pastries, with features for store staff to manage logistics and operations.
