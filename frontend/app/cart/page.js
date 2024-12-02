@@ -1,44 +1,58 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Breadcrumb from '../components/breadcrumb';
 import CartItem from '../components/cartItem';
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState([
-    // { cartItemId: 1, productId: 1, customCakeId: null, price: 30.0, quantity: 2 },
-    // { cartItemId: 2, productId: 2, customCakeId: null, price: 47.0, quantity: 1 },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
   useEffect(() => {
     cookieStore
       .get('token')
-      .then((cookie) => {
-        console.log(cookie);
-        return fetch(`/api/customer/Cart`, {
+      .then((cookie) =>
+        fetch(`/api/customer/Cart`, {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
-        });
-      })
+        })
+      )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        setCartItems(data.cartItems);
+        console.log(data.cartItems);
+        setCartItems(data);
       })
-      .catch((error) => {
-        console.error;
-      });
+      .catch((error) => console.error('Error fetching cart:', error));
   }, []);
 
-  function RemoveItem(cartItemId) {
-    const updatedCart = [];
-    for (let i = 0; i < cartItems.length; i++) {
-      if (cartItems[i].cartItemId !== cartItemId) {
-        updatedCart.push(cartItems[i]);
-      }
+  async function RemoveItem(productid, quantity) {
+    try {
+      const cookie = await cookieStore.get('token');
+      const response = await fetch('/api/customer/Cart/Remove', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cookie.value}`,
+        },
+        body: JSON.stringify({
+          product_id: productid,
+          quantity: quantity,
+        }),
+      });
+      const data = await response.json();
+      console.log(data.cartItems);
+      setCartItems(data);
+    } catch (error) {
+      console.error(error);
     }
-    setCartItems(updatedCart);
   }
 
+  /**
+   * Calculates the total price of items in the cart.
+   *
+   * Iterates through each item in the cart and multiplies the price
+   * by the quantity for each item, accumulating the result in the total.
+   *
+   * @returns {number} The total price of all items in the cart.
+   */
   const calculateTotal = () => {
     let total = 0;
     for (let i = 0; i < cartItems.length; i++) {
@@ -60,20 +74,25 @@ export default function Cart() {
                       <th>Product</th>
                       <th>Price</th>
                       <th>Quantity</th>
-                      <th>Total</th>
+                      {/* <th>Total</th> */}
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {cartItems.map((item) => (
+                  {Array.isArray(cartItems) && cartItems.map((item) => (
                       <CartItem
-                        key={item.cartItemId}
-                        productId={item.productId}
-                        customCakeId={item.customCakeId}
+                        key={item.productid}
+                        productId={item.productid}
+                        customCakeId={item.customcakeid}
                         price={item.price}
                         quantity={item.quantity}
                         total={item.price * item.quantity}
-                        onRemove={() => RemoveItem(item.cartItemId)}
+                        onRemove={() =>
+                          RemoveItem(
+                            item.productid,
+                            item.quantity
+                          )
+                        }
                       />
                     ))}
                   </tbody>

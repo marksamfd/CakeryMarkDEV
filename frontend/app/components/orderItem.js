@@ -5,21 +5,21 @@ import cart1 from '../img/shop/cart/cart1.jpg';
 
 const OrderItem = ({
   orderId,
+  name,
   totalPrice,
   status,
-  orderDate,
-  deliveryDate,
+  orderDate
 }) => (
   <tr>
     <td>
-      <Image src={cart1.src} alt="cart1" />
-      <h6>{orderId} , {orderDate}, {deliveryDate}</h6>
+      <Image src={cart1}/>
+      <h6>{orderDate}</h6>
     </td>
     <td>
-      <h6>{status}</h6>
+      <h6 style={{ color: 'green'}}>{status} </h6>
     </td>
     <td>
-      <h6>{totalPrice}</h6>
+      <h6>{totalPrice} EGP</h6>
     </td>
   </tr>
 );

@@ -1,14 +1,28 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import Breadcrumb from '../components/breadcrumb';
 import OrderItem from '../components/orderItem';
-import { useSession } from 'next-auth/react';
 
 export default function CustomerOrders() {
-  const [orderItems, setOrderItems] = useState([
-    // { cartItemId: 1, productId: 1, customCakeId: null, price: 30.0, quantity: 2 },
-    // { cartItemId: 2, productId: 2, customCakeId: null, price: 47.0, quantity: 1 },
-  ]);
+  const [orderItems, setOrderItems] = useState([]);
+  useEffect(() => {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api/customer/orders`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        })
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.orderItems);
+        setOrderItems(data);
+      })
+      .catch((error) => console.error('Error fetching orders:', error));
+  }, []);
 
   return (
     <>
@@ -17,7 +31,7 @@ export default function CustomerOrders() {
         <div className="container">
           <div className="row">
             <div className="col-lg-8">
-              <div className="shopping__cart__table">
+              <div className="shopping_cart_table">
                 <table>
                   <thead>
                     <tr>
@@ -33,9 +47,8 @@ export default function CustomerOrders() {
                         key={item.orderId}
                         orderId={item.orderId}
                         totalPrice={item.totalPrice}
-                        status={item.status}
+                        status={item.status } 
                         orderDate={item.orderDate}
-                        deliveryDate={item.deliveryDate}
                       />
                     ))}
                   </tbody>

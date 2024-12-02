@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ProductCard from '../components/productCard';
 import Breadcrumb from '../components/breadcrumb';
-// imgs:
+// imgs :
 import customize from '../img/shop/customize.png';
 import product1 from '../img/shop/product1.jpg';
 import product2 from '../img/shop/product2.jpg';
@@ -18,53 +18,43 @@ import product9 from '../img/shop/product9.jpg';
 import product10 from '../img/shop/product10.jpg';
 import product11 from '../img/shop/product11.jpg';
 import product12 from '../img/shop/product12.jpg';
-
-
-function Shop() {
-  const[product, setProducts] = useState([]);
-  // const products = [
-  //   { name: 'Dozen Cupcakes', image: product1, category: 'Cupcake', price: 10.0, rating: 5 },
-  //   { name: 'Cookies and Cream', image: product2, category: 'Cupcake', price: 30.0, rating: 4 },
-  //   { name: 'Gluten Free Mini Dozen', image: product3, category: 'Cupcake', price: 31.0, rating: 5 },
-  //   { name: 'Cookie Dough', image: product4, category: 'Cupcake', price: 25.0, rating: 4 },
-  //   { name: 'Vanilla Salted Caramel', image: product5, category: 'Cupcake', price: 5.00, rating: 4 },
-  //   { name: 'German Chocolate', image: product6, category: 'Cupcake', price: 14.00, rating: 5 },
-  //   { name: 'Dulce De Leche', image: product7, category: 'Cupcake', price: 32.00, rating: 5 },
-  //   { name: 'Mississippi Mud', image: product8, category: 'Cupcake', price: 8.00, rating: 3 },
-  //   { name: 'VEGAN/GLUTEN FREE', image: product9, category: 'Cupcake', price: 98.85, rating: 5 },
-  //   { name: 'SWEET CELTICS', image: product10, category: 'Cupcake', price: 5.77, rating: 4 },
-  //   { name: 'SWEET AUTUMN LEAVES', image: product11, category: 'Cupcake', price: 26.41, rating: 4 },
-  //   { name: 'PALE YELLOW SWEET', image: product12, category: 'Cupcake', price: 22.47, rating: 5 },
-  // ];
-  // test json file in frontend\public\data\products.json
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        
-        const res = await fetch('/data/products.json'); 
-        if (!res.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await res.json();
-        if (Array.isArray(data.products)) {
-          const productsData = data.products.map((product) => ({
-            name: product.name,
-            image: product.image, 
-            category: product.category,
-            price: product.price,
-            rating: product.rating,
-          }));
-          setProducts(productsData);
-        }
-      }catch (error) {
-        console.error('Error fetching products:', error.message);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
   
+
+/**
+ * Shop component fetches product data from an API and displays a list of products.
+ * 
+ * The component:
+ * - Fetches an authentication token from cookies and uses it to request product data from the `/api/customer/shop` endpoint.
+ * - Stores the fetched product data in the state and maps over it to render individual `ProductCard` components.
+ * - Displays a search form and sorting options for filtering products.
+ * - Provides a UI to navigate through different categories and customize cakes.
+ * - Includes pagination controls for navigating through product pages.
+ */
+function Shop() {
+  const[products, setProducts] = useState([]);
+
+  useEffect(() => {
+    cookieStore
+    .get('token')
+    .then((cookie) => {
+      console.log(cookie);
+      return fetch(`/api/customer/shop`,{
+        headers:{
+          Authorization: `Bearer ${cookie.value}`
+        },
+
+      })
+    })
+    .then((res) => res.json())
+    .then(data => {
+      console.log(data);
+      setProducts(data)
+    })
+    .catch((error) => {
+      console.error
+    })
+   
+  }, []);
   return (
     <>
       <Breadcrumb title="Shop" />
@@ -139,8 +129,8 @@ function Shop() {
                 </div>
               </Link>
             </div>
-            {product.map((product, index) => (
-              <ProductCard key={index} {...product} />
+            {products.map((products, index) => (
+              <ProductCard key={index} {...products} />
             ))}
           </div>
 
