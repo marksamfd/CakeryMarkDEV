@@ -5,6 +5,7 @@ import StepperIndicatior from '../components/stepperIndicatior';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
 import Breadcrumb from '../components/breadcrumb';
+import { redirect } from 'next/navigation';
 
 function Page() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -21,6 +22,7 @@ function Page() {
   ]);
   const [cakeCurrentLayer, setCakeCurrentLayer] = useState(0);
   const steps = ['Structure', 'Layers', 'Summary'];
+  const [cakeMessage, setcakeMesssage] = useState('');
   const [allSizes, setAllSizes] = useState([]);
   const [allShapes, setAllShapes] = useState([]);
   const [allFlavours, setAllFlavours] = useState([]);
@@ -30,6 +32,7 @@ function Page() {
   const [outerToppings, setOuterToppings] = useState([]);
   const [layersSum, setLayersSum] = useState([]);
   const [rawItemsPricing, setRawItemsPricing] = useState([]);
+  const [customResponse, setCustomResponse] = useState('');
   useEffect(() => {
     cookieStore
       .get('token')
@@ -228,6 +231,7 @@ function Page() {
             <CheckoutInputField
               label="WRITE YOUR CUSTOM MESSAGE"
               required={false}
+              onChange={(e) => setcakeMesssage(e.current.value)}
             />
           </div>
         </div>
@@ -362,6 +366,7 @@ function Page() {
         <div className="container" style={styles.stepContainer}>
           Your Custom Cake is total at $
           {layersSum.reduce((partialSum, a) => partialSum + a, 0)}
+          <div>{customResponse.message}</div>
         </div>
       )}
 
@@ -415,6 +420,33 @@ function Page() {
               // Submit form
               if (currentStep !== steps.length - 1)
                 setCurrentStep(currentStep + 1);
+              else {
+                cookieStore
+                  .get('token')
+                  .then((cookie) => {
+                    return fetch(
+                      `/api/App/User/Customer/Customize_Cake/Create`,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${cookie.value}`,
+                          Accept: 'application/json',
+                          'Content-Type': 'application/json',
+                        },
+                        method: 'post',
+                        body: JSON.stringify({
+                          cakeshape: cakeShape,
+                          cakesize: cakeSize,
+                          caketype: cakeFlavour,
+                          cakeMessage,
+                          layers: [...cakeLayers],
+                        }),
+                      },
+                    );
+                  })
+                  .then((res) => res.json())
+                  .then(setCustomResponse)
+                  .then(() => redirect('/shop'));
+              }
             }}
           >
             {currentStep !== steps.length - 1 ? 'Next' : 'Submit'}

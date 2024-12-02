@@ -1,4 +1,11 @@
-from  app.models import Cart, CartItems, Inventory,CustomizeCake,Customize_Cake_Layers,Rawmaterials
+from app.models import (
+    Cart,
+    CartItems,
+    Inventory,
+    CustomizeCake,
+    Customize_Cake_Layers,
+    Rawmaterials,
+)
 from sqlalchemy.sql import text
 from sqlalchemy.exc import SQLAlchemyError
 from app.models import Voucher, Orders, OrderItems
@@ -7,14 +14,17 @@ from app.models import Voucher, Orders, OrderItems
 from app.db import db
 
 
-''' ===================================== Product Functions ===================================== '''
+""" ===================================== Product Functions ===================================== """
+
 
 # ------------ Get All Products ( shop page ) ------------
 def get_all_products():
-    try: 
+    try:
         # all products from the Inventory table
         products = Inventory.query.all()
-        return [product.as_dict() for product in products] # return a list of dictionaries, each is data of a product
+        return [
+            product.as_dict() for product in products
+        ]  # return a list of dictionaries, each is data of a product
 
     except Exception as e:
         print("all products error")
@@ -24,17 +34,20 @@ def get_all_products():
 
 # ------------ Get Product Details ( click on product ) ------------
 def get_product_details(product_id):
-    try: 
+    try:
         # get all details of a product based on product_id
-        product = Inventory.query.get(product_id)   # Use mappings() and first()
-        return product.as_dict() if product else None  
+        product = Inventory.query.get(product_id)  # Use mappings() and first()
+        return product.as_dict() if product else None
     except Exception as e:
         print("product details error")
         print(f"Error: {e}")
         return None
-''' ------------------------------------------------------------------------------------------ '''
 
-''' ===================================== Cart Functions ===================================== '''
+
+""" ------------------------------------------------------------------------------------------ """
+
+""" ===================================== Cart Functions ===================================== """
+
 
 #  ------------ Get Cart Items ------------
 def get_cart_items(customeremail):
@@ -44,13 +57,12 @@ def get_cart_items(customeremail):
     return [item.as_dict() for item in cart.cart_items]
 
 
-
 # ------------------------------- Add to Cart ------------------------------
 def add_to_cart(customeremail, product_id, quantity):
-    '''
-    Add a product to the cart and if the product already exists in the cart, 
+    """
+    Add a product to the cart and if the product already exists in the cart,
     increments the quantity, If not it will add ot as new item to the cart.
-    '''
+    """
     # customer cart
     cart = Cart.query.filter_by(customeremail=customeremail).first()
     if not cart:
@@ -67,13 +79,20 @@ def add_to_cart(customeremail, product_id, quantity):
 
     # Check if the product is already in the cart
     try:
-        cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+        cart_item = CartItems.query.filter_by(
+            cartid=cart.cartid, productid=product_id
+        ).first()
         if cart_item:
             # increment quantity if it's already in the cart
             cart_item.quantity += quantity
         else:
             # new item
-            cart_item = CartItems(cartid=cart.cartid, productid=product_id, quantity=quantity, price=product.price)
+            cart_item = CartItems(
+                cartid=cart.cartid,
+                productid=product_id,
+                quantity=quantity,
+                price=product.price,
+            )
             db.session.add(cart_item)
 
         # save to DB
@@ -85,21 +104,19 @@ def add_to_cart(customeremail, product_id, quantity):
         return {"error": "Error adding product to cart"}
 
 
-
-
 # -------------------------------------- Remove from Cart --------------------------------------
 def remove_from_cart(customeremail, product_id):
+    """Removes a product completely from  cart"""
 
-    ''' Removes a product completely from  cart '''
-
-
-    # cart retrival 
+    # cart retrival
     cart = Cart.query.filter_by(customeremail=customeremail).first()
     if not cart:
         return {"error": f"Cart not found for {customeremail}"}
 
-    try: # check if it's in inventory
-        cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+    try:  # check if it's in inventory
+        cart_item = CartItems.query.filter_by(
+            cartid=cart.cartid, productid=product_id
+        ).first()
         if not cart_item:
             return {"error": f"Product with ID {product_id} not found in cart"}
 
@@ -113,7 +130,9 @@ def remove_from_cart(customeremail, product_id):
         return {"error": "Error removing product from cart"}
 
 
-''' ===================================== Customize Cake Functions ===================================== '''
+""" ===================================== Customize Cake Functions ===================================== """
+
+
 # -------------------------------------- Add the customized cake data to the database --------------------------------------
 def create_customized_cake(email, data):
     cake_shape = data.get("cakeshape")
@@ -130,7 +149,7 @@ def create_customized_cake(email, data):
         cakeshape=cake_shape,
         cakesize=cake_size,
         cakeflavor=cake_flavor,
-        message=message
+        message=message,
     )
     db.session.add(new_customized_cake)
     db.session.commit()  # Commit to generate ID
@@ -148,16 +167,21 @@ def create_customized_cake(email, data):
             innerfillings=inner_fillings,
             innertoppings=inner_toppings,
             outercoating=outer_coating,
-            outertoppings=outer_toppings
+            outertoppings=outer_toppings,
         )
         db.session.add(new_layer)
 
     # Final commit
     db.session.commit()
 
-    return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}
+    return {
+        "message": "Cake customization created successfully!",
+        "customizecakeid": new_customized_cake.customizecakeid,
+    }
+
 
 # -------------------------------------- Send all the raw materials data --------------------------------------
+
 
 def get_raw_materials():
     """
@@ -173,7 +197,9 @@ def get_raw_materials():
     return serialized_data
 
 
-'''=================================== Checkout Service ==================================='''
+"""=================================== Checkout Service ==================================="""
+
+
 def process_checkout(customer_email, voucher_code=None):
     # cart of customer making his order
     cart = Cart.query.filter_by(customeremail=customer_email).first()
@@ -196,7 +222,7 @@ def process_checkout(customer_email, voucher_code=None):
         new_order = Orders(
             customeremail=customer_email,
             totalprice=total_price,
-            status="preparing", 
+            status="preparing",
         )
         db.session.add(new_order)
         db.session.flush()  # Allows us to retrieve the order ID immediately
@@ -208,21 +234,28 @@ def process_checkout(customer_email, voucher_code=None):
                 productid=item.productid,
                 customcakeid=item.customcakeid,
                 quantity=item.quantity,
-                priceatorder=item.price
+                priceatorder=item.price,
             )
             db.session.add(order_item)
         # Clear the cart after successful order creation
-        db.session.delete(cart)  # Delete the entire cart (or you can clear the cart items separately)
+        db.session.delete(
+            cart
+        )  # Delete the entire cart (or you can clear the cart items separately)
         # Commit all changes
         db.session.commit()
-        return {"message": "Checkout successful", "order_id": new_order.orderid, "total_price": total_price}
+        return {
+            "message": "Checkout successful",
+            "order_id": new_order.orderid,
+            "total_price": total_price,
+        }
     except SQLAlchemyError as e:
         db.session.rollback()
         return {"error": f"Database error during checkout: {e}"}
 
 
+"""=================================== My Orders Service ==================================="""
 
-'''=================================== My Orders Service ==================================='''
+
 def get_customer_orders(customer_email):
     # Retrieve all orders for the customer
     orders = Orders.query.filter_by(customeremail=customer_email).all()
@@ -240,17 +273,20 @@ def get_customer_orders(customer_email):
                 {
                     "productID": item.productid,
                     "quantity": item.quantity,
-                    "priceAtOrder": float(item.priceatorder) if item.priceatorder else 0
+                    "priceAtOrder": (
+                        float(item.priceatorder) if item.priceatorder else 0
+                    ),
                 }
                 for item in order.order_items
-            ]
+            ],
         }
         for order in orders
     ]
 
 
+""" ===================================== Customize Cake Functions ===================================== """
 
-''' ===================================== Customize Cake Functions ===================================== '''
+
 # -------------------------------------- Add the customized cake data to the database --------------------------------------
 def create_customized_cake(email, data):
     cake_shape = data.get("cakeshape")
@@ -267,17 +303,17 @@ def create_customized_cake(email, data):
         cakeshape=cake_shape,
         cakesize=cake_size,
         cakeflavor=cake_flavor,
-        message=message
+        message=message,
     )
     db.session.add(new_customized_cake)
     db.session.commit()  # Commit to generate ID
 
     # Add layers
     for i, layer in enumerate(layers):
-        inner_fillings = layer.get("innerfillings", "")
-        inner_toppings = layer.get("innertoppings", "")
-        outer_coating = layer.get("outercoating", "")
-        outer_toppings = layer.get("outertoppings", "")
+        inner_fillings = layer.get("innerFillings", "")
+        inner_toppings = layer.get("innerToppings", "")
+        outer_coating = layer.get("outerCoating", "")
+        outer_toppings = layer.get("outerToppings", "")
 
         new_layer = Customize_Cake_Layers(
             customizecakeid=new_customized_cake.customizecakeid,
@@ -285,16 +321,21 @@ def create_customized_cake(email, data):
             innerfillings=inner_fillings,
             innertoppings=inner_toppings,
             outercoating=outer_coating,
-            outertoppings=outer_toppings
+            outertoppings=outer_toppings,
         )
         db.session.add(new_layer)
 
     # Final commit
     db.session.commit()
 
-    return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}
+    return {
+        "message": "Cake customization created successfully!",
+        "customizecakeid": new_customized_cake.customizecakeid,
+    }
+
 
 # -------------------------------------- Send all the raw materials data --------------------------------------
+
 
 def get_raw_materials():
     """

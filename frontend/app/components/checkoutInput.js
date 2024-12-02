@@ -13,6 +13,7 @@ const CheckoutInputField = React.forwardRef((props, ref) => {
         name={`${props?.name}`}
         type={inputType}
         ref={ref}
+        {...props}
       />
     </div>
   );
