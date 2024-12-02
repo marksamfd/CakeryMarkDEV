@@ -4,22 +4,22 @@ An online bakery platform where customers can browse, customize, and order cakes
 ## Features  
 - **Customer Features:**  
   - View available products and customize cakes.  
-  - Add products to cart and place orders.  
-  - View order history, track order status, and leave reviews.  
+  - Add products to the cart and place orders.  
+  - View order history and track order status.  
 
 - **Admin Features:**  
   - Manage customer and staff data.  
   - Access analytics and view reports on platform performance.  
 
+- **Baker Features:**
+  - View the assigned orders and update order status.
 - **Delivery Features:**  
   - View assigned orders and update order status.  
 
 ## Technologies Used  
-List the technologies, frameworks, and libraries used in the project. Example:  
-- **Frontend:** HTML, CSS, JavaScript  
+- **Frontend:** Next.js
 - **Backend:** Flask, Python  
 - **Database:** PostgreSQL  
-- **APIs and Libraries:** Gemini API  
 
 ## Setup and Installation  
 
@@ -35,17 +35,17 @@ List the technologies, frameworks, and libraries used in the project. Example:
 
 3. Install dependencies for the backend:  
    ```bash  
-   pip install -r requirements.txt  
+   pip install -r requirements.txt
    ```  
 
 4. Start the backend server:  
    ```bash  
-   flask run  
+   python run.py 
    ```  
    The backend will run on `http://127.0.0.1:5000`.  
 
 5. Set up and start the frontend server:  
-   - Navigate to the frontend directory (if applicable):  
+   - Navigate to the frontend directory:  
      ```bash  
      cd frontend  
      ```  
@@ -55,7 +55,7 @@ List the technologies, frameworks, and libraries used in the project. Example:
      ```  
    - Start the frontend development server:  
      ```bash  
-     
+     npm run dev
      ```  
      The frontend server will run on `http://localhost:3000`.  
 
