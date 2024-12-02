@@ -51,10 +51,23 @@ def get_product_details(product_id):
 
 #  ------------ Get Cart Items ------------
 def get_cart_items(customeremail):
+    # Fetch the cart for the given customer email
     cart = Cart.query.filter_by(customeremail=customeremail).first()
     if not cart:
         return {"error": "Cart not found"}
-    return [item.as_dict() for item in cart.cart_items]
+
+    # Fetch all cart items with the associated product name
+    cart_items = []
+    for item in cart.cart_items:
+        # Get the product details
+        product = Inventory.query.filter_by(productid=item.productid).first()
+        
+        # Convert the item to a dictionary and include the product name
+        item_dict = item.as_dict()
+        item_dict["productname"] = product.name if product else None
+        cart_items.append(item_dict)
+
+    return cart_items
 
 
 # ------------------------------- Add to Cart ------------------------------
@@ -272,13 +285,12 @@ def get_customer_orders(customer_email):
             "items": [
                 {
                     "productID": item.productid,
+                    "productName": Inventory.query.filter_by(productid=item.productid).first().name if item.productid else None,  # Get product name
                     "quantity": item.quantity,
-                    "priceAtOrder": (
-                        float(item.priceatorder) if item.priceatorder else 0
-                    ),
+                    "priceAtOrder": float(item.priceatorder) if item.priceatorder else 0
                 }
                 for item in order.order_items
-            ],
+            ]
         }
         for order in orders
     ]
