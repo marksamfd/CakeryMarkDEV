@@ -27,22 +27,27 @@ def get_order_details(order_id):
     if not order:
         return None
 
-    return {
+    order_details = {
         "orderID": order.orderid,
         "orderDate": order.orderdate.isoformat() if order.orderdate else None,
         "customer": {
             "name": f"{order.customer.firstname} {order.customer.lastname}",
-            "phone": order.customer.phonenum,
+            "phone": order.customer.phonenum, # chef can call the customer for special instructions
         },
-        "items": [
-            {
-                "productID": item.productid,
-                "quantity": item.quantity,
-            }
-            for item in order.order_items
-        ],
+        "items": []
     }
 
+    for item in order.order_items:
+        # Fetch product details from the Inventory table
+        product = Inventory.query.get(item.productid)
+        order_details["items"].append({
+            "productID": item.productid, # can search in a physical manual 
+            "productName": product.name if product else "Unknown Product",
+            "productDescription": product.description if product else "No description available",
+            "quantity": item.quantity,
+        })
+
+    return order_details
 
 '''=================================== Baker | View order ===================================='''
 # --------------------------------  assign delivery man function --------------------------------
