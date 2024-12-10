@@ -1,5 +1,5 @@
-from app.db import db
 from app.models import Inventory
+from app.db import db
 
 class CustomerRepository:
     def get_all_products(self):
