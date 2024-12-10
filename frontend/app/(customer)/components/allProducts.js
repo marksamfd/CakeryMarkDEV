@@ -10,10 +10,14 @@ function AllProducts(props) {
   return (
     <ol className="checkout__total__products">
       {props.items?.length > 0
-        ? props.items.map((item) => {
+        ? props.items.map((item, i) => {
             return (
-              <li>
-                {item.name} <span>$ {item.price}</span>
+              <li key={`product-${i}`}>
+                {item.productname}{' '}
+                <span className="blockquote-footer">
+                  $ {item.price} X {item.quantity}
+                </span>
+                <span>$ {item.price * 1 * item.quantity}</span>
               </li>
             );
           })

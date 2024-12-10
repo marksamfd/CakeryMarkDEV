@@ -2,7 +2,7 @@ import React from 'react';
 
 const CheckoutInputField = React.forwardRef((props, ref) => {
   const inputType = props.type || `text`;
-  const requiredField = props.requiredField || true;
+  const requiredField = props.requiredfield;
   return (
     <div className="checkout__input">
       <p>

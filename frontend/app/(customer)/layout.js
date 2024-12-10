@@ -1,13 +1,13 @@
-import './styles/barfiller.css';
-import './styles/bootstrap.min.css';
-import './styles/elegant-icons.css';
-import './styles/flaticon.css';
-import './styles/font-awesome.min.css';
-import './styles/magnific-popup.css';
-import './styles/nice-select.css';
+import '../styles/barfiller.css';
+import '../styles/bootstrap.min.css';
+import '../styles/elegant-icons.css';
+import '../styles/flaticon.css';
+import '../styles/font-awesome.min.css';
+import '../styles/magnific-popup.css';
+import '../styles/nice-select.css';
 // import "./styles/owl.carousel.min.css";
-import './styles/slicknav.min.css';
-import './styles/style.css';
+import '../styles/slicknav.min.css';
+import '../styles/style.css';
 import { cookies } from 'next/headers';
 
 import HeaderNav from './components/header';
@@ -30,7 +30,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={``}>
-        <HeaderNav itemsInCart={0} token={cookie.value} />
+        <HeaderNav itemsInCart={0} token={cookie?.value} />
         {children}
         <FooterNav />
       </body>

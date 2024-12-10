@@ -172,3 +172,6 @@ app/routes/__pycache__/baker_routes.cpython-312.pyc
 app/routes/__pycache__/customer_routes.cpython-312.pyc
 app/services/__pycache__/baker_service.cpython-312.pyc
 app/services/__pycache__/customer_service.cpython-312.pyc
+*.xml
+*.pyc
+*.pyc

@@ -1,5 +1,4 @@
-import React from 'react';
-
+'use client';
 /**
  * A basic button component.
  *

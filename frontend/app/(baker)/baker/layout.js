@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import BakerHeader from '../../components/bakerHeader';
+import BakerHeader from '../../(customer)/components/bakerHeader';
 import '../../styles/barfiller.css';
 import '../../styles/bootstrap.min.css';
 import '../../styles/elegant-icons.css';

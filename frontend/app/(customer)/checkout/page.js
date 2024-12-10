@@ -16,8 +16,8 @@ export default function checkout() {
           <form action="#">
             <div className="row">
               <div className="col-lg-8 col-md-6">
-                <h6 className="checkout__title">Billing Details</h6>
-                <div className="row">
+                <h6 className="checkout__title">Checkout</h6>
+                {/* <div className="row">
                   <div className="col-lg-6">
                     <CheckoutInputField label={'Card Number'} />
                   </div>
@@ -34,7 +34,7 @@ export default function checkout() {
                     />
                   </div>
                 </div>
-                <CheckoutInputField label={'CVV'} />
+                <CheckoutInputField label={'CVV'} /> */}
               </div>
               <CheckoutSummary />
             </div>
