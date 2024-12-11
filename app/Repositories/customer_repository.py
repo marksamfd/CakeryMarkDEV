@@ -1,4 +1,4 @@
-from app.models import Inventory, Cart, CartItems
+from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers
 from app.db import db
 
 
@@ -84,3 +84,54 @@ class CustomerRepository:
         except Exception as e:
             db.session.rollback()
             return {"error": "error occurred while removing the item from the cart", "error_details": str(e)}
+#
+    def get_raw_materials(self):
+        raw_materials = Rawmaterials.query.all()
+
+        # Serialize raw materials into dictionaries
+        serialized_data = [material.as_dict() for material in raw_materials]
+
+        return serialized_data
+
+    def create_custom_cake(self,customer_email, data):
+        cake_shape = data.get("cakeshape")
+        cake_size = data.get("cakesize")
+        cake_type = data.get("caketype")
+        cake_flavor = cake_type  # Assuming type is flavor
+        message = data.get("message", "")
+        layers = data.get("layers", [])
+        num_layers = len(layers)
+
+        # Create the parent CustomizeCake record
+        new_customized_cake = CustomizeCake(
+            numlayers=num_layers,
+            customeremail=customer_email,
+            cakeshape=cake_shape,
+            cakesize=cake_size,
+            cakeflavor=cake_flavor,
+            message=message
+        )
+        db.session.add(new_customized_cake)
+        db.session.commit()  # Commit to generate ID
+
+        # Add layers
+        for i, layer in enumerate(layers):
+            inner_fillings = layer.get("innerFillings", "")
+            inner_toppings = layer.get("innerToppings", "")
+            outer_coating = layer.get("outerCoating", "")
+            outer_toppings = layer.get("outerToppings", "")
+
+            new_layer = Customize_Cake_Layers(
+                customizecakeid=new_customized_cake.customizecakeid,
+                layer=i + 1,
+                innerfillings=inner_fillings,
+                innertoppings=inner_toppings,
+                outercoating=outer_coating,
+                outertoppings=outer_toppings
+            )
+            db.session.add(new_layer)
+
+        # Final commit
+        db.session.commit()
+
+        return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}
