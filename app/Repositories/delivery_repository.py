@@ -33,7 +33,7 @@ class DeliveryRepository:
             order = Orders.query.get(order_id)
             if not order:
                 return {"error": "Order not found"}
-
+            
             assignment = DeliveryAssignments(orderid=order_id,deliveryemail=delivery_email)
             db.session.add(assignment)
             db.session.commit()
@@ -41,3 +41,4 @@ class DeliveryRepository:
         except SQLAlchemyError as e:
             db.session.rollback()
             return {"error": f" (repo) error assigning delivery user: {e}"}
+    # -------------------------------------------------------------------------------

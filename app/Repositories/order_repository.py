@@ -1,12 +1,11 @@
-from app.models import Orders, OrderItems, Inventory, Voucher
+from app.models import Orders, OrderItems, Inventory, Voucher, Cart
 from app.db import db
 from sqlalchemy.exc import SQLAlchemyError
 
 
 class OrderRepository:
-
     '''============================ create order ==============================='''
-    def create_order(self, customer_email, cart_items, voucher_code=None):
+    def create_order(self, customer_email, cart_items, voucher_code):
         try:
             discount = 0
             # calculate discount if applicable
@@ -15,61 +14,81 @@ class OrderRepository:
                 if not voucher:
                     return {"error": "(repo) Invalid voucher code"}
                 discount = voucher.discountpercentage / 100
-            total_price = sum(item["quantity"] * item["price"] for item in cart_items) * (1-discount) # total price
+            
+            B_price = sum(item["quantity"] * item["price"] for item in cart_items) # price before discount
+            total_price = B_price * (1 - discount)  # total price
 
             # ----  new order ----
             new_order = Orders(customeremail=customer_email, totalprice=total_price, status="preparing")
             db.session.add(new_order)
-            db.session.flush()  # get the order ID
+            db.session.flush()
 
-            # ------ cart items to the order ----- 
+            # ------- cart items to order items -------
+            order_items = []
             for item in cart_items:
                 order_item = OrderItems(
                     orderid=new_order.orderid,
                     productid=item["productid"],
-                    customcakeid=item.get("customcakeid"),  
                     quantity=item["quantity"],
                     priceatorder=item["price"],
                 )
                 db.session.add(order_item)
+                order_items.append(order_item)  # add order item to order_items list
+            # ---------------- empty the cart ----------------
+            cart = Cart.query.filter_by(customeremail=customer_email).first()
+            if cart:
+                for cart_item in cart.cart_items:
+                    db.session.delete(cart_item)
+
 
             db.session.commit()
-            return {"Order created successfully"}
 
+            return {
+                "message": f"Order created successfully, voucher: {voucher_code}, price before discount: {B_price}, discount: {discount}, total price: {total_price}",
+                "order_id": new_order.orderid,
+                "total_price": total_price,
+                "items": [{"productid": i.productid, "quantity": i.quantity} for i in order_items],
+            }
         except Exception as e:
-            db.session.rollback() 
-            return {"error": f"(repo) failed to create order: {e}"}
-        
+            db.session.rollback()
+            return {"error": f"(repo) error during order creation: {e}"}
+
+            
     # -------------------------------------------------------------------------------
 
     '''============================ get orders by customer ==============================='''
-        
-    def get_orders_by_customer(self,customer_email):
+    ''' first we will take email, get all orders ids, then get all order items by order ids one by one '''
+   
+    '''--------------------Get Order IDs by Customer ------------------'''
+    def get_order_ids_by_customer(self, customer_email): # this function will return a list of order ids
+        orders = Orders.query.filter_by(customeremail=customer_email).all()
+        if not orders:
+            return []
+            # list of ids
+        return [order.orderid for order in orders]
+   
+
+    #--------------------------- function to get orders by customer email ---------------------------
+    def get_orders_by_customer(self, customer_email):
         try:
-            orders = Orders.query.filter_by(customeremail=customer_email).all() # customer orders
-            return [
-                {
-                    "orderID": order.orderid,
-                    "orderDate": order.orderdate.isoformat(),
-                    "status": order.status,
-                    "totalPrice": float(order.totalprice),
-                    "items": [
-                        {
-                            "productID": item.productid,
-                            "productName": Inventory.query.get(item.productid).name,
-                            "quantity": item.quantity,
-                            "priceAtOrder": float(item.priceatorder),
-                        }
-                        for item in order.order_items # go to order_items table to get the items of current order
-                    ],
-                }
-                for order in orders # loop on orders
-            ]
-        except SQLAlchemyError as e:
-            return {"error": f" (repo) can't get orders by customer {e}"}
+            # Get a list of order IDs for the customer
+            order_ids = self.get_order_ids_by_customer(customer_email)
+            if not order_ids:
+                return {"message": "No orders found"}
+            # Use `get_order_by_id` to get details for each order
+            orders = [self.get_order_by_id(order_id) for order_id in order_ids]
+            # Filter out any None values (in case an order ID doesn't exist)
+            orders = [order for order in orders if order is not None]
+            
+            return orders
+        except Exception as e:
+            print(f"(repo) error fetching orders by customer: {e}")
+            return {"error": "An error occurred while fetching orders"}
+
+
     # -------------------------------------------------------------------------------
         
-    '''============================ get order by id ==============================='''
+    '''============================ get order details by id ==============================='''
     def get_order_by_id(self, order_id):
         try:
             order = Orders.query.get(order_id)
@@ -127,7 +146,6 @@ class OrderRepository:
             return {"error": f"(repo) can't get orders by status: {e}"}
         
     # -------------------------------------------------------------------------------
-
     '''============================ get all orders ==============================='''
     def get_all_orders(self):
         try:

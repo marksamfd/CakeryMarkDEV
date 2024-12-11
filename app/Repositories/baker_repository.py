@@ -24,7 +24,7 @@ class BakerRepository:
     # -------------------------------------------------------------------------------    
     
     ''' ============================ get order details =============================== '''
-    def get_order_details(self, order_id):
+    def get_order_details(self,order_id):
         try:
             order = Orders.query.get(order_id)
             if not order:
@@ -46,9 +46,11 @@ class BakerRepository:
             }
             return order_details
         except SQLAlchemyError as e:
-            return {"error": f" (repo) can't get order details: {e}"}
+            return {"error": f"(repo) can't get order details: {e}"}
 
-    def update_order_status(self, order_id, status):
+    # -------------------------------------------------------------------------------
+    ''' ============================ update order status =============================== '''
+    def update_order_status(self, order_id,status):
         try:
             order = Orders.query.get(order_id)
             if not order:
