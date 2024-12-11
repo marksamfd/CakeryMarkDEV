@@ -74,31 +74,30 @@ def remove_from_cart(customer_email):
 # ----------------------------------------------------------------------------------
 
 
-# '''=================================== Customize Cake ===================================='''
-# @customer_controller.route("/App/User/Customer/Customize_Cake", methods=["GET"])
-# def view_raw_materials():
-#     """
-#     View raw materials available for cake customization
-#     """
-#     raw_materials = customer_service.view_raw_materials()
-#     return jsonify(raw_materials), 200
+'''=================================== Customize Cake ===================================='''
+@customer_controller.route("/App/User/Customer/Customize_Cake", methods=["GET"])
+def view_raw_materials():
+     """
+     View raw materials available for cake customization
+     """
+     raw_materials = customer_service.view_raw_materials()
+     return jsonify(raw_materials), 200
 # # ----------------------------------------------------------------------------------
 
 # '''=================================== Create Custom Cake ===================================='''
-# @customer_controller.route("/App/User/Customer/Customize_Cake/Create", methods=["POST"]) # (Customize Cake Page)
-# def create_custom_cake():
-#     """
-#     Create a customized cake and add it to the cart.
-#     """
-#     try:
-#         data = request.get_json()
-#         customer_email = request.headers.get("customer_email")  # testing
-
-#         response = customer_service.create_custom_cake(customer_email, data)
-#         return jsonify(response), 200
-#     except Exception as e:
-#         return jsonify({"error": f"Error creating custom cake: {e}"}), 400
-# # ----------------------------------------------------------------------------------
+@customer_controller.route("/App/User/Customer/Customize_Cake/Create/<customer_email>", methods=["POST"]) # (Customize Cake Page)
+def create_custom_cake(customer_email):
+     """
+     Create a customized cake and add it to the cart.
+     """
+     try:
+         data = request.get_json()
+         #customer_email = request.headers.get("customer_email")  # testing
+         response = customer_service.create_custom_cake(customer_email, data)
+         return jsonify(response), 200
+     except Exception as e:
+         return jsonify({"error": f"Error creating custom cake: {e}"}), 400
+# ----------------------------------------------------------------------------------
 
 '''=================================== Checkout ===================================='''  # - issue (voucher code)
 @customer_controller.route("/customer/checkout/<customer_email>", methods=["POST"])
