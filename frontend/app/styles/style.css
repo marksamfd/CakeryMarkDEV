@@ -1208,7 +1208,7 @@ ol {
 }
 
 .product__item__text .cart_add a {
-  color: #111111;
+  color: white;
   font-size: 16px;
   font-weight: 600;
   display: inline-block;
@@ -4478,4 +4478,93 @@ ol {
   border-color: rebeccapurple !important;
   border-width: 10px;
   border-style: double;
+}
+/* Styling the cart table */
+.shopping__cart__table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.shopping__cart__table th,
+.shopping__cart__table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.shopping__cart__table th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+
+.cart-item-row:hover {
+  background-color: #f2f2f2;
+}
+
+.cart-item__image {
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.cart-item__name-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.remove-btn {
+  background-color: #F2F2F2;
+  border: none;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.shopping-cart.spad {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.cart__total a:hover {
+  background-color: #f08632;
+}
+
+/* Styling the orders table */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px; /* Space between the table and other content */
+}
+
+.order-table th,
+.order-table td {
+  padding: 10px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+  background-color: #f8f8f8;
+}
+
+.order-table tr:hover {
+  background-color: #f2f2f2;
+}
+
+.shopping_cart_table {
+  margin-top: 30px;
+}
+
+.shopping-cart.spad {
+  padding-top: 50px; 
+  padding-bottom: 50px; 
 }
