@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:aabb1122@localhost:5432/Cakery"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:ahmed123@localhost:5432/test_for_ahmed_1"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = "1234"
     app.config['JWT_SECRET_KEY'] = "1234"
