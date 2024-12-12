@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import Breadcrumb from '../components/breadcrumb';
 import OrderItem from '../components/orderItem';
 
@@ -13,7 +12,6 @@ import OrderItem from '../components/orderItem';
  */
 export default function CustomerOrders() {
   const [orderItems, setOrderItems] = useState([]);
-
   useEffect(() => {
     cookieStore
       .get('token')
@@ -31,7 +29,7 @@ export default function CustomerOrders() {
       })
       .catch((error) => console.error('Error fetching orders:', error));
   }, []);
-
+  console.log(orderItems);
   return (
     <>
       <Breadcrumb title="My Orders" />
@@ -49,7 +47,8 @@ export default function CustomerOrders() {
                     </tr>
                   </thead>
                   <tbody>
-                    {orderItems.map((item) => (
+                    {console.log(orderItems)}
+                    {orderItems?.map((item) => (
                       <OrderItem
                         key={item.orderID}
                         productName={item.items[0].productName}

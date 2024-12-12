@@ -13,6 +13,7 @@ export const authConfig = {
       const isUserPage =
         nextUrl.pathname.startsWith('/customerOrders') ||
         nextUrl.pathname.startsWith('/customizeCake') ||
+        nextUrl.pathname.startsWith('/shop') ||
         nextUrl.pathname.startsWith('/cart');
       const isBakerPage = nextUrl.pathname.startsWith('/baker');
 

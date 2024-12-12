@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Displays an ordered list of all items in the cart.
  * @param {object} props

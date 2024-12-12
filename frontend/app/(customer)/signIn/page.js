@@ -1,5 +1,4 @@
 'use client';
-import '../styles/style.css';
 import Image from 'next/image';
 import googleIcon from '@/img/icon/googleIcon.svg';
 import Button from '../components/button';

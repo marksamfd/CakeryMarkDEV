@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import product3 from '../img/shop/product3.jpg';
+import product3 from '../../img/shop/product3.jpg';
 import Link from 'next/link';
 
 export const addBtnStyle = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import hero1 from '../../img/hero/hero-1.jpg';
+import hero1 from '../../../img/hero/hero-1.jpg';
 
 /**
  * The HeroSection component is a section of the homepage that displays
