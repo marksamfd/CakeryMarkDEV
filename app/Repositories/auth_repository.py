@@ -15,13 +15,14 @@ ph = PasswordHasher()
 
 
 class AuthRepository:
-    ''' ============================ add users data to the database =============================== '''
-
+    ''' ============================ Hashing password during sign up =============================== '''
 
     def hash_password(self,password):
         return ph.hash(password)
+    # -------------------------------------------------------------------------------    
 
-# Verify the password during sign-in
+    ''' ============================ Verify the password during sign-in =============================== '''
+
     def verify_password(self,stored_password, provided_password):
         try:
         # Argon2 will automatically verify the password hash
@@ -29,7 +30,9 @@ class AuthRepository:
             return True
         except Exception:
             return False
+    # -------------------------------------------------------------------------------    
 
+    ''' ============================ Adding new customer =============================== '''
 
     def add_user(self, customer_email, data):
         # Extract required fields
@@ -77,6 +80,9 @@ class AuthRepository:
             db.session.rollback()
             return {"message": "An error occurred while signing up", "error": str(e), "status": "error"}, 500
 
+    # -------------------------------------------------------------------------------    
+
+    ''' ============================ User sign in =============================== '''
 
     def user_sign_in(self,customer_email,data):
         
@@ -158,5 +164,6 @@ class AuthRepository:
                 "status": "error"
             }, 500
 
+    # -------------------------------------------------------------------------------    
 
         
