@@ -1,28 +1,27 @@
 'use client';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProductCard from '../components/productCard';
 import Breadcrumb from '../components/breadcrumb';
 // imgs :
-import customize from '../img/shop/customize.png';
-import product1 from '../img/shop/product1.jpg';
-import product2 from '../img/shop/product2.jpg';
-import product3 from '../img/shop/product3.jpg';
-import product4 from '../img/shop/product4.jpg';
-import product5 from '../img/shop/product5.jpg';
-import product6 from '../img/shop/product6.jpg';
-import product7 from '../img/shop/product7.jpg';
-import product8 from '../img/shop/product8.jpg';
-import product9 from '../img/shop/product9.jpg';
-import product10 from '../img/shop/product10.jpg';
-import product11 from '../img/shop/product11.jpg';
-import product12 from '../img/shop/product12.jpg';
-  
+import customize from '../../img/shop/customize.png';
+import product1 from '../../img/shop/product1.jpg';
+import product2 from '../../img/shop/product2.jpg';
+import product3 from '../../img/shop/product3.jpg';
+import product4 from '../../img/shop/product4.jpg';
+import product5 from '../../img/shop/product5.jpg';
+import product6 from '../../img/shop/product6.jpg';
+import product7 from '../../img/shop/product7.jpg';
+import product8 from '../../img/shop/product8.jpg';
+import product9 from '../../img/shop/product9.jpg';
+import product10 from '../../img/shop/product10.jpg';
+import product11 from '../../img/shop/product11.jpg';
+import product12 from '../../img/shop/product12.jpg';
 
 /**
  * Shop component fetches product data from an API and displays a list of products.
- * 
+ *
  * The component:
  * - Fetches an authentication token from cookies and uses it to request product data from the `/api/customer/shop` endpoint.
  * - Stores the fetched product data in the state and maps over it to render individual `ProductCard` components.
@@ -31,29 +30,25 @@ import product12 from '../img/shop/product12.jpg';
  * - Includes pagination controls for navigating through product pages.
  */
 function Shop() {
-  const[products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     cookieStore
-    .get('token')
-    .then((cookie) => {
-      console.log(cookie);
-      return fetch(`/api/customer/shop`,{
-        headers:{
-          Authorization: `Bearer ${cookie.value}`
-        },
-
+      .get('token')
+      .then((cookie) => {
+        console.log(cookie);
+        return fetch(`/api/customer/shop`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        });
       })
-    })
-    .then((res) => res.json())
-    .then(data => {
-      console.log(data);
-      setProducts(data)
-    })
-    .catch((error) => {
-      console.error
-    })
-   
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setProducts(data);
+      })
+      .catch(console.error);
   }, []);
   return (
     <>
@@ -104,7 +99,7 @@ function Shop() {
                     className="product__item__pic set-bg"
                     style={{
                       backgroundImage: `url(${customize.src})`,
-                      height: '250px', 
+                      height: '250px',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                     }}
@@ -122,7 +117,8 @@ function Shop() {
                         textAlign: 'center',
                       }}
                     >
-                      Customize Your<br />
+                      Customize Your
+                      <br />
                       Cake!
                     </h6>
                   </div>

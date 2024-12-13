@@ -1,8 +1,8 @@
 import React from 'react';
-import baker1 from '../../img/team/team-1.jpg';
-import baker2 from '../../img/team/team-2.jpg';
-import baker3 from '../../img/team/team-3.jpg';
-import baker4 from '../../img/team/team-4.jpg';
+import baker1 from '../../../img/team/team-1.jpg';
+import baker2 from '../../../img/team/team-2.jpg';
+import baker3 from '../../../img/team/team-3.jpg';
+import baker4 from '../../../img/team/team-4.jpg';
 import TeamMember from '../teamMember';
 
 /**

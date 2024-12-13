@@ -1,5 +1,4 @@
 'use client';
-import '../styles/style.css';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import styles from './page.module.css';
+import styles from '../page.module.css';
 import HeroSection from './components/homePage/heroSection';
 import AboutSection from './components/homePage/aboutSection';
 import CategoriesSection from './components/homePage/categoriesSection';

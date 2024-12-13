@@ -1,7 +1,7 @@
 // import React from 'react';
 import Image from 'next/image';
-import ta1 from '../../img/testimonial/ta-1.jpg';
-import ta2 from '../../img/testimonial/ta-2.jpg';
+import ta1 from '../../../img/testimonial/ta-1.jpg';
+import ta2 from '../../../img/testimonial/ta-2.jpg';
 import { Carousel, CarouselItem, Row } from 'react-bootstrap';
 import Testimonial from '../testimonial';
 

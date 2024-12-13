@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import cart1 from '../img/shop/cart/cart1.jpg';
+import cart1 from '../../img/shop/cart/cart1.jpg';
 
 /**
  * A component that displays a single row in the cart table, including the product name,
