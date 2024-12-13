@@ -7,19 +7,19 @@ auth_service = AuthService()
 
 '''=================================== Customer | SignUp ====================================''' 
 
-@auth_controller.route("/App/User/SignUp/<customer_email>", methods=["POST"]) 
-def signup(customer_email):
+@auth_controller.route("/App/User/SignUp", methods=["POST"]) 
+def signup():
     data = request.get_json()
-    response, status_code = auth_service.add_new_user(customer_email, data)
+    response, status_code = auth_service.add_new_user(data)
     return jsonify(response), status_code
 
 # -------------------------------------------------------------------------------
 
 '''=================================== Users | SignIn ====================================''' 
 
-@auth_controller.route("/App/User/SignIn/<customer_email>", methods=["POST"]) 
-def signin(customer_email):
+@auth_controller.route("/App/User/SignIn", methods=["POST"]) 
+def signin():
     data = request.get_json()
-    response, status_code = auth_service.sign_user_in(customer_email, data)
+    response, status_code = auth_service.sign_user_in(data)
     return jsonify(response), status_code
 # -------------------------------------------------------------------------------
