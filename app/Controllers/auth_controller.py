@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.Services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
+from app.Middlewares.auth_middleware import token_required
 
 auth_controller = Blueprint("auth_controller", __name__)
 auth_service = AuthService()
@@ -23,3 +24,11 @@ def signin():
     response, status_code = auth_service.sign_user_in(data)
     return jsonify(response), status_code
 # -------------------------------------------------------------------------------
+
+'''=================================== Test auth middleware ====================================''' 
+
+@auth_controller.route("/App/User/profile", methods=["GET"]) 
+@token_required(roles=['admin','customer'])
+def get_profile():
+    return jsonify({'message': f"Welcome {request.user}, your role is {request.role}"})
+
