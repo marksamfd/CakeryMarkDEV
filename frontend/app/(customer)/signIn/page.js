@@ -6,7 +6,7 @@ import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';
 import { useActionState } from 'react';
 import { authenticate } from '@/app/lib/actions';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, redirect } from 'next/navigation';
 
 /**
  * Renders a sign in form with email and password fields, and a button to
@@ -34,6 +34,30 @@ export default function SignIn() {
     fontSize: '20px',
     gap: '10px',
   };
+  cookieStore
+    .get('token')
+    .then((c) => {
+      if (c) {
+        if (callbackUrl) {
+          redirect(callbackUrl);
+        }
+        return cookieStore.get('role');
+      }
+    })
+    .then((role) => {
+      if (role) {
+        switch (role) {
+          case 'baker':
+            redirect('../baker');
+            break;
+          case 'delivary':
+            redirect('../delivary');
+            break;
+          default:
+            redirect('../');
+        }
+      }
+    });
 
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
