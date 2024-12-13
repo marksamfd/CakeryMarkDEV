@@ -19,8 +19,8 @@ class CustomerService:
     def view_cart(self, customer_email):
         return self.customer_repo.get_cart(customer_email)
     # ------------------- add to cart -------------------
-    def add_to_cart(self, customer_email, product_id, quantity):
-        return self.customer_repo.add_item_to_cart(customer_email, product_id, quantity)
+    def add_to_cart(self,  customer_email, product_id, quantity, custom_cake_id=None): # included custom_cake_id but with none as default to avoid error
+        return self.customer_repo.add_item_to_cart(customer_email, product_id, quantity, custom_cake_id)
     # ------------------- remove from cart -------------------
     def remove_from_cart(self, customer_email, product_id):
         return self.customer_repo.remove_from_cart(customer_email, product_id)

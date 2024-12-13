@@ -3,7 +3,7 @@ from app.db import db
 
 
 class CustomerRepository:
-    # --------------------------- get all products ---------------------------
+    # ============================== get all products ==============================
     def get_all_products(self):
         try:
             products = Inventory.query.all()
@@ -11,7 +11,11 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get all products: {e}")
             return []
-    # --------------------------- get product by id ---------------------------
+        
+    #==============================================================================
+
+
+    # ============================== get product by id ==============================
     def get_product_by_id(self, product_id):
         try:
             product = Inventory.query.get(product_id)
@@ -19,7 +23,10 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get product by id: {e}")
             return None
-    # --------------------------- get cart ---------------------------
+        
+
+
+    # ============================== get cart ==============================
     def get_cart(self, customer_email):
         try:
             cart = Cart.query.filter_by(customeremail=customer_email).first() # get the cart of the customer 
@@ -29,6 +36,7 @@ class CustomerRepository:
             cart_items = [
                 {
                     "productid": item.productid,
+                    "customcakeid": item.customcakeid,
                     "quantity": item.quantity,
                     "price": item.price,
                     "productname": Inventory.query.get(item.productid).name if Inventory.query.get(item.productid) else None,
@@ -40,32 +48,61 @@ class CustomerRepository:
             print(f" (repo) cant get cart: {e}")
             return {"error": "An error occurred while fetching the cart"}
         
-    # --------------------------- add item to cart ---------------------------
-    def add_item_to_cart(self, customer_email, product_id, quantity):
+    # ============================== add item to cart ==============================
+    # edited to handle adding the custom cake to the cart 
+    def add_item_to_cart(self, customer_email, product_id=None, quantity=1, custom_cake_id=None):
         try:
-            cart = Cart.query.filter_by(customeremail=customer_email).first() # get the cart of the customer
+            # cart
+            cart = Cart.query.filter_by(customeremail=customer_email).first()
             if not cart:
-                return {"error": "(repo) cart not found for this customer"}
-            
-            product = Inventory.query.get(product_id)
-            if not product:
-                return {"error": "(repo) product not found"}
+                return {"error": "(repo) Cart not found for this customer"}
 
-            cart_item = CartItems.query.filter_by(cartid=cart.cartid,productid=product_id).first() # check if the product is already in the cart
-            if cart_item:
-                cart_item.quantity += quantity
-            else:
-                cart_item = CartItems(cartid=cart.cartid, productid=product_id, quantity=quantity, price=product.price)
+            #  ---------- normal product  ------------
+            if product_id:
+                product = Inventory.query.get(product_id)
+                if not product:
+                    return {"error": "(repo) Product not found"}
+                
+                
+                cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+                if cart_item: # if the product is already in the cart
+                    cart_item.quantity += quantity
+                else: # if first time adding the product
+                    cart_item = CartItems(
+                        cartid=cart.cartid, 
+                        productid=product_id, 
+                        quantity=quantity, 
+                        price=product.price
+                    )
+                    db.session.add(cart_item)
+
+            # ---------- customized cake  ------------
+            elif custom_cake_id:
+                custom_cake = CustomizeCake.query.get(custom_cake_id)
+                if not custom_cake:
+                    return {"error": "(repo) Customized cake not found"}
+                
+                cart_item = CartItems(
+                  cartid=cart.cartid, 
+                  customcakeid=custom_cake_id, 
+                  quantity=quantity, 
+                  price=custom_cake.price  # Assuming CustomizeCake has a price attribute
+                )
                 db.session.add(cart_item)
 
+            else: 
+                return {"error": "(repo) product_id or custom_cake_id must be provided"}
+
             db.session.commit()
-            return {"message": f"added to cart successfully, cart id: {cart.cartid}"}
-    
+            return {"message": f"Added to cart successfully, cart id: {cart.cartid}"}
         except Exception as e:
             db.session.rollback()
-            return {"error": "(repo) can't add item to cart: {e}"}
-    # ----------------------------------------------------------------------------------------
-    # --------------------------- remove item from cart ---------------------------------------
+            return {"error": f"(repo) Can't add item to cart: {e}"}
+
+    # =========================================================================================
+
+
+    # ============================== remove item from cart ==============================
     def remove_from_cart(self, customer_email, product_id):
         try:
             # ------- get cart --------
@@ -84,7 +121,9 @@ class CustomerRepository:
         except Exception as e:
             db.session.rollback()
             return {"error": "error occurred while removing the item from the cart", "error_details": str(e)}
-#
+    # ===========================================================================================================
+
+    # ====================== Raw materials ========================
     def get_raw_materials(self):
         raw_materials = Rawmaterials.query.all()
 
@@ -92,7 +131,10 @@ class CustomerRepository:
         serialized_data = [material.as_dict() for material in raw_materials]
 
         return serialized_data
+    # ===========================================================
 
+
+    # --------------------------- create custom cake ---------------------------
     def create_custom_cake(self,customer_email, data):
         cake_shape = data.get("cakeshape")
         cake_size = data.get("cakesize")
@@ -131,7 +173,6 @@ class CustomerRepository:
             )
             db.session.add(new_layer)
 
-        # Final commit
         db.session.commit()
 
         return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}

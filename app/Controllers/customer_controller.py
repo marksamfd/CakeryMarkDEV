@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.Services.customer_service import CustomerService
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 customer_controller = Blueprint("customer_controller", __name__)
 customer_service = CustomerService()
@@ -28,6 +29,7 @@ def get_product_details(product_id):
 
 '''=================================== Cart  ====================================''' # - checked
 @customer_controller.route("/customer/Cart/<customer_email>", methods=["GET"]) # (Cart Page) 
+
 def get_cart(customer_email):
     """
     get the customer's cart
@@ -39,17 +41,18 @@ def get_cart(customer_email):
 
 '''=================================== Add to Cart ===================================='''  # - checked, but the files have to be run speratley from repos -> services -> controllers, check the database after restrting the app
 @customer_controller.route("/customer/Cart/Add/<customer_email>", methods=["POST"]) # (Cart Page)
+# @jwt_required()
 def add_to_cart(customer_email):
     """
     add a product to the customer's cart
     """
     try:
+        # customer_email = get_jwt_identity()
         data = request.get_json()
-        # customer_email =   # testing only
         product_id = data.get("product_id")
         quantity = data.get("quantity")
-
-        response = customer_service.add_to_cart(customer_email,product_id,quantity)
+        custom_cake_id = data.get("custom_cake_id")
+        response = customer_service.add_to_cart(customer_email,product_id,quantity,custom_cake_id)
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": f" (route) can't add a product to the cart: {e}"}), 400
