@@ -1,4 +1,4 @@
-from app.models import DeliveryUser, BakeryUser, Inventory, Voucher, Rawmaterials
+from app.models import DeliveryUser, BakeryUser, Inventory, Voucher, Rawmaterials, CustomerUser
 from app.db import db
 from argon2 import PasswordHasher
 
@@ -28,11 +28,22 @@ class AdminRepository:
                 "role": "baker",
             }
         return stafflist
-    
+    ''' ============================ get all customers =============================== '''
+    # ---- get all customers ----
+    def get_customers(self):
+        customers = CustomerUser.query.all()
+        customer_list = []
+        for customer in customers:
+            customer_list.append({
+                "name": customer.name,
+                "email": customer.email,
+                "phone": customer.phone,
+            })
+        return customer_list
     ''' ============================ add staff user =============================== '''
     # ---- add baker user ----
     def add_bakery_user(self, name, email, phone, password):
-        hashed_password = encrypt.hash(password)
+        hashed_password = encrypt.hash(password) 
         bakery_user = BakeryUser(name=name, email=email, phone=phone, password=hashed_password)
         db.session.add(bakery_user)
         db.session.commit()
@@ -61,6 +72,16 @@ class AdminRepository:
 
         
     ''' ============================ add/edit voucher =============================== '''
+    # ---- view all vouchers ----
+    def get_vouchers(self):
+       vouchers = Voucher.query.all()
+       voucher_list = []
+       for voucher in vouchers:
+          voucher_list.append({
+                "voucher_code": voucher.voucher_code,
+                "discount_percentage": voucher.discount_percentage
+            })
+       return voucher_list
     # ---- add voucher ----
     def add_voucher(self, voucher_code, discount_percentage):
         voucher = Voucher(voucher_code=voucher_code, discount_percentage=discount_percentage)
@@ -83,13 +104,31 @@ class AdminRepository:
 
     ''' ============================ edit raw product or raw materials prices =============================== '''
     # ------ get all raw products ------
-    def raw_materials(self):
+    def prducts_rawMats(self):
         rawItems = Rawmaterials.query.all()
-        raw_materials_list = {}
+        products = Inventory.query.all()
+        itemsList = {}
+        for product in products:
+            itemsList[product.product_name] = {
+                "price": product.price,
+                "quantity": product.quantity,
+            }
         for raw_product in rawItems:
-            raw_materials_list[raw_product.raw_product_name] = {
+            itemsList[raw_product.raw_product_name] = {
                 "price": raw_product.price,
                 "quantity": raw_product.quantity,
             }
-        return raw_materials_list
+        return itemsList
+    def edit_product(self,price,product_id, rawItem=None):
+        product = Inventory.query.filter_by(product_id=product_id)
+        if product:
+            product.price = price
+            db.session.commit()
+           
+        elif rawItem:
+            rawItem.price = price
+            db.session.commit()
+        
+     
     
+    ''' ============================ get all customers =============================== '''
