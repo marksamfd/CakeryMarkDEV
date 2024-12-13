@@ -34,8 +34,9 @@ class AuthRepository:
 
     ''' ============================ Adding new customer =============================== '''
 
-    def add_user(self, customer_email, data):
+    def add_user(self, data):
         # Extract required fields
+        customer_email = data.get("email")
         password = data.get("password")
         firstname = data.get("firstname")
         lastname = data.get("lastname")
@@ -84,8 +85,9 @@ class AuthRepository:
 
     ''' ============================ User sign in =============================== '''
 
-    def user_sign_in(self,customer_email,data):
-        
+    def user_sign_in(self,data):
+
+        customer_email = data.get("email")
         password = data.get("password")
 
         # Validate required fields
@@ -140,9 +142,10 @@ class AuthRepository:
             # Compare the stored password and the input password
             stored_password = user.password
             #stored_password == password
+            """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ To be Edited later ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
             """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Caution ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
             ''' I commented the condition above because the password is hashed and can't be compared directly '''
-            # if self.verify_password(stored_password, password):
+            #if self.verify_password(stored_password, password):
             # Create JWT token with role as an additional claim
             additional_claims = {"role": role}
             access_token = create_access_token(identity=customer_email, additional_claims=additional_claims)
