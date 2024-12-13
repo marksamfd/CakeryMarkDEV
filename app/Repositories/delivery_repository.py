@@ -21,11 +21,13 @@ class DeliveryRepository:
                     "customerEmail": order.customeremail,
                     "totalPrice": float(order.totalprice),
                 }
-                for assignment, order in assigned_orders
+                for assigment, order in assigned_orders
             ]
         except SQLAlchemyError as e:
             return {"error": f"(repo) can't get assigned orders: {e}"}
         # -------------------------------------------------------------------------------
+
+
 
     ''' ============================ assign delivery user =============================== '''
     def assign_delivery_user(self, order_id, delivery_email):

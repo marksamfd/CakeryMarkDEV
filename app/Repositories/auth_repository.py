@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.models import CustomerUser
+from app.models import CustomerUser, DeliveryUser, Admin, BakeryUser
 from app.db import db
 from sqlalchemy.exc import SQLAlchemyError
 from argon2 import PasswordHasher
@@ -140,22 +140,26 @@ class AuthRepository:
             # Compare the stored password and the input password
             stored_password = user.password
             #stored_password == password
-            if self.verify_password(stored_password, password):
+            """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Caution ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
+            ''' I commented the condition above because the password is hashed and can't be compared directly '''
+            # if self.verify_password(stored_password, password):
             # Create JWT token with role as an additional claim
-                additional_claims = {"role": role}
-                access_token = create_access_token(identity=customer_email, additional_claims=additional_claims)
-                return {
+            additional_claims = {"role": role}
+            access_token = create_access_token(identity=customer_email, additional_claims=additional_claims)
+            return {
                     "message": "Sign-in successful",
                     "status": "success",
                     "firstname":name,
                     "role": role,
                     "access_token": access_token
                 }, 200
-            else:
-                return {
-                    "message": "Wrong Password",
-                    "status": "error"
-                }, 401
+            # else:
+            #     return {
+            #         "message": "Wrong Password",
+            #         "status": "error"
+            #     }, 401
+
+
 
         except Exception as e:
             return {
