@@ -173,6 +173,7 @@ class AuthRepository:
 
     # -------------------------------------------------------------------------------  
 
+    ''' ============================ User Reset/Change password =============================== '''
 
     def change_password(self,data):
         email = data.get("email")

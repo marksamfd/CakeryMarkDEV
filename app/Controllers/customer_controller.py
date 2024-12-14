@@ -131,3 +131,12 @@ def view_orders(customer_email):
     orders = customer_service.view_customer_orders(customer_email)
     return jsonify(orders), 200
 # ----------------------------------------------------------------------------------
+
+'''=================================== Edit customer data ====================================''' 
+@customer_controller.route("/App/User/Customer/EditData/<customer_email>", methods=["PUT"]) 
+def edit_customer_data(customer_email):
+    
+    data = request.get_json()
+    response, status_code = customer_service.update_data(customer_email,data)
+    return jsonify(response), status_code
+# ----------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers
+from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser
 from app.db import db
 
 
@@ -134,7 +134,7 @@ class CustomerRepository:
     # ===========================================================
 
 
-    # --------------------------- create custom cake ---------------------------
+    # --------------------------- Create custom cake ---------------------------
     def create_custom_cake(self,customer_email, data):
         cake_shape = data.get("cakeshape")
         cake_size = data.get("cakesize")
@@ -176,3 +176,135 @@ class CustomerRepository:
         db.session.commit()
 
         return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}
+
+    # --------------------------- Create custom cake ---------------------------
+
+    def change_customer_data(self,customer_email,data):
+        
+        email = data.get("email")
+        password = data.get("password")
+
+        # Validate required fields
+        if not email or not password:
+            return {
+            "message": "Email and password are required",
+            "status": "error"
+            }, 400
+
+        # Extract user domain
+        domain = email.split("@")[1] if "@" in email else None
+
+        if not domain:
+            return {
+            "message": "Invalid email format",
+            "status": "error"
+            }, 400
+
+        role = None
+        user = None
+
+        # Define the queries for different user roles
+        if domain == "cakery_admin.com":
+            user = Admin.query.filter_by(adminemail=email).first()
+            role = "admin"
+        elif domain == "cakery_baker.com":
+            user = BakeryUser.query.filter_by(bakeryemail=email).first()
+            role = "baker"
+            name = user.firstname
+        elif domain == "gmail.com":
+            user = CustomerUser.query.filter_by(customeremail=email).first()
+            role = "customer"
+            name = user.firstname
+        elif domain == "cakery_delivery.com":
+            user = DeliveryUser.query.filter_by(deliveryemail=email).first()
+            role = "delivery"
+            name = user.firstname
+        else:
+            return {
+                "message": "Invalid email domain",
+                "status": "error"
+            }, 400
+
+        try:
+            # User not found
+            if not user:
+                return {
+                    "message": "User not found",
+                    "status": "error"
+                }, 401
+
+            # Compare the stored password and the input password
+            stored_password = user.password
+            #stored_password == password
+            """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ To be Edited later ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
+            """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Caution ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
+            ''' I commented the condition above because the password is hashed and can't be compared directly '''
+            #if self.verify_password(stored_password, password):
+            # Create JWT token with role as an additional claim
+            additional_claims = {"role": role}
+            access_token = create_access_token(identity=email, additional_claims=additional_claims)
+            return {
+                    "message": "Sign-in successful",
+                    "status": "success",
+                    "firstname":name,
+                    "role": role,
+                    "access_token": access_token
+                }, 200
+            # else:
+            #     return {
+            #         "message": "Wrong Password",
+            #         "status": "error"
+            #     }, 401
+
+
+
+        except Exception as e:
+            return {
+                "message": "An error occurred during sign-in",
+                "error": str(e),
+                "status": "error"
+            }, 500
+
+    # -------------------------------------------------------------------------------  
+
+
+    def change_customer_data(self, customer_email, data):
+    # Extract the customer data from the input
+        firstname = data.get("firstname", "")
+        lastname = data.get("lastname", "")
+        phonenum = data.get("phonenum", "")
+        addressgooglemapurl = data.get("addressgooglemapurl", "")
+        password = data.get("password", "")  # If password is part of the update
+
+        try:
+            # Retrieve the customer based on email
+            user = CustomerUser.query.filter_by(customeremail=customer_email).first()
+
+            if not user:
+                return {"message": "User not found", "status": "error"}, 404
+
+            # Update fields if provided
+            if firstname:
+                user.firstname = firstname
+            if lastname:
+                user.lastname = lastname
+            if phonenum:
+                user.phonenum = phonenum
+            if addressgooglemapurl:
+                user.addressgooglemapurl = addressgooglemapurl
+
+            # If a new password is provided, hash it and update it
+            if password:
+                #hashed_password = self.hash_password(password)  # Ensure you have a hash function
+                user.password = password  # Assuming 'password' is the correct field name
+
+            # Commit the changes to the database
+            db.session.commit()
+
+            return {"message": "User's data updated successfully", "status": "success"}, 200
+
+        except Exception as e:
+            # Rollback in case of error
+            db.session.rollback()
+            return {"message": "An error occurred while editing user data", "error": str(e), "status": "error"}, 500
+
