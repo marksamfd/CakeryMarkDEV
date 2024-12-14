@@ -25,6 +25,16 @@ def signin():
     return jsonify(response), status_code
 # -------------------------------------------------------------------------------
 
+
+'''=================================== Users | Forget Password ====================================''' 
+
+@auth_controller.route("/App/User/ForgetPassword", methods=["PUT"]) 
+def forget_password():
+    data = request.get_json()
+    response, status_code = auth_service.new_password(data)
+    return jsonify(response), status_code
+# -------------------------------------------------------------------------------
+
 '''=================================== Test auth middleware ====================================''' 
 
 @auth_controller.route("/App/User/profile", methods=["GET"]) 
