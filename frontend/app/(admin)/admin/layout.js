@@ -1,0 +1,27 @@
+'use client';
+import React from 'react';
+import BakerHeader from '@/componenets/bakerHeader';
+import '@/app/styles/barfiller.css';
+import '@/app/styles/bootstrap.min.css';
+import '@/app/styles/elegant-icons.css';
+import '@/app/styles/flaticon.css';
+import '@/app/styles/font-awesome.min.css';
+import '@/app/styles/magnific-popup.css';
+import '@/app/styles/nice-select.css';
+import '@/app/styles/slicknav.min.css';
+import '@/app/styles/style.css';
+
+function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={``}>
+        <BakerHeader pos={'Admin'} />
+        <div className="container-fluid h-100">{children}</div>
+      </body>
+    </html>
+  );
+}
+
+export default RootLayout;
+{
+}

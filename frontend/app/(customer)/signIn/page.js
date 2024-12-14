@@ -53,6 +53,9 @@ export default function SignIn() {
           case 'delivary':
             redirect('../delivary');
             break;
+          case 'admin':
+            redirect('../admin');
+            break;
           default:
             redirect('../');
         }
