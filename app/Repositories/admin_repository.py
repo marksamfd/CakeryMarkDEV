@@ -13,18 +13,18 @@ class AdminRepository:
         stafflist = {}
         delivery_users = DeliveryUser.query.all()
         for user in delivery_users:
-            stafflist[user.email] = {
-                "name": user.name,
-                "email" : user.email,
-                "phone" : user.phone,
+            stafflist[user.deliveryemail] = {
+                "name": user.firstname + " " + user.lastname,
+                "email" : user.deliveryemail,
+                "phone" : user.phonenum,
                 "role": "delivery",
             }
         bakery_users = BakeryUser.query.all()  
         for user in bakery_users:
-            stafflist[user.email] = {
-                "name": user.name,
-                "email" : user.email,
-                "phone" : user.phone,
+            stafflist[user.bakeryemail] = {
+                "name": user.firstname + " " + user.lastname,
+                "email" : user.bakeryemail,
+                "phone" : user.phonenum,
                 "role": "baker",
             }
         return stafflist
@@ -35,37 +35,42 @@ class AdminRepository:
         customer_list = []
         for customer in customers:
             customer_list.append({
-                "name": customer.name,
-                "email": customer.email,
-                "phone": customer.phone,
+                "name": customer.firstname + " " + customer.lastname,
+                "email": customer.customeremail,
+                "phone": customer.phonenum,
             })
         return customer_list
     ''' ============================ add staff user =============================== '''
     # ---- add baker user ----
-    def add_bakery_user(self, name, email, phone, password):
-        hashed_password = encrypt.hash(password) 
-        bakery_user = BakeryUser(name=name, email=email, phone=phone, password=hashed_password)
-        db.session.add(bakery_user)
-        db.session.commit()
-        return bakery_user
+    def add_bakery_user(self, firstname, lastname, email, phone, password):
+        try: 
+            hashed_password = encrypt.hash(password) 
+            bakery_user = BakeryUser(firstname=firstname, lastname=lastname, bakeryemail=email, phonenum=phone, password=hashed_password)
+            db.session.add(bakery_user)
+            db.session.commit()
+            return {'message' : f"baker user {email} was added"}
+        except Exception as e:
+            return {"error": f"(repo) error adding baker user: {e}"}
+    
+    
     # ---- add delivery user ----
-    def add_delivery_user(self, name, email, phone, password):
+    def add_delivery_user(self,firstname, lastname, email, phone, password):
         hashed_password = encrypt.hash(password)
-        delivery_user = DeliveryUser(name=name, email=email, phone=phone, password=hashed_password)
+        delivery_user = DeliveryUser(firstname=firstname, lastname=lastname, deliveryemail=email, phone=phone, password=hashed_password)
         db.session.add(delivery_user)
         db.session.commit()
-        return delivery_user
+        return {f"delivery user {email} was added"}
     
     ''' ============================ delete staff user =============================== '''
     # ---- delete baker user ----
     def delete_baker_user(self, email):
-        baker = BakeryUser.query.filter_by(email=email).first()
+        baker = BakeryUser.query.filter_by(bakeryemail=email)
         db.session.delete(baker)
         db.session.commit()
         return {"message": "baker deleted successfully"}
     # ---- delete delivery user ----
     def delete_delivery_user(self, email):
-        delivery = DeliveryUser.query.filter_by(email=email).first()
+        delivery = DeliveryUser.query.filter_by(deliveryemail=email)
         db.session.delete(delivery)
         db.session.commit()
         return {"message": "delivery deleted successfully"}
@@ -132,4 +137,3 @@ class AdminRepository:
      
     
     ''' ============================ get all customers =============================== '''
-    

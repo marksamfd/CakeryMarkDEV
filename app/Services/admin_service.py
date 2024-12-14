@@ -13,16 +13,19 @@ class AdminService:
         return self.admin_repo.get_staff_users()
     
     def add_user(self,data):
-        name = data["name"]
+        firstname = data["firstname"]
+        lastname = data["lastname"]
         email = data["email"]
         phone = data["phone"]
         password = data["password"]
         role = data["role"]
 
         if role == "baker":
-            return self.admin_repo.add_bakery_user(name,email,phone,password)
+            return self.admin_repo.add_bakery_user(firstname,lastname,email,phone,password)
         elif role == "delivery":
-            return self.admin_repo.add_delivery_user(name,email,phone,password)
+            return self.admin_repo.add_delivery_user(firstname,lastname,email,phone,password)
+        else:
+            return {f"passed role is wrong, error in adding user (service)"},400
     
 
     def delete_user(self,data):
