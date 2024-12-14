@@ -8,18 +8,26 @@ class AdminService:
     def __init__(self):
         self.admin_repo = AdminRepository()
         self.order_repo = OrderRepository()
-
+    # -------- get list of staff users  ------
     def get_users(self):
         return self.admin_repo.get_staff_users()
     
-    def add_user(self,role,name,email,phone,password):
+    def add_user(self,data):
+        name = data["name"]
+        email = data["email"]
+        phone = data["phone"]
+        password = data["password"]
+        role = data["role"]
+
         if role == "baker":
             return self.admin_repo.add_bakery_user(name,email,phone,password)
         elif role == "delivery":
             return self.admin_repo.add_delivery_user(name,email,phone,password)
     
 
-    def delete_user(self,role,email):
+    def delete_user(self,data):
+        role = data["role"]
+        email = data["email"]
         if role == "baker":
             return self.admin_repo.delete_baker_user(email)
         elif role == "delivery":
@@ -32,15 +40,26 @@ class AdminService:
     def get_products(self):
         return self.admin_repo.prducts_rawMats()
     # update product price
-    def edit_product(self,price,product_id,rawItem=None):
-        return self.admin_repo.edit_product(product_id,rawItem,price)
+    def edit_product(self,data):
+        product_id = data["product_id"]
+        rawItem = data["rawItem"]
+        price = data["price"]
+        if rawItem:
+            return self.admin_repo.edit_product(product_id=None, rawItem=rawItem, price=price)
+        else:
+            return self.admin_repo.edit_product(product_id,rawItem=None,price=price)
     
 
-    def add_voucher(self,discount):
+    def add_voucher(self,data):
+        discount = data["discount"]
         return self.admin_repo.add_voucher(discount)
-    def edit_vocher(self,voucher_id,discount):
+    def edit_vocher(self,data):
+        voucher_id = data["voucher_id"]
+        discount = data["discount"]
         return self.admin_repo.edit_voucher(voucher_id,discount)
-    def delete_voucher(self,voucher_id):
+    
+    def delete_voucher(self,data):
+        voucher_id = data["voucher_id"]
         return self.admin_repo.delete_voucher(voucher_id)
     def get_vouchers(self):
         return self.admin_repo.get_vouchers()
