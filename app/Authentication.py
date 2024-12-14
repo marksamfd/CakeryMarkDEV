@@ -125,6 +125,7 @@ def sign_in():
     if domain == "cakeryadmin.com":
         user = Admin.query.filter_by(adminemail=email).first()
         role = "admin"
+        name = "name"
     elif domain == "cakerybaker.com":
         user = BakeryUser.query.filter_by(bakeryemail=email).first()
         role = "baker"
