@@ -27,7 +27,7 @@ def view_assigned_orders():
 @jwt_required()
 def change_order_status():
     """
-    Change the status of an assigned order ("on_the_way","delivered")
+    Change the status of an assigned order ("out_for_delivery")
     """
     try:
         delivery_email = get_jwt_identity()
