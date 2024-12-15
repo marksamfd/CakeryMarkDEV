@@ -72,31 +72,6 @@ export default function DeliveryOrders() {
       })
       .catch((error) => console.error('error while updating order status:', error));
   };
-
-// testing using a mock data.json:
-// useEffect(() => {
-//     fetch('/data.json')
-//       .then((res) => res.json())
-//       .then((data) => {
-//         setOrderItems(data);
-//         setLoading(false);
-//       })
-//       .catch((error) => {
-//         console.error('Error fetching orders:', error);
-//         setLoading(false);
-//       });
-//   }, []);
-
-
-// testing changing the status
-//   const handleChangeOrderStatusTest = (orderId, newStatus) => {
-//     setOrderItems((prevState) =>
-//       prevState.map((item) =>
-//         item.orderID === orderId ? { ...item, status: newStatus } : item
-//       )
-//     );
-//   };
-
   if (loading) {
     return <div>Loading...</div>;
   }
