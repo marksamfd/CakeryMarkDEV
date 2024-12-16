@@ -16,7 +16,7 @@ export default function CustomerOrders() {
     cookieStore
       .get('token')
       .then((cookie) =>
-        fetch(`/api/customer/orders`, {
+        fetch(`/api/cakery/user/customer/Orders`, {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
