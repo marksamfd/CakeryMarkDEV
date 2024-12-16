@@ -43,8 +43,17 @@ class CustomerService:
     # ------------------- Update customer data -------------------
     def update_data(self, customer_email,data):
         return self.customer_repo.change_customer_data(customer_email,data)
+    # ----------- User forget password -----------
+    def new_password(self,data):
+        return self.customer_repo.change_password(data)
+    # ----------- User forget password -----------
+    def send_email(self,data):
+        return self.customer_repo.check_user(data)
 
-
-    # ---------- notifications ------------
-    def get_notifications(self, customer_email):
+    # ----------- my notification -----------
+    def view_notifications(self,customer_email):
         return self.customer_repo.get_notifications(customer_email)
+    
+
+    def get_customer_name(self, customer_email):
+        return self.customer_repo.get_customer_name(customer_email)
