@@ -395,7 +395,7 @@ def delete_voucher():
     return jsonify(response), status_code
 
 @admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
-#@jwt_required()
+@jwt_required()
 def view_dashboard():
   try:
         response = admin_service.dashboard_data()  # Ensure this call works
