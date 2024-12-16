@@ -19,16 +19,19 @@ const j = {
 export default async function Page({ params }) {
   const cookieStore = await cookies();
   const token = await cookieStore.get('token');
-  const order = await (
-    await fetch(`${process.env.backend}/user/baker/orders`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-  ).json();
   const slug = (await params).orderId;
+  const order = await (
+    await fetch(
+      `${process.env.backend}/cakery/user/baker/Orders/${slug}/details`,
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+  ).json();
   return (
     <>
       <h1>{order.customer.name}'s Order</h1>
