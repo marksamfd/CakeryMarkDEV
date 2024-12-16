@@ -1,5 +1,8 @@
 from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser
 from app.db import db
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 class CustomerRepository:
@@ -308,3 +311,110 @@ class CustomerRepository:
             db.session.rollback()
             return {"message": "An error occurred while editing user data", "error": str(e), "status": "error"}, 500
 
+
+               # -------------------------------------------------------------------------------  
+
+    ''' ============================ User Reset/Change password =============================== '''
+
+    def change_password(self,data):
+        email = data.get("email")
+        domain = email.split("@")[1]
+
+        
+        if domain == "cakery_baker.com":
+            user = BakeryUser.query.filter_by(bakeryemail=email).first()
+            role = "baker"
+        elif domain == "gmail.com":
+            user = CustomerUser.query.filter_by(customeremail=email).first()
+            role = "customer"
+        elif domain == "cakery_delivery.com":
+            user = DeliveryUser.query.filter_by(deliveryemail=email).first()
+            role = "delivery"
+        else:
+            return {
+                "message": "Invalid email domain",
+                "status": "error"
+            }, 400
+
+        try:
+            if not user:
+                return {
+                    "message": "User not found please sign up",
+                    "status": "error"
+                }, 401
+
+            new_pass = data.get("newpassword")
+            new_pass_confirm = data.get("newpasswordconfirm")  # Fixed typo here
+
+            # Check if passwords match
+            if new_pass != new_pass_confirm:
+                return {
+                    "message": "Passwords do not match",
+                    "status": "error"
+                }, 400
+
+            # Assuming you want to hash the password before saving it
+            hashed_password = self.hash_password(new_pass)  # Replace with actual hashing logic
+
+            # Update the user's password
+            if role == "baker":
+                user.bakerypassword = hashed_password
+            elif role == "customer":
+                user.customerpassword = hashed_password
+            elif role == "delivery":
+                user.deliverypassword = hashed_password
+        
+            # Commit the changes to the database
+            db.session.commit()
+
+            return {
+                "message": "Password changed successfully",
+                "status": "success"
+            }, 200
+
+        except Exception as e:
+            return {
+                "message": f"An error occurred: {str(e)}",
+                "status": "error"
+            }, 500
+               # -------------------------------------------------------------------------------  
+
+    ''' ============================ User reset password_send email=============================== '''
+    def check_user(self, data):
+        # Email Configuration
+        email = data.get("email")
+        SMTP_SERVER = "smtp.gmail.com"
+        SMTP_PORT = 587
+        EMAIL_ADDRESS = "ahmedabdelghany951@gmail.com"
+        EMAIL_PASSWORD = '123umnft'
+        
+        # Check if user exists
+        user = CustomerUser.query.filter_by(customeremail=email).first()
+        if not user:
+            return {"message": "User not found", "status": "error"}, 404
+
+        # Create reset token (pseudo-code, replace with actual implementation)
+        reset_token = self.generate_reset_token(email)  # Implement this function
+        reset_link = f"https://your-app.com/reset-password?token={reset_token}"
+        
+        # Email content
+        subject = "Password Reset Request"
+        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n{reset_link}\n\nIf you did not request a password reset, please ignore this email."
+
+        # Send email
+        try:
+            msg = MIMEMultipart()
+            msg['From'] = EMAIL_ADDRESS
+            msg['To'] = email
+            msg['Subject'] = subject
+            msg.attach(MIMEText(body, 'plain'))
+
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+                server.starttls()
+                server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                server.send_message(msg)
+
+            return {"message": "Password reset email sent successfully", "status": "success"}, 200
+
+        except Exception as e:
+            return {"message": "Failed to send email", "error": str(e), "status": "error"}, 500
