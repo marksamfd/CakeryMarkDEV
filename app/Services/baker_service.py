@@ -18,5 +18,5 @@ class BakerService:
             return result
 
         # Assign a delivery user - currently None, can be handled as needed
-        delivery_assignment = self.order_service.assign_delivery(order_id,delivery_email=None)
+        delivery_assignment = self.order_service.assign_delivery(order_id)
         return delivery_assignment

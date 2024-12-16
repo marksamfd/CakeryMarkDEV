@@ -40,9 +40,9 @@ def change_order_status():
         if orderId not in assigned_order_ids:
             return jsonify({"error": "This order isn't assigned to this delivery user"}), 403
         # ---------------------------------
+        # result = delivery_service.mark_order_status(orderId) # change the order status from the delivery service/repo
 
-    
-        result = order_service.update_order_status(orderId,"out_for_delivery") # change the order status from the order service/repo 
+        result = delivery_service.mark_order_status(orderId,"delivered") # change the order status from the order service/repo 
         if "error" in result:
             return jsonify(result), 400
         return jsonify(result), 200

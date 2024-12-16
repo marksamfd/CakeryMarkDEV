@@ -153,3 +153,12 @@ class OrderRepository:
         except SQLAlchemyError as e:
             return {"error": f"(repo) can't get all orders: {e}"}
     # -------------------------------------------------------------------------------
+
+    def get_customerEmail_by_order_id(self, order_id):
+        try:
+            order = Orders.query.get(order_id)
+            if not order:
+                return {"error": " (repo) order not found"}
+            return order.customeremail
+        except SQLAlchemyError as e:
+            return {"error": f" (repo) error getting customer email: {e}"}
