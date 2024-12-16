@@ -12,5 +12,5 @@ class OrderService:
     def update_order_status(self,order_id,status):
         return self.order_repo.update_order_status(order_id,status)
     # --------------- assign delivery ---------------
-    def assign_delivery(self,order_id,delivery_email): # called in bakery_service on status = "prepared"
-        return self.delivery_repo.assign_delivery_user(order_id,delivery_email)
+    def assign_delivery(self,order_id): # called in bakery_service on status = "prepared"
+        return self.delivery_repo.assign_delivery_user(order_id)

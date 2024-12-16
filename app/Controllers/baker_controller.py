@@ -26,9 +26,9 @@ def get_order_details(order_id):
 def update_order_status():
     data = request.get_json()
     order_id = data.get("order_id")
-    status = data.get("status")
+    # status = data.get("status")
 
-    if not order_id or not status:
+    if not order_id:
         return jsonify({"error": "Order ID and status are required"}),400
 
     result = baker_service.mark_order_prepared(order_id)

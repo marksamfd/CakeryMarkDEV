@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify
 from app.Services.customer_service import CustomerService
+from app.Services.otp_service import OTPService 
 from flask_jwt_extended import jwt_required, get_jwt_identity
+# from app.utils.order_status_notifier import OrderStatusNotifier, PushNotificationObserver, DatabaseNotificationObserver
+# from app.Services.otp_service import OTPService
 
 customer_controller = Blueprint("customer_controller", __name__)
 customer_service = CustomerService()
@@ -28,7 +31,8 @@ def get_product_details(product_id):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Cart  ====================================''' # - checked
-@customer_controller.route("/cakery/user/customer/Cart/<customer_email>", methods=["GET"]) # (Cart Page) 
+@customer_controller.route("/customer/Cart/<customer_email>", methods=["GET"]) # (Cart Page) 
+
 def get_cart(customer_email):
     """
     get the customer's cart
@@ -139,3 +143,46 @@ def edit_customer_data(customer_email):
     response, status_code = customer_service.update_data(customer_email,data)
     return jsonify(response), status_code
 # ----------------------------------------------------------------------------------
+
+'''=================================== Users | Forget Password ====================================''' 
+
+@customer_controller.route("/cakery/user/customer/ForgetPassword/email", methods=["POST"]) 
+def forget_pass_email():
+    data = request.get_json()
+    response, status_code = customer_service.send_email(data)
+    return jsonify(response), status_code
+
+@customer_controller.route("/cakery/user/customer/ForgetPassword", methods=["PUT"]) 
+def forget_password():
+    data = request.get_json()
+    response, status_code = customer_service.new_password(data)
+    return jsonify(response), status_code
+
+# -------------------------------------------------------------------------------
+
+'''===================================== Verify OTP ===================================='''
+@customer_controller.route("/cakery/user/customer/VerifyOTP", methods=["POST"])
+@jwt_required()
+def verify_otp():
+    customer_email = get_jwt_identity()
+    data = request.get_json()
+    otp_code = data.get("otp_code")
+    otp_service = customer_controller.otp_service
+    response, status_code =  otp_service.validate_otp(customer_email,otp_code)
+    return jsonify(response), status_code
+
+'''===================================== My Notifications ===================================='''
+@customer_controller.route("/cakery/user/customer/Notifications", methods=["GET"])
+@jwt_required()
+def view_notifications():
+    customer_email = get_jwt_identity()
+    notifications = customer_service.view_notifications(customer_email)
+    return jsonify(notifications), 200
+
+'''===================================== get customer name ===================================='''
+@customer_controller.route("/cakery/user/customer/Name", methods=["GET"])
+@jwt_required()
+def get_customer_name():
+    customer_email = get_jwt_identity()
+    name = customer_service.get_customer_name(customer_email)
+    return jsonify(name), 200
