@@ -104,15 +104,23 @@ async function Page() {
       },
     })
   ).json();
+  const lineChart = orders.data['total_price_by_date'];
+  const dataLine = lineChart.map((e) => {
+    return { x: e['Date'], y: e['Total Price'] };
+  });
+  const bestSold = orders.data['best_sold_items'];
+  const bestSoldPie = bestSold.map((e) => {
+    return { label: e['Date'], value: e['qty'] };
+  });
   return (
     <div className="container h-100">
       <div className="row h-50 w-100">
         <div className="col-lg">
-          <LineChart data={data} />
+          <LineChart data={dataLine} />
         </div>
         <div className="w-100 d-lg-none d-sm-block"></div>
         <div className="col-lg">
-          <PieChart data={pie} />
+          <PieChart data={bestSoldPie} />
         </div>
       </div>
       <div className="row h-50">
@@ -126,14 +134,13 @@ async function Page() {
               </tr>
             </thead>
             <tbody>
-              {/* {orders.map((el) => { */}
-              <tr>
-                {/* <th scope="row">1</th> */}
-                <td>{'Cupcake'}</td>
-                <td>500</td>
-                <td>15$</td>
-              </tr>
-              {/* })} */}
+              {orders.map((el) => {
+                <tr>
+                  <th scope="row">{el.itemName}</th>
+                  <td>{el['qty']}</td>
+                  <td>{el['price']}</td>
+                </tr>;
+              })}
             </tbody>
           </table>
         </div>
