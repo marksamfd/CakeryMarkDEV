@@ -5,10 +5,34 @@ from app.Controllers.auth_controller import auth_controller
 from app.Controllers.delivery_controller import delivery_controller
 from app.Controllers.admin_controller import admin_controller
 from app.Middlewares.error_middleware import error_middleware
-from app.utils.order_status_notifier import OrderStatusNotifier, PushNotificationObserver, DatabaseNotificationObserver
+from app.utils.order_status_notifier import (
+    OrderStatusNotifier,
+    PushNotificationObserver,
+    DatabaseNotificationObserver,
+)
 from app.Services.otp_service import OTPService
 from app.Services.delivery_service import DeliveryService
 from flask_jwt_extended import JWTManager
+from flasgger import Swagger
+
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "Cakery Admin API",
+        "description": "API documentation for Admin-related endpoints in Cakery",
+        "version": "2.0.0",
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Enter 'Bearer <your JWT token>'",
+        }
+    },
+    "produces": ["application/json"],
+    "consumes": ["application/json"],
+}
 
 app = create_app()
 jwt = JWTManager(app)
@@ -27,13 +51,17 @@ delivery_service = DeliveryService(notifier)
 delivery_controller.delivery_service = delivery_service
 customer_controller.otp_service = otp_service
 
+# Register Blueprints
 app.register_blueprint(customer_controller)
 app.register_blueprint(baker_controller)
 app.register_blueprint(auth_controller)
 app.register_blueprint(delivery_controller)
 app.register_blueprint(admin_controller)
 
+# Initialize Swagger
+swagger = Swagger(app, template=swagger_template)
+
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all() 
+        db.create_all()
     app.run(debug=True)
