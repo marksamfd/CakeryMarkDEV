@@ -393,3 +393,14 @@ def delete_voucher():
     data = request.get_json()
     response, status_code = admin_service.delete_voucher(data)
     return jsonify(response), status_code
+
+@admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
+@jwt_required()
+def view_dashboard():
+  try:
+        response = admin_service.dashboard_data()  # Ensure this call works
+        return jsonify(response), 200  # Return a proper JSON response with HTTP status code 200
+  except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500  # Return an error response with status code 500

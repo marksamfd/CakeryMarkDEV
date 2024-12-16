@@ -171,6 +171,9 @@ class Inventory(db.Model):
     category = db.Column(db.String(255))
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+    reviews = db.relationship('Review', backref='inventory', cascade='all, delete-orphan')
+
+
     def as_dict(self):
         return {
             "productid": self.productid,
@@ -210,7 +213,6 @@ class Orders(db.Model):
 
     # Relationships
     payments = db.relationship('Payment', backref='order', cascade='all, delete-orphan')
-    reviews = db.relationship('Review', backref='order', cascade='all, delete-orphan')
     order_items = db.relationship('OrderItems', backref='order', cascade='all, delete-orphan')
 
     def as_dict(self):
@@ -294,7 +296,7 @@ class Payment(db.Model):
     __tablename__ = 'payment'
 
     paymentid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
+    orderid = db.Column(db.Integer, db.ForeignKey('.orderid'))
     deposit = db.Column(db.Numeric(10, 2), nullable=False)
     restofprice = db.Column(db.Numeric(10, 2), nullable=False)
     paymentdate = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -316,7 +318,7 @@ class Review(db.Model):
     __tablename__ = 'review'
 
     reviewid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
+    productid = db.Column(db.Integer, db.ForeignKey('inventory.orderid'))
     customeremail = db.Column(db.String(255), db.ForeignKey('customeruser.customeremail'))
     rating = db.Column(db.Integer, nullable=False)
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -325,7 +327,7 @@ class Review(db.Model):
     def as_dict(self):
         return {
             "reviewid": self.reviewid,
-            "orderid": self.orderid,
+            "orderid": self.productid,
             "customeremail": self.customeremail,
             "rating": self.rating,
             "createdat": self.createdat.isoformat() if self.createdat else None
