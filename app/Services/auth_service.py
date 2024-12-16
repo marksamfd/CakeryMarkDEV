@@ -10,6 +10,4 @@ class AuthService:
     # ----------- User sign in -----------
     def sign_user_in(self,data):
         return self.auth_repo.user_sign_in(data)
-    # ----------- User forget password -----------
-    def new_password(self,data):
-        return self.auth_repo.change_password(data)
+    

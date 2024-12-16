@@ -1,5 +1,5 @@
 from app.db import db
-import datetime
+from datetime import datetime
 ''' The main difference here is that we are dealing with the database as models, where each table
 is represented by a class, the class taking the db.model from the initialized db instance in the db.py file.
 The class has the table name, and the columns as attributes, and the relationships as attributes as well.
@@ -341,22 +341,5 @@ class Voucher(db.Model):
             "discountpercentage": self.discountpercentage
         }
     
-
-
-class Notification(db.Model):
-    __tablename__ = 'notifications'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
-    message = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    def as_dict(self):
-        return {
-            "id": self.id,
-            "customer_id": self.customer_id,
-            "message": self.message,
-            "created_at": self.created_at.isoformat() if self.created_at else None
-        }
-
 
 
