@@ -6,7 +6,7 @@ customer_controller = Blueprint("customer_controller", __name__)
 customer_service = CustomerService()
 
 '''=================================== Shop ===================================='''  # - checked
-@customer_controller.route("/customer/shop",methods=["GET"]) # (Shop Page) 
+@customer_controller.route("/cakery/user/customer/Shop",methods=["GET"]) # (Shop Page) 
 def list_products():
     """
     List all available products 
@@ -16,7 +16,7 @@ def list_products():
 # ----------------------------------------------------------------------------------
 
 '''=================================== Product Detail ===================================='''  # - checked
-@customer_controller.route("/Product/<int:product_id>",methods=["GET"]) # (Product Detail Page) 
+@customer_controller.route("/cakery/user/customer/Product/<int:product_id>",methods=["GET"]) # (Product Detail Page) 
 def get_product_details(product_id):
     """
     get the details of a specific product
@@ -28,8 +28,7 @@ def get_product_details(product_id):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Cart  ====================================''' # - checked
-@customer_controller.route("/customer/Cart/<customer_email>", methods=["GET"]) # (Cart Page) 
-
+@customer_controller.route("/cakery/user/customer/Cart/<customer_email>", methods=["GET"]) # (Cart Page) 
 def get_cart(customer_email):
     """
     get the customer's cart
@@ -40,7 +39,7 @@ def get_cart(customer_email):
 
 
 '''=================================== Add to Cart ===================================='''  # - checked, but the files have to be run speratley from repos -> services -> controllers, check the database after restrting the app
-@customer_controller.route("/customer/Cart/Add/<customer_email>", methods=["POST"]) # (Cart Page)
+@customer_controller.route("/cakery/user/customer/Cart/Add/<customer_email>", methods=["POST"]) # (Cart Page)
 # @jwt_required()
 def add_to_cart(customer_email):
     """
@@ -60,7 +59,7 @@ def add_to_cart(customer_email):
 
 
 '''=================================== Remove from Cart ===================================='''  # - checked
-@customer_controller.route("/customer/Cart/Remove/<customer_email>",methods=["DELETE"]) # (Cart Page)
+@customer_controller.route("/cakery/user/customer/Cart/Remove/<customer_email>",methods=["DELETE"]) # (Cart Page)
 def remove_from_cart(customer_email):
     """
     Remove a product from the customer's cart
@@ -78,7 +77,7 @@ def remove_from_cart(customer_email):
 
 
 '''=================================== Customize Cake ===================================='''
-@customer_controller.route("/App/User/Customer/Customize_Cake", methods=["GET"])
+@customer_controller.route("/cakery/user/customer/Customize_Cake", methods=["GET"])
 def view_raw_materials():
      """
      View raw materials available for cake customization
@@ -88,7 +87,7 @@ def view_raw_materials():
 # # ----------------------------------------------------------------------------------
 
 # '''=================================== Create Custom Cake ===================================='''
-@customer_controller.route("/App/User/Customer/Customize_Cake/Create/<customer_email>", methods=["POST"]) # (Customize Cake Page)
+@customer_controller.route("/cakery/user/customer/Customize_Cake/Create/<customer_email>", methods=["POST"]) # (Customize Cake Page)
 def create_custom_cake(customer_email):
      """
      Create a customized cake and add it to the cart.
@@ -103,7 +102,7 @@ def create_custom_cake(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Checkout ===================================='''  # - issue (voucher code)
-@customer_controller.route("/customer/checkout/<customer_email>", methods=["POST"])
+@customer_controller.route("/cakery/user/customer/Checkout/<customer_email>", methods=["POST"])
 def checkout(customer_email):
     """
     Checkout the customer's cart.
@@ -122,7 +121,7 @@ def checkout(customer_email):
 
 
 '''=================================== View Orders ===================================='''  # - checked
-@customer_controller.route("/customer/orders/<customer_email>", methods=["GET"]) # (Customer orders Page)
+@customer_controller.route("/cakery/user/customer/Orders/<customer_email>", methods=["GET"]) # (Customer orders Page)
 def view_orders(customer_email):
     """
     View all orders of the customer
@@ -133,7 +132,7 @@ def view_orders(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Edit customer data ====================================''' 
-@customer_controller.route("/App/User/Customer/EditData/<customer_email>", methods=["PUT"]) 
+@customer_controller.route("/cakery/user/customer/EditData/<customer_email>", methods=["PUT"]) 
 def edit_customer_data(customer_email):
     
     data = request.get_json()

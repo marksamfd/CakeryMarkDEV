@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nivo/bar": "^0.88.0",
+    "@nivo/core": "^0.88.0",
+    "@nivo/line": "^0.88.0",
+    "@nivo/pie": "^0.88.0",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
     "next": "15.0.3",

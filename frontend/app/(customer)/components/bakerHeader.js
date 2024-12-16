@@ -1,38 +1,39 @@
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 /**
  * A custom navigation bar for the Baker pages.
  *
  * @returns {React.ReactElement} A custom navigation bar
  */
-function BakerHeader() {
+function BakerHeader({ pos }) {
   return (
-    <nav
-      className="navbar navbar-expand-lg"
-      style={{ backgroundColor: '#f08632' }}
-    >
+    <Navbar style={{ backgroundColor: '#f08632' }} expand={'lg'}>
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
-          Navbar
-        </a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div className="navbar-nav">
-            <a className="nav-link active" aria-current="page" href="#">
+        <Navbar.Brand href="#">{'Cakery ' + pos || 'Baker'}</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="navbar-nav">
+            <Nav.Link className="nav-link active" aria-current="page" href="#">
               Home
-            </a>
-          </div>
-        </div>
+            </Nav.Link>
+
+            <NavDropdown title="Manage Users" id="basic-nav-dropdown">
+              <NavDropdown.Item className="dropdown-item" href="#">
+                Baker
+              </NavDropdown.Item>
+              <NavDropdown.Item className="dropdown-item" href="#">
+                Delivary
+              </NavDropdown.Item>
+              <NavDropdown.Item className="dropdown-item" href="#">
+                Customer
+              </NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
       </div>
-    </nav>
+    </Navbar>
   );
 }
 
