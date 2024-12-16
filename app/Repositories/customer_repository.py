@@ -468,17 +468,38 @@ class CustomerRepository:
 
 
     '''============================ add user review ==============================='''
-    def place_review(self, customer_email,rating,product_id):
-        new_review = Review(
+    def place_review(self, customer_email, rating, product_id):
+        try:
+            # Validate customer_email exists
+            customer = db.session.query(CustomerUser).filter_by(customeremail=customer_email).first()
+            if not customer:
+                return {"message": "Customer does not exist", "status": "error"}, 404
+
+            # Validate product_id exists
+            product = db.session.query(Inventory).filter_by(productid=product_id).first()
+            if not product:
+                return {"message": "Product does not exist", "status": "error"}, 404
+
+            # Validate rating is within acceptable range
+            if not (1 <= rating <= 5):
+                return {"message": "Rating must be between 1 and 5", "status": "error"}, 400
+
+            # Create new review
+            new_review = Review(
                 customeremail=customer_email,
                 rating=rating,
-                productid = product_id
-                )
+                productid=product_id
+            )
+        
+            db.session.add(new_review)
+            db.session.commit()
 
-        db.session.add(new_review)
-        db.session.commit()
+            return {"message": "User rating added successfully", "status": "success"}, 201
+    
+        except Exception as e:
+            db.session.rollback()  # Ensure the transaction is rolled back in case of failure
+            return {"message": "An error occurred", "error": str(e), "status": "error"}, 500
 
-        return {"message": "User rating added successfully", "status": "success"}, 201
             
 
 

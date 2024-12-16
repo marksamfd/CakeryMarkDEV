@@ -296,7 +296,7 @@ class Payment(db.Model):
     __tablename__ = 'payment'
 
     paymentid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    orderid = db.Column(db.Integer, db.ForeignKey('.orderid'))
+    orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
     deposit = db.Column(db.Numeric(10, 2), nullable=False)
     restofprice = db.Column(db.Numeric(10, 2), nullable=False)
     paymentdate = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -318,7 +318,7 @@ class Review(db.Model):
     __tablename__ = 'review'
 
     reviewid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    productid = db.Column(db.Integer, db.ForeignKey('inventory.orderid'))
+    productid = db.Column(db.Integer, db.ForeignKey('inventory.productid'))
     customeremail = db.Column(db.String(255), db.ForeignKey('customeruser.customeremail'))
     rating = db.Column(db.Integer, nullable=False)
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -327,7 +327,7 @@ class Review(db.Model):
     def as_dict(self):
         return {
             "reviewid": self.reviewid,
-            "orderid": self.productid,
+            "productid": self.productid,
             "customeremail": self.customeremail,
             "rating": self.rating,
             "createdat": self.createdat.isoformat() if self.createdat else None
