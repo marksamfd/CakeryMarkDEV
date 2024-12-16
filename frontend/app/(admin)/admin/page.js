@@ -93,17 +93,17 @@ const pie = [
   },
 ];
 async function Page() {
-  /*  const cookieStore = await cookies();
+  const cookieStore = await cookies();
   const token = await cookieStore.get('token');
   const orders = await (
-    await fetch(`${process.env.backend}/user/baker/orders`, {
+    await fetch(`${process.env.backend}/cakery/user/admin/Dashboard`, {
       headers: {
         Authorization: `Bearer ${token.value}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })
-  ).json(); */
+  ).json();
   return (
     <div className="container h-100">
       <div className="row h-50 w-100">
