@@ -445,3 +445,27 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get customer name: {e}")
             return None
+    def increment_quantity(self, customer_email, product_id, action):
+        try:
+            #  cart for the customer
+            cart = Cart.query.filter_by(customeremail=customer_email).first()
+            if not cart:
+                return {"message": "Cart not found"}, 404
+            #  cart id and product id
+            cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+            if cart_item:
+                if action == "increment":
+                    cart_item.quantity += 1
+                elif action == "decrement" and cart_item.quantity > 0:
+                    cart_item.quantity -= 1
+                db.session.commit()
+                return {"message": "Quantity updated successfully"}, 200
+            else:
+                return {"message": "Cart item not found"}, 404
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"Error updating quantity: {e}"}, 500
+
+
+
+  

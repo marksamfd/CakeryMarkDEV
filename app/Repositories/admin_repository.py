@@ -116,14 +116,14 @@ class AdminRepository:
         products = Inventory.query.all()
         itemsList = {}
         for product in products:
-            itemsList[product.product_name] = {
+            itemsList[product.name] = {
                 "price": product.price,
-                "quantity": product.quantity,
+                
             }
         for raw_product in rawItems:
-            itemsList[raw_product.raw_product_name] = {
+            itemsList[raw_product.name] = {
                 "price": raw_product.price,
-                "quantity": raw_product.quantity,
+               
             }
         return itemsList
     def edit_product(self,price,product_id, rawItem=None):
