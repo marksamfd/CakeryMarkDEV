@@ -281,7 +281,81 @@ def add_to_cart():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": f" (route) can't add a product to the cart: {e}"}), 400
-# ----------------------------------------------------------------------------------
+# *****************************************************************************************************
+# ------------------------------------ increment/decrement quantity ------------------------------------
+# *****************************************************************************************************
+@customer_controller.route("/cakery/user/customer/Cart/Increment", methods=["PUT"])  # (Cart Page)
+@jwt_required() 
+def increment_quantity():
+    """
+    Update Cart Item Quantity
+    ---
+    tags:
+      - Customer
+    summary: Increment or decrement the quantity of a specific product in the authenticated customer's cart
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        description: Details for updating product quantity
+        required: true
+        schema:
+          type: object
+          required:
+            - product_id
+            - action
+          properties:
+            product_id:
+              type: integer
+              example: 1
+            action:
+              type: string
+              enum: ["decrement", "increment"]
+              example: "increment"
+    responses:
+      200:
+        description: Quantity updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Product quantity updated successfully."
+            cart_id:
+              type: integer
+              example: 301
+            product_id:
+              type: integer
+              example: 1
+            new_quantity:
+              type: integer
+              example: 3
+      400:
+        description: Bad Request - Missing product ID, invalid action, or other validation errors
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid action provided. Must be 'increment' or 'decrement'."
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while updating product quantity."
+    """
+    customer_email = get_jwt_identity()
+    data = request.get_json()
+    response = customer_service.incrementQuantity(data, customer_email)
+    return jsonify(response), 200
 
 '''=================================== Remove from Cart ===================================='''  # - checked
 @customer_controller.route("/cakery/user/customer/Cart/Remove", methods=["DELETE"])  # (Cart Page)

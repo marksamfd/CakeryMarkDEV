@@ -57,3 +57,9 @@ class CustomerService:
 
     def get_customer_name(self, customer_email):
         return self.customer_repo.get_customer_name(customer_email)
+    
+    def incrementQuantity(self,data, customer_email):
+        customer_email = customer_email
+        product_id = data["product_id"]
+        action = data["action"]
+        return self.customer_repo.increment_quantity(customer_email, product_id, action)
