@@ -1,9 +1,12 @@
-from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser,Notification
+from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser,Notification,Review
 from app.db import db
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 class CustomerRepository:
@@ -384,23 +387,23 @@ class CustomerRepository:
     def check_user(self, data):
         # Email Configuration
         email = data.get("email")
-        SMTP_SERVER = "smtp.gmail.com"
-        SMTP_PORT = 587
-        EMAIL_ADDRESS = "ahmedabdelghany951@gmail.com"
-        EMAIL_PASSWORD = '123umnft'
+        SMTP_SERVER = os.getenv("SMTP_SERVER")
+        SMTP_PORT = os.getenv("SMTP_PORT")
+        EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+        EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
         
+
         # Check if user exists
         user = CustomerUser.query.filter_by(customeremail=email).first()
         if not user:
             return {"message": "User not found", "status": "error"}, 404
 
         # Create reset token (pseudo-code, replace with actual implementation)
-        reset_token = self.generate_reset_token(email)  # Implement this function
-        reset_link = f"https://your-app.com/reset-password?token={reset_token}"
+        #reset_link = f"https://your-app.com/reset-password?"  link to the reset pass page after deployment
         
         # Email content
         subject = "Password Reset Request"
-        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n{reset_link}\n\nIf you did not request a password reset, please ignore this email."
+        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
 
         # Send email
         try:
@@ -418,6 +421,7 @@ class CustomerRepository:
             return {"message": "Password reset email sent successfully", "status": "success"}, 200
 
         except Exception as e:
+            print(f"Error sending email: {e}")
             return {"message": "Failed to send email", "error": str(e), "status": "error"}, 500
         
 
@@ -441,3 +445,64 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get customer name: {e}")
             return None
+    def increment_quantity(self, customer_email, product_id, action):
+        try:
+            #  cart for the customer
+            cart = Cart.query.filter_by(customeremail=customer_email).first()
+            if not cart:
+                return {"message": "Cart not found"}, 404
+            #  cart id and product id
+            cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+            if cart_item:
+                if action == "increment":
+                    cart_item.quantity += 1
+                elif action == "decrement" and cart_item.quantity > 0:
+                    cart_item.quantity -= 1
+                db.session.commit()
+                return {"message": "Quantity updated successfully"}, 200
+            else:
+                return {"message": "Cart item not found"}, 404
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"Error updating quantity: {e}"}, 500
+
+
+    '''============================ add user review ==============================='''
+    def place_review(self, customer_email, rating, product_id):
+        try:
+            # Validate customer_email exists
+            customer = db.session.query(CustomerUser).filter_by(customeremail=customer_email).first()
+            if not customer:
+                return {"message": "Customer does not exist", "status": "error"}, 404
+
+            # Validate product_id exists
+            product = db.session.query(Inventory).filter_by(productid=product_id).first()
+            if not product:
+                return {"message": "Product does not exist", "status": "error"}, 404
+
+            # Validate rating is within acceptable range
+            if not (1 <= rating <= 5):
+                return {"message": "Rating must be between 1 and 5", "status": "error"}, 400
+
+            # Create new review
+            new_review = Review(
+                customeremail=customer_email,
+                rating=rating,
+                productid=product_id
+            )
+        
+            db.session.add(new_review)
+            db.session.commit()
+
+            return {"message": "User rating added successfully", "status": "success"}, 201
+    
+        except Exception as e:
+            db.session.rollback()  # Ensure the transaction is rolled back in case of failure
+            return {"message": "An error occurred", "error": str(e), "status": "error"}, 500
+
+            
+
+
+
+  
+  
