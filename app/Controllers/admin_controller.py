@@ -9,7 +9,7 @@ order_service = OrderService()
 admin_service = AdminService()
 
 
-@admin_controller.route("/App/User/Admin/ViewCustomers", methods=["GET"]) # -- checked
+@admin_controller.route("/cakery/user/admin/ViewCustomers", methods=["GET"]) # -- checked
 @jwt_required()
 def view_customers():
     """
@@ -19,7 +19,7 @@ def view_customers():
     return jsonify(customers), 200
 
 
-@admin_controller.route("/App/User/Admin/ViewStaff", methods=["GET"]) # -- checked
+@admin_controller.route("/cakery/user/admin/ViewStaff", methods=["GET"]) # -- checked
 @jwt_required()
 def view_staff():
     """
@@ -29,7 +29,7 @@ def view_staff():
     return jsonify(staff), 200
 
 
-@admin_controller.route("/App/User/Admin/AddStaff", methods=["POST"])
+@admin_controller.route("/cakery/user/admin/AddStaff", methods=["POST"])
 @jwt_required()
 def add_staff():   
     try: 
@@ -41,14 +41,14 @@ def add_staff():
     
 
 
-@admin_controller.route("/App/User/Admin/DeleteStaff", methods=["DELETE"])
+@admin_controller.route("/cakery/user/admin/DeleteStaff", methods=["DELETE"])
 @jwt_required()
 def delete_staff():
     data = request.get_json()
     response, status_code = admin_service.delete_user(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/App/User/Admin/products", methods=["GET"])
+@admin_controller.route("/cakery/user/admin/Products", methods=["GET"])
 @jwt_required()
 def view_products():
     """
@@ -57,7 +57,8 @@ def view_products():
     products = admin_service.get_products()
     return jsonify(products), 200
 
-@admin_controller.route("/App/User/Admin/EditPrices", methods=["PUT"])
+
+@admin_controller.route("/cakery/user/admin/EditPrices", methods=["PUT"])
 @jwt_required()
 def edit_products():
     """
@@ -67,21 +68,21 @@ def edit_products():
     response, status_code = admin_service.edit_product(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/App/User/Admin/AddVoucher", methods=["POST"])
+@admin_controller.route("/cakery/user/admin/AddVoucher", methods=["POST"])
 @jwt_required()
 def add_voucher():
     data = request.get_json()
     response, status_code = admin_service.add_voucher(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/App/User/Admin/EditVoucher", methods=["PUT"])
+@admin_controller.route("/cakery/user/admin/EditVoucher", methods=["PUT"])
 @jwt_required()
 def edit_voucher():
     data = request.get_json()
     response, status_code = admin_service.edit_vocher(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/App/User/Admin/DeleteVoucher", methods=["DELETE"])
+@admin_controller.route("/cakery/user/admin/DeleteVoucher", methods=["DELETE"])
 @jwt_required()
 def delete_voucher():
     data = request.get_json()

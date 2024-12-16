@@ -8,7 +8,7 @@ auth_service = AuthService()
 
 '''=================================== Customer | SignUp ====================================''' 
 
-@auth_controller.route("/App/User/SignUp", methods=["POST"]) 
+@auth_controller.route("/cakery/user/SignUp", methods=["POST"]) 
 def signup():
     data = request.get_json()
     response, status_code = auth_service.add_new_user(data)
@@ -17,8 +17,7 @@ def signup():
 # -------------------------------------------------------------------------------
 
 '''=================================== Users | SignIn ====================================''' 
-
-@auth_controller.route("/App/User/SignIn", methods=["POST"]) 
+@auth_controller.route("/cakery/user/SignIn", methods=["POST"]) 
 def signin():
     data = request.get_json()
     response, status_code = auth_service.sign_user_in(data)
@@ -28,7 +27,7 @@ def signin():
 
 '''=================================== Users | Forget Password ====================================''' 
 
-@auth_controller.route("/App/User/ForgetPassword", methods=["PUT"]) 
+@auth_controller.route("/cakery/user/ForgetPassword", methods=["PUT"]) 
 def forget_password():
     data = request.get_json()
     response, status_code = auth_service.new_password(data)
@@ -37,7 +36,7 @@ def forget_password():
 
 '''=================================== Test auth middleware ====================================''' 
 
-@auth_controller.route("/App/User/profile", methods=["GET"]) 
+@auth_controller.route("/cakery/user/Profile", methods=["GET"]) 
 @token_required(roles=['admin','customer'])
 def get_profile():
     return jsonify({'message': f"Welcome {request.user}, your role is {request.role}"})

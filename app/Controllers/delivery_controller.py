@@ -9,7 +9,7 @@ delivery_service = DeliveryService()
 order_service = OrderService()
 
 # ------------------------------- View Assigned Orders -------------------------------
-@delivery_controller.route("/user/delivery/orders", methods=["GET"])
+@delivery_controller.route("/cakery/user/delivery/orders", methods=["GET"])
 @jwt_required()
 def view_assigned_orders():
     """
@@ -23,7 +23,7 @@ def view_assigned_orders():
         return jsonify({"error": f"(delivery controller) error fetching assigned orders: {str(e)}"}), 500
 
 # ------------------------------- Change Order Status -------------------------------
-@delivery_controller.route("/user/delivery/orders/change_status", methods=["POST"])
+@delivery_controller.route("/cakery/user/delivery/orders/change_status", methods=["POST"])
 @jwt_required()
 def change_order_status():
     """

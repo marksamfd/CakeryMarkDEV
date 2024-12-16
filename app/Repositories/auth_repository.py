@@ -175,11 +175,10 @@ class AuthRepository:
 
     ''' ============================ User Reset/Change password =============================== '''
 
-    def change_password(self,data):
+    def change_password(self, data):
         email = data.get("email")
         domain = email.split("@")[1]
 
-        
         if domain == "cakery_baker.com":
             user = BakeryUser.query.filter_by(bakeryemail=email).first()
             role = "baker"
