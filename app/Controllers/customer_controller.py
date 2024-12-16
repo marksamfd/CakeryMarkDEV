@@ -135,26 +135,22 @@ def get_product_details(product_id):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Cart ===================================='''  # - checked
-@customer_controller.route("/customer/Cart/<customer_email>", methods=["GET"])  # (Cart Page) 
-def get_cart(customer_email):
+@customer_controller.route("/cakery/user/customer/Cart", methods=["GET"])  # (Cart Page) 
+@jwt_required()
+def get_cart():
     """
     Get Customer's Cart
     ---
     tags:
       - Customer
-    summary: Retrieve the contents of a customer's cart by their email
-    parameters:
-      - in: path
-        name: customer_email
-        type: string
-        required: true
-        description: The email of the customer whose cart is to be retrieved
-        example: "john.doe@example.com"
+    summary: Retrieve the contents of the authenticated customer's cart
+    security:
+      - BearerAuth: []
     produces:
       - application/json
     responses:
       200:
-        description: The customer's cart details
+        description: The authenticated customer's cart details
         schema:
           type: object
           properties:
@@ -203,6 +199,7 @@ def get_cart(customer_email):
               example: "Detailed error message."
     """
     try:
+        customer_email = get_jwt_identity()
         cart = customer_service.view_cart(customer_email)
         return jsonify(cart), 200
     except Exception as e:
@@ -210,22 +207,22 @@ def get_cart(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Add to Cart ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Cart/Add/<customer_email>", methods=["POST"])  # (Cart Page)
-# @jwt_required()
-def add_to_cart(customer_email):
+@customer_controller.route("/cakery/user/customer/Cart/Add", methods=["POST"])  # (Cart Page)
+@jwt_required()
+def add_to_cart():
     """
     Add Product to Cart
     ---
     tags:
       - Customer
-    summary: Add a product or a customized cake to the customer's cart
+    summary: Add a product or a customized cake to the authenticated customer's cart
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
     parameters:
-      - in: path
-        name: customer_email
-        type: string
-        required: true
-        description: The email of the customer adding items to the cart
-        example: "john.doe@example.com"
       - in: body
         name: body
         description: Details of the product to add to the cart
@@ -245,10 +242,6 @@ def add_to_cart(customer_email):
             custom_cake_id:
               type: integer
               example: 1001
-    consumes:
-      - application/json
-    produces:
-      - application/json
     responses:
       200:
         description: Product added to cart successfully
@@ -279,7 +272,7 @@ def add_to_cart(customer_email):
               example: "Detailed error message."
     """
     try:
-        # customer_email = get_jwt_identity()
+        customer_email = get_jwt_identity()
         data = request.get_json()
         product_id = data.get("product_id")
         quantity = data.get("quantity")
@@ -291,21 +284,22 @@ def add_to_cart(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Remove from Cart ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Cart/Remove/<customer_email>", methods=["DELETE"])  # (Cart Page)
-def remove_from_cart(customer_email):
+@customer_controller.route("/cakery/user/customer/Cart/Remove", methods=["DELETE"])  # (Cart Page)
+@jwt_required()
+def remove_from_cart():
     """
     Remove Product from Cart
     ---
     tags:
       - Customer
-    summary: Remove a specific product from the customer's cart
+    summary: Remove a specific product from the authenticated customer's cart
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
     parameters:
-      - in: path
-        name: customer_email
-        type: string
-        required: true
-        description: The email of the customer removing items from the cart
-        example: "john.doe@example.com"
       - in: body
         name: body
         description: Details of the product to remove from the cart
@@ -318,10 +312,6 @@ def remove_from_cart(customer_email):
             product_id:
               type: integer
               example: 501
-    consumes:
-      - application/json
-    produces:
-      - application/json
     responses:
       200:
         description: Product removed from cart successfully
@@ -350,7 +340,7 @@ def remove_from_cart(customer_email):
     """
     try:
         data = request.get_json()
-        # customer_email =  
+        customer_email = get_jwt_identity()
         product_id = data.get("product_id")
 
         response = customer_service.remove_from_cart(customer_email, product_id)
@@ -407,21 +397,22 @@ def view_raw_materials():
 # ----------------------------------------------------------------------------------
 
 '''=================================== Create Custom Cake ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Customize_Cake/Create/<customer_email>", methods=["POST"])  # (Customize Cake Page)
-def create_custom_cake(customer_email):
+@customer_controller.route("/cakery/user/customer/Customize_Cake/Create", methods=["POST"])  # (Customize Cake Page)
+@jwt_required()
+def create_custom_cake():
      """
      Create a Customized Cake and Add to Cart
      ---
      tags:
        - Customer
      summary: Create a customized cake based on customer preferences and add it to the cart
+     security:
+       - BearerAuth: []
+     consumes:
+       - application/json
+     produces:
+       - application/json
      parameters:
-       - in: path
-         name: customer_email
-         type: string
-         required: true
-         description: The email of the customer creating the custom cake
-         example: "john.doe@example.com"
        - in: body
          name: body
          description: Details of the custom cake to be created
@@ -463,10 +454,6 @@ def create_custom_cake(customer_email):
                    outerToppings:
                      type: string
                      example: "Cherries"
-     consumes:
-       - application/json
-     produces:
-       - application/json
      responses:
        200:
          description: Customized cake created and added to cart successfully
@@ -500,8 +487,8 @@ def create_custom_cake(customer_email):
                example: "Detailed error message."
      """
      try:
+         customer_email = get_jwt_identity()
          data = request.get_json()
-         # customer_email = request.headers.get("customer_email")  # testing
          response = customer_service.create_custom_cake(customer_email, data)
          return jsonify(response), 200
      except Exception as e:
@@ -509,21 +496,22 @@ def create_custom_cake(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Checkout ===================================='''  # - issue (voucher code)
-@customer_controller.route("/cakery/user/customer/Checkout/<customer_email>", methods=["POST"])
-def checkout(customer_email):
+@customer_controller.route("/cakery/user/customer/Checkout", methods=["POST"])
+@jwt_required()
+def checkout():
     """
     Checkout Customer's Cart
     ---
     tags:
       - Customer
-    summary: Process the checkout of the customer's cart, optionally applying a voucher code
+    summary: Process the checkout of the authenticated customer's cart, optionally applying a voucher code
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
     parameters:
-      - in: path
-        name: customer_email
-        type: string
-        required: true
-        description: The email of the customer checking out
-        example: "john.doe@example.com"
       - in: body
         name: body
         description: Checkout details
@@ -534,10 +522,6 @@ def checkout(customer_email):
             voucher:
               type: string
               example: "DISCOUNT20"
-    consumes:
-      - application/json
-    produces:
-      - application/json
     responses:
       200:
         description: Checkout completed successfully
@@ -573,7 +557,7 @@ def checkout(customer_email):
     """
     try:
         data = request.get_json()
-        # customer_email =  
+        customer_email = get_jwt_identity()
         voucher_code = data.get("voucher")
         response = customer_service.checkout(customer_email, voucher_code)
         if "error" in response:
@@ -584,26 +568,22 @@ def checkout(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== View Orders ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Orders/<customer_email>", methods=["GET"])  # (Customer orders Page)
-def view_orders(customer_email):
+@customer_controller.route("/cakery/user/customer/Orders", methods=["GET"])  # (Customer orders Page)
+@jwt_required()
+def view_orders():
     """
     View Customer's Orders
     ---
     tags:
       - Customer
-    summary: Retrieve all orders placed by the customer
-    parameters:
-      - in: path
-        name: customer_email
-        type: string
-        required: true
-        description: The email of the customer whose orders are to be retrieved
-        example: "john.doe@example.com"
+    summary: Retrieve all orders placed by the authenticated customer
+    security:
+      - BearerAuth: []
     produces:
       - application/json
     responses:
       200:
-        description: A list of the customer's orders
+        description: A list of the authenticated customer's orders
         schema:
           type: array
           items:
@@ -651,6 +631,7 @@ def view_orders(customer_email):
               example: "An error occurred while fetching orders."
     """
     try:
+        customer_email = get_jwt_identity()
         orders = customer_service.view_customer_orders(customer_email)
         return jsonify(orders), 200
     except Exception as e:
@@ -658,21 +639,22 @@ def view_orders(customer_email):
 # ----------------------------------------------------------------------------------
 
 '''=================================== Edit Customer Data ====================================''' 
-@customer_controller.route("/cakery/user/customer/EditData/<customer_email>", methods=["PUT"]) 
-def edit_customer_data(customer_email):
+@customer_controller.route("/cakery/user/customer/EditData", methods=["PUT"]) 
+@jwt_required()
+def edit_customer_data():
     """
     Edit Customer Data
     ---
     tags:
       - Customer
-    summary: Update the customer's personal data
+    summary: Update the authenticated customer's personal data
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
     parameters:
-      - in: path
-        name: customer_email
-        type: string
-        required: true
-        description: The email of the customer whose data is to be updated
-        example: "john.doe@example.com"
       - in: body
         name: body
         description: Customer data to be updated
@@ -695,10 +677,6 @@ def edit_customer_data(customer_email):
             password:
               type: string
               example: "NewSecureP@ssw0rd"
-    consumes:
-      - application/json
-    produces:
-      - application/json
     responses:
       200:
         description: Customer data updated successfully
@@ -737,20 +715,27 @@ def edit_customer_data(customer_email):
               type: string
               example: "error"
     """
-    data = request.get_json()
-    response, status_code = customer_service.update_data(customer_email, data)
-    return jsonify(response), status_code
+    try:
+        customer_email = get_jwt_identity()
+        data = request.get_json()
+        response, status_code = customer_service.update_data(customer_email, data)
+        return jsonify(response), status_code
+    except Exception as e:
+        return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
 # ----------------------------------------------------------------------------------
 
 '''=================================== Users | Forget Password ====================================''' 
-@customer_controller.route("/cakery/user/customer/ForgetPassword/email", methods=["POST"]) 
+@customer_controller.route("/cakery/user/customer/ForgetPassword", methods=["POST"]) 
+@jwt_required()
 def forget_pass_email():
     """
     Initiate Password Reset via Email
     ---
     tags:
       - Authentication
-    summary: Send a password reset email to the customer
+    summary: Send a password reset email to the authenticated customer
+    security:
+      - BearerAuth: []
     consumes:
       - application/json
     produces:
@@ -806,18 +791,24 @@ def forget_pass_email():
               type: string
               example: "error"
     """
-    data = request.get_json()
-    response, status_code = customer_service.send_email(data)
-    return jsonify(response), status_code
+    try:
+        data = request.get_json()
+        response, status_code = customer_service.send_email(data)
+        return jsonify(response), status_code
+    except Exception as e:
+        return jsonify({"message": "An error occurred while sending the password reset email.", "error": str(e)}), 500
 
 @customer_controller.route("/cakery/user/customer/ForgetPassword", methods=["PUT"]) 
+@jwt_required()
 def forget_password():
     """
     Reset User Password
     ---
     tags:
       - Authentication
-    summary: Reset the customer's password using a reset token
+    summary: Reset the authenticated customer's password using a reset token
+    security:
+      - BearerAuth: []
     consumes:
       - application/json
     produces:
@@ -877,10 +868,13 @@ def forget_password():
               type: string
               example: "error"
     """
-    data = request.get_json()
-    response, status_code = customer_service.new_password(data)
-    return jsonify(response), status_code
-# -------------------------------------------------------------------------------
+    try:
+        data = request.get_json()
+        response, status_code = customer_service.new_password(data)
+        return jsonify(response), status_code
+    except Exception as e:
+        return jsonify({"error": f"Error resetting password: {e}"}), 500
+# ----------------------------------------------------------------------------------
 
 '''===================================== Verify OTP ====================================''' 
 @customer_controller.route("/cakery/user/customer/VerifyOTP", methods=["POST"])
@@ -891,7 +885,7 @@ def verify_otp():
     ---
     tags:
       - Authentication
-    summary: Validate the OTP code provided by the customer
+    summary: Validate the OTP code provided by the authenticated customer
     security:
       - BearerAuth: []
     consumes:
@@ -1034,3 +1028,4 @@ def get_customer_name():
         return jsonify({"name": name}), 200
     except Exception as e:
         return jsonify({"error": "An error occurred while fetching the customer name.", "error_details": str(e)}), 500
+# ----------------------------------------------------------------------------------
