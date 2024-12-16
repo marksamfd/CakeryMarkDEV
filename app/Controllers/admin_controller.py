@@ -422,8 +422,8 @@ def view_vouchers():
     vouchers = admin_service.get_vouchers()
     return jsonify(vouchers), 200
 
-'''=================================== Admin | Dashboard ====================================''
-'
+'''=================================== Admin | Dashboard ===================================='''
+
 @admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
 @jwt_required()
 def view_dashboard():
