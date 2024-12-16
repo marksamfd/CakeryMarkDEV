@@ -79,17 +79,15 @@ class AdminRepository:
     ''' ============================ add/edit voucher =============================== '''
     # ---- view all vouchers ----
     def get_vouchers(self):
-       vouchers = Voucher.query.all()
-       voucher_list = []
-       for voucher in vouchers:
-          voucher_list.append({
-                "voucher_code": voucher.voucher_code,
-                "discount_percentage": voucher.discount_percentage
-            })
-       return voucher_list
+        vouchers = Voucher.query.all()
+        voucher_list = {}
+        for voucher in vouchers:
+          voucher_list[voucher.vouchercode] = {"discount_percentage": voucher.discountpercentage,}
+        return voucher_list
+       
     # ---- add voucher ----
     def add_voucher(self, voucher_code, discount_percentage):
-        voucher = Voucher(voucher_code=voucher_code, discount_percentage=discount_percentage)
+        voucher = Voucher(vouchercode=voucher_code, discountpercentage=discount_percentage)
         db.session.add(voucher)
         db.session.commit()
         return voucher
@@ -97,7 +95,7 @@ class AdminRepository:
     def edit_voucher(self, voucher_code, discount_percentage):
         voucher = Voucher.query.filter_by(voucher_code=voucher_code)
         if voucher:
-            voucher.discount_percentage = discount_percentage
+            voucher.discountpercentage = discount_percentage
             db.session.commit()
             return voucher
         return None

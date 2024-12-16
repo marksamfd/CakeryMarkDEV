@@ -393,3 +393,26 @@ def delete_voucher():
     data = request.get_json()
     response, status_code = admin_service.delete_voucher(data)
     return jsonify(response), status_code
+
+@admin_controller.route("/cakery/user/admin/Vouchers", methods=["GET"])
+@jwt_required()
+def view_vouchers():
+    """
+    View all vouchers
+    ---
+    tags:
+      - Admin
+    summary: Retrieve a list of all vouchers
+    security:
+      - BearerAuth: []
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Vouchers retrieved successfully
+      401:
+        description: Unauthorized
+    """
+
+    vouchers = admin_service.get_vouchers()
+    return jsonify(vouchers), 200
