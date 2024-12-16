@@ -63,3 +63,6 @@ class CustomerService:
         product_id = data["product_id"]
         action = data["action"]
         return self.customer_repo.increment_quantity(customer_email, product_id, action)
+
+    def add_review(self,customer_email, rating,product_id):
+        return self.customer_repo.place_review(customer_email, rating,product_id)

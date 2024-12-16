@@ -1,6 +1,8 @@
-from app.models import DeliveryUser, BakeryUser, Inventory, Voucher, Rawmaterials, CustomerUser
+from app.models import DeliveryUser, BakeryUser, Inventory, Voucher, Rawmaterials, CustomerUser,OrderItems,Orders
 from app.db import db
 from argon2 import PasswordHasher
+from datetime import datetime, timedelta
+from sqlalchemy import func, desc
 
 encrypt = PasswordHasher()
 
@@ -134,4 +136,59 @@ class AdminRepository:
         
      
     
-    ''' ============================ get all customers =============================== '''
+    ''' ============================ get dashboard data =============================== '''
+    
+
+
+
+    # ============================ get dashboard data =============================== 
+    def get_dashboard_data(self): # top 5 sold items of all time, total of all prices in the last 5 days
+        try:
+            # Define the date 5 days ago
+            five_days_ago = datetime.now() - timedelta(days=5)
+            
+            # 1. Total price of orders grouped by order date (last 5 days)
+            total_prices_5_days = db.session.query(
+                func.date(Orders.orderdate).label('order_date'),
+                func.sum(Orders.totalprice).label('total_price')
+            ).filter(Orders.orderdate >= five_days_ago) \
+             .group_by(func.date(Orders.orderdate)) \
+             .order_by(func.date(Orders.orderdate)).all()
+            
+            # Prepare data for date and total price
+            total_price_data = [
+                {"Date": record.order_date.strftime('%d/%m/%Y'), "Total Price": float(record.total_price)}
+                for record in total_prices_5_days
+            ]
+            
+            # 2. Best 5 sold items (productid, total_quantity, total_price)
+            best_sold_items = db.session.query(
+                OrderItems.productid,
+                func.sum(OrderItems.quantity).label('total_quantity'),
+                func.sum(OrderItems.priceatorder).label('total_price')
+            ).join(Orders, Orders.orderid == OrderItems.orderid) \
+             .group_by(OrderItems.productid) \
+             .order_by(desc('total_quantity')) \
+             .limit(5).all()
+            
+            # Optional: Fetch product names (assuming you have a Product table)
+            product_data = []
+            for item in best_sold_items:
+                product = db.session.query(Inventory).filter_by(productid=item.productid).first()
+                product_name = product.name if product else "Customized Cake"
+                product_data.append({
+                    "itemName": product_name,
+                    "price": float(item.total_price),
+                    "qty": int(item.total_quantity)
+                })
+            
+            # Prepare the final dashboard data
+            dashboard_data = {
+                "total_price_by_date": total_price_data,
+                "best_sold_items": product_data
+            }
+            
+            return {"status": "success", "data": dashboard_data}
+
+        except Exception as e:
+            return {"status": "error", "message": str(e)}

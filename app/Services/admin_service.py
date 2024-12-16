@@ -66,5 +66,7 @@ class AdminService:
         return self.admin_repo.delete_voucher(voucher_id)
     def get_vouchers(self):
         return self.admin_repo.get_vouchers()
+    def dashboard_data(self):
+        return self.admin_repo.get_dashboard_data()
     
     
