@@ -427,6 +427,24 @@ def view_vouchers():
 @admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
 @jwt_required()
 def view_dashboard():
+  """
+    View the admin dashboard
+    ---
+    tags:
+      - Admin
+    summary: Get the admin dashboard data
+    security:
+      - BearerAuth: []
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Admin dashboard data retrieved successfully
+      401:
+        description: Unauthorized
+      500:
+        description: Internal Server Error
+  """
   try:
         response = admin_service.dashboard_data()  # Ensure this call works
         return jsonify(response), 200  # Return a proper JSON response with HTTP status code 200
