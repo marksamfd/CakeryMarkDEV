@@ -15,19 +15,35 @@ function AdminHeader({ pos }) {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="navbar-nav">
-            <Nav.Link className="nav-link active" aria-current="page" href="#">
+            <Nav.Link className="nav-link active" aria-current="page" href="/admin">
               Home
             </Nav.Link>
 
             <NavDropdown title="Manage Users" id="basic-nav-dropdown">
               <NavDropdown.Item className="dropdown-item" href="/admin/manageUsers/baker">
-                Baker
-              </NavDropdown.Item>
-              <NavDropdown.Item className="dropdown-item" href="/admin/manageUsers/delivery">
-                Delivery
+                Staff : Bakers & Delivery Guys
               </NavDropdown.Item>
               <NavDropdown.Item className="dropdown-item" href="/admin/manageUsers/customer">
-                Customer
+                Customers
+              </NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Manage Products" id="basic-nav-dropdown">
+              <NavDropdown.Item className="dropdown-item" href="#">
+                View Products
+              </NavDropdown.Item>
+              <NavDropdown.Item className="dropdown-item" href="#">
+                Edit Products
+              </NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Manage Vouchers" id="basic-nav-dropdown">
+              <NavDropdown.Item className="dropdown-item" href="#">
+                View Vouchers
+              </NavDropdown.Item>
+              <NavDropdown.Item className="dropdown-item" href="#">
+                Add Vouchers
+              </NavDropdown.Item>
+              <NavDropdown.Item className="dropdown-item" href="#">
+                Edit Vouchers
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
