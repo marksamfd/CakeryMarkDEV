@@ -39,3 +39,6 @@ class DeliveryService:
         return self.delivery_repo.get_assigned_orders(delivery_email)
     
    
+
+    def get_deliveryman_name(self, delivery_email):
+        return self.delivery_repo.get_deliveryman_name(delivery_email)

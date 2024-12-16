@@ -46,3 +46,12 @@ def change_order_status():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": f"(delivery controller) Error changing order status: {str(e)}"}), 500
+
+    '''=================================== Get Deliveryman Name ===================================='''
+@delivery_controller.route("/cakery/user/delivery/name", methods=["GET"])
+@jwt_required() 
+def get_deliveryman_name():
+    delivery_email = get_jwt_identity()
+    delivery_service = delivery_controller.delivery_service
+    name = delivery_service.get_deliveryman_name(delivery_email)
+    return jsonify(name), 200
