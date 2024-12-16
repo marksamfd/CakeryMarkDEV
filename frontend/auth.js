@@ -32,7 +32,7 @@ export const { auth, signIn, signOut } = NextAuth({
           const cookieStore = await cookies();
           await cookieStore.set('token', res.access_token);
           await cookieStore.set('role', res.role);
-          await cookieStore.set('role', res?.name);
+          await cookieStore.set('name', res?.name);
 
           return res;
         }
