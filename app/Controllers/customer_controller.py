@@ -965,3 +965,20 @@ def get_customer_name():
     except Exception as e:
         return jsonify({"error": "An error occurred while fetching the customer name.", "error_details": str(e)}), 500
 # ----------------------------------------------------------------------------------
+
+'''===================================== Customer Review ====================================''' 
+@customer_controller.route("/cakery/user/customer/Review", methods=["POST"])
+@jwt_required()
+def customer_review():
+   
+    try:
+        customer_email = get_jwt_identity()
+        data = request.get_json()
+        rating = data.get("rating")
+        product_id = data.get("productid")
+        response, status_code = customer_service.add_review(customer_email, rating,product_id)
+        return jsonify(response), status_code
+    except Exception as e:
+        return jsonify({"error": "An error occurred while fetching the customer name.", "error_details": str(e)}), 500
+# ----------------------------------------------------------------------------------
+

@@ -1,4 +1,4 @@
-from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser,Notification
+from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser,Notification,Review
 from app.db import db
 import smtplib
 from email.mime.text import MIMEText
@@ -467,5 +467,21 @@ class CustomerRepository:
             return {"error": f"Error updating quantity: {e}"}, 500
 
 
+    '''============================ add user review ==============================='''
+    def place_review(self, customer_email,rating,product_id):
+        new_review = Review(
+                customeremail=customer_email,
+                rating=rating,
+                productid = product_id
+                )
 
+        db.session.add(new_review)
+        db.session.commit()
+
+        return {"message": "User rating added successfully", "status": "success"}, 201
+            
+
+
+
+  
   
