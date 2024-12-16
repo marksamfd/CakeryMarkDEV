@@ -144,16 +144,16 @@ def edit_customer_data(customer_email):
     return jsonify(response), status_code
 # ----------------------------------------------------------------------------------
 
-'''=================================== Users | Forget Password ====================================''' 
+'''=================================== Users | Reset Password ====================================''' 
 
-@customer_controller.route("/cakery/user/customer/ForgetPassword/email", methods=["POST"]) 
-def forget_pass_email():
+@customer_controller.route("/cakery/user/customer/ResetPassword/email", methods=["POST"]) 
+def reset_pass_email():
     data = request.get_json()
     response, status_code = customer_service.send_email(data)
     return jsonify(response), status_code
 
-@customer_controller.route("/cakery/user/customer/ForgetPassword", methods=["PUT"]) 
-def forget_password():
+@customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"]) 
+def reset_password():
     data = request.get_json()
     response, status_code = customer_service.new_password(data)
     return jsonify(response), status_code
