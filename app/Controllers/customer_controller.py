@@ -724,157 +724,19 @@ def edit_customer_data():
         return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
 # ----------------------------------------------------------------------------------
 
-'''=================================== Users | Forget Password ====================================''' 
-@customer_controller.route("/cakery/user/customer/ForgetPassword", methods=["POST"]) 
-@jwt_required()
-def forget_pass_email():
-    """
-    Initiate Password Reset via Email
-    ---
-    tags:
-      - Authentication
-    summary: Send a password reset email to the authenticated customer
-    security:
-      - BearerAuth: []
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - in: body
-        name: body
-        description: Customer email for password reset
-        required: true
-        schema:
-          type: object
-          required:
-            - email
-          properties:
-            email:
-              type: string
-              example: "john.doe@example.com"
-    responses:
-      200:
-        description: Password reset email sent successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "Password reset email sent successfully"
-            status:
-              type: string
-              example: "success"
-      404:
-        description: User not found
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "User not found"
-            status:
-              type: string
-              example: "error"
-      500:
-        description: Failed to send email
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "Failed to send email"
-            error:
-              type: string
-              example: "SMTP server not reachable"
-            status:
-              type: string
-              example: "error"
-    """
-    try:
-        data = request.get_json()
-        response, status_code = customer_service.send_email(data)
-        return jsonify(response), status_code
-    except Exception as e:
-        return jsonify({"message": "An error occurred while sending the password reset email.", "error": str(e)}), 500
+'''=================================== Users | Reset Password ====================================''' 
 
-@customer_controller.route("/cakery/user/customer/ForgetPassword", methods=["PUT"]) 
-@jwt_required()
+@customer_controller.route("/cakery/user/customer/ResetPassword/email", methods=["POST"]) 
+def forget_pass_email():
+    data = request.get_json()
+    response, status_code = customer_service.send_email(data)
+    return jsonify(response), status_code
+
+@customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"]) 
 def forget_password():
-    """
-    Reset User Password
-    ---
-    tags:
-      - Authentication
-    summary: Reset the authenticated customer's password using a reset token
-    security:
-      - BearerAuth: []
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - in: body
-        name: body
-        description: New password details
-        required: true
-        schema:
-          type: object
-          required:
-            - newpassword
-            - newpasswordconfirm
-          properties:
-            newpassword:
-              type: string
-              example: "NewSecureP@ssw0rd"
-            newpasswordconfirm:
-              type: string
-              example: "NewSecureP@ssw0rd"
-    responses:
-      200:
-        description: Password changed successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "Password changed successfully"
-            status:
-              type: string
-              example: "success"
-      400:
-        description: Bad Request - Passwords do not match or validation errors
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "Passwords do not match"
-            status:
-              type: string
-              example: "error"
-      500:
-        description: Internal Server Error
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "An error occurred during password reset"
-            error:
-              type: string
-              example: "Detailed error message."
-            status:
-              type: string
-              example: "error"
-    """
-    try:
-        data = request.get_json()
-        response, status_code = customer_service.new_password(data)
-        return jsonify(response), status_code
-    except Exception as e:
-        return jsonify({"error": f"Error resetting password: {e}"}), 500
-# ----------------------------------------------------------------------------------
+    data = request.get_json()
+    response, status_code = customer_service.new_password(data)
+    return jsonify(response), status_code
 
 '''===================================== Verify OTP ====================================''' 
 @customer_controller.route("/cakery/user/customer/VerifyOTP", methods=["POST"])
