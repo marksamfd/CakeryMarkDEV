@@ -10,3 +10,9 @@ CLIENT_ID = google_auth_id
 CLIENT_SECRET = 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
 REDIRECT_URI = http://localhost:5000/App/User/Google-Callback
 SCOPE = https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile 
+
+# Reset Password email 
+SMTP_SERVER = smtp.gmail.com
+SMTP_PORT = 587
+EMAIL_ADDRESS = sender email address
+EMAIL_PASSWORD = sender email password

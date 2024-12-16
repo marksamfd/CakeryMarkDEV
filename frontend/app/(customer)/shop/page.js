@@ -37,7 +37,7 @@ function Shop() {
       .get('token')
       .then((cookie) => {
         console.log(cookie);
-        return fetch(`/api/customer/shop`, {
+        return fetch(`/api/cakery/user/customer/Shop`, {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
