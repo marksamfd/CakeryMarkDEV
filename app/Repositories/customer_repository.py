@@ -1,8 +1,9 @@
-from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser
+from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser,Notification
 from app.db import db
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
 
 
 class CustomerRepository:
@@ -418,3 +419,25 @@ class CustomerRepository:
 
         except Exception as e:
             return {"message": "Failed to send email", "error": str(e), "status": "error"}, 500
+        
+
+
+
+    '''============================ get notifications ==============================='''
+    def get_notifications(self, customer_email):
+        try:
+            notifications = Notification.query.filter_by(customer_email=customer_email).all()
+            # return only id and message
+            result = [{"id": notification.id, "message": notification.message} for notification in notifications]
+            return result
+        except Exception as e:
+            return {"error": f"(repo) error getting notifications: {e}"}, 500
+        
+    def get_customer_name(self, customer_email):
+        try:
+            customer = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            name = customer.firstname + " " + customer.lastname
+            return name
+        except Exception as e:
+            print(f"(repo) can't get customer name: {e}")
+            return None

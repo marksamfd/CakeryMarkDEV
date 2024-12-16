@@ -5,18 +5,33 @@ from app.Controllers.auth_controller import auth_controller
 from app.Controllers.delivery_controller import delivery_controller
 from app.Controllers.admin_controller import admin_controller
 from app.Middlewares.error_middleware import error_middleware
+from app.utils.order_status_notifier import OrderStatusNotifier, PushNotificationObserver, DatabaseNotificationObserver
+from app.Services.otp_service import OTPService
+from app.Services.delivery_service import DeliveryService
 from flask_jwt_extended import JWTManager
-
 
 app = create_app()
 jwt = JWTManager(app)
 error_middleware(app)
+
+# ------ Shared Dependencies ------
+notifier = OrderStatusNotifier()
+notifier.register_observer(PushNotificationObserver())
+notifier.register_observer(DatabaseNotificationObserver())
+
+# Initialize services with shared dependencies
+otp_service = OTPService(notifier)
+delivery_service = DeliveryService(notifier)
+
+# Inject shared dependencies into controllers
+delivery_controller.delivery_service = delivery_service
+customer_controller.otp_service = otp_service
+
 app.register_blueprint(customer_controller)
 app.register_blueprint(baker_controller)
 app.register_blueprint(auth_controller)
 app.register_blueprint(delivery_controller)
 app.register_blueprint(admin_controller)
-
 
 if __name__ == "__main__":
     with app.app_context():

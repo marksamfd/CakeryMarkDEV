@@ -49,3 +49,11 @@ class CustomerService:
     # ----------- User forget password -----------
     def send_email(self,data):
         return self.customer_repo.check_user(data)
+
+    # ----------- my notification -----------
+    def view_notifications(self,customer_email):
+        return self.customer_repo.get_notifications(customer_email)
+    
+
+    def get_customer_name(self, customer_email):
+        return self.customer_repo.get_customer_name(customer_email)

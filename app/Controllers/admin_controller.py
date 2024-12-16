@@ -19,7 +19,7 @@ def view_customers():
     return jsonify(customers), 200
 
 
-@admin_controller.route("/cakery/user/admin/ViewStaff", methods=["GET"]) # -- checked
+@admin_controller.route("/cakery/user/admin/Staff/View", methods=["GET"]) # -- checked
 @jwt_required()
 def view_staff():
     """
@@ -29,7 +29,7 @@ def view_staff():
     return jsonify(staff), 200
 
 
-@admin_controller.route("/cakery/user/admin/AddStaff", methods=["POST"])
+@admin_controller.route("/cakery/user/admin/Staff/Add", methods=["POST"])
 @jwt_required()
 def add_staff():   
     try: 
@@ -41,7 +41,7 @@ def add_staff():
     
 
 
-@admin_controller.route("/cakery/user/admin/DeleteStaff", methods=["DELETE"])
+@admin_controller.route("/cakery/user/admin/Staff/Delete", methods=["DELETE"])
 @jwt_required()
 def delete_staff():
     data = request.get_json()
@@ -58,7 +58,7 @@ def view_products():
     return jsonify(products), 200
 
 
-@admin_controller.route("/cakery/user/admin/EditPrices", methods=["PUT"])
+@admin_controller.route("/cakery/user/admin/Products/edit", methods=["PUT"])
 @jwt_required()
 def edit_products():
     """
@@ -68,21 +68,21 @@ def edit_products():
     response, status_code = admin_service.edit_product(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/cakery/user/admin/AddVoucher", methods=["POST"])
+@admin_controller.route("/cakery/user/admin/Vouchers/Add", methods=["POST"])
 @jwt_required()
 def add_voucher():
     data = request.get_json()
     response, status_code = admin_service.add_voucher(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/cakery/user/admin/EditVoucher", methods=["PUT"])
+@admin_controller.route("/cakery/user/admin/Vouchers/Add", methods=["PUT"])
 @jwt_required()
 def edit_voucher():
     data = request.get_json()
     response, status_code = admin_service.edit_vocher(data)
     return jsonify(response), status_code
 
-@admin_controller.route("/cakery/user/admin/DeleteVoucher", methods=["DELETE"])
+@admin_controller.route("/cakery/user/admin/Vouchers/Delete", methods=["DELETE"])
 @jwt_required()
 def delete_voucher():
     data = request.get_json()

@@ -3,7 +3,7 @@ from app.db import db
 
 class Observer:
     def update(self, customer_email, message):
-        raise NotImplementedError("Subclass must implement the 'update' method")
+        raise NotImplementedError("not implemented")
 
 
 class PushNotificationObserver(Observer):
