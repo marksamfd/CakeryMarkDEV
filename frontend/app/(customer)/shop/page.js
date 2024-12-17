@@ -30,8 +30,9 @@ import product12 from '../../img/shop/product12.jpg';
  * - Includes pagination controls for navigating through product pages.
  */
 function Shop() {
-  const [products, setProducts] = useState([]);
-
+  const [allProducts, setAllProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   useEffect(() => {
     cookieStore
       .get('token')
@@ -46,7 +47,9 @@ function Shop() {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setProducts(data);
+        setAllProducts(data);
+        setFilteredProducts(data);
+        setAllCategories(new Set(data.map((e) => e.category)));
       })
       .catch(console.error);
   }, []);
@@ -60,16 +63,45 @@ function Shop() {
               <div className="col-lg-7 col-md-7">
                 <div className="shop__option__search">
                   <form action="#">
-                    <select>
+                    <select
+                      onChange={(event) => {
+                        console.log(event.target.value.length);
+                        if (event.target.value.length > 0) {
+                          setFilteredProducts(
+                            allProducts.filter((e) =>
+                              e.category
+                                .toLowerCase()
+                                .includes(event.target.value.toLowerCase()),
+                            ),
+                          );
+                        } else {
+                          setFilteredProducts(allProducts);
+                        }
+                      }}
+                    >
                       <option value="">Categories</option>
-                      <option value="red velvet">Red Velvet</option>
-                      <option value="cup cake">Cup Cake</option>
-                      <option value="biscuit">Biscuit</option>
+                      {[...allCategories.values()].map((e, i) => (
+                        <option key={`kat-${i}`} value={e}>
+                          {e}
+                        </option>
+                      ))}
                     </select>
-                    <input type="text" placeholder="Search" />
-                    <button type="submit">
-                      <i className="fa fa-search" />
-                    </button>
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      onInput={(event) => {
+                        console.log(event.target.value.length);
+                        if (event.target.value.length > 0) {
+                          setFilteredProducts(
+                            allProducts.filter((e) =>
+                              e.name.toLowerCase().includes(event.target.value),
+                            ),
+                          );
+                        } else {
+                          setFilteredProducts(allProducts);
+                        }
+                      }}
+                    />
                   </form>
                 </div>
               </div>
@@ -125,7 +157,7 @@ function Shop() {
                 </div>
               </Link>
             </div>
-            {products.map((products, index) => (
+            {filteredProducts.map((products, index) => (
               <ProductCard key={index} {...products} />
             ))}
           </div>
