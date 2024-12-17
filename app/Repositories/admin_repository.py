@@ -1,14 +1,17 @@
-from app.models import DeliveryUser, BakeryUser, Inventory, Voucher, Rawmaterials, CustomerUser,OrderItems,Orders
+from app.models import DeliveryUser, BakeryUser,DeliveryAssignments, Inventory, Voucher, Rawmaterials, CustomerUser,OrderItems,Orders
 from app.db import db
 from argon2 import PasswordHasher
 from datetime import datetime, timedelta
 from sqlalchemy import func, desc
+from app.Repositories.delivery_repository import DeliveryRepository
 
 encrypt = PasswordHasher()
 
 
 
 class AdminRepository:
+    def __init__(self, delivery_repo: DeliveryRepository):
+        self.delivery_repo = delivery_repo
     ''' ============================ get all staff users =============================== '''
     # ---- get all staff users ----
     def  get_staff_users(self):
@@ -64,19 +67,47 @@ class AdminRepository:
         return {f"delivery user {email} was added"}
     
     ''' ============================ delete staff user =============================== '''
+
     # ---- delete baker user ----
     def delete_baker_user(self, email):
-        baker = BakeryUser.query.filter_by(bakeryemail=email)
-        db.session.delete(baker)
-        db.session.commit()
-        return {"message": "baker deleted successfully"}
+        try: 
+            baker = BakeryUser.query.filter_by(bakeryemail=email).first()
+            if baker:
+                db.session.delete(baker)
+                db.session.commit()
+                return {"message": "baker deleted successfully"}
+            else:
+                 return {"error": f"(repo) error deleting baker user: user not found"}
+        except Exception as e:
+            return {"error": f"(repo) error deleting baker user: {e}"}
+
     # ---- delete delivery user ----
     def delete_delivery_user(self, email):
-        delivery = DeliveryUser.query.filter_by(deliveryemail=email)
-        db.session.delete(delivery)
-        db.session.commit()
-        return {"message": "delivery deleted successfully"}
+        try:
+            # Step 1: Find all orders assigned to this delivery user
+            orders = Orders.query.filter_by(deliveryemail=email).all()
+            if orders:
+                # Step 2: Reassign orders to other delivery users
+                for order in orders:
+                    new_delivery_email = self.delivery_repo.find_available_delivery_user()
+                    if new_delivery_email:
+                        order.deliveryemail = new_delivery_email
+                    else:
+                        return {"error": "No available delivery users to reassign orders."}
+                db.session.commit()
 
+            # Step 3: Delete the delivery user
+            delivery_user = DeliveryUser.query.filter_by(deliveryemail=email).first()
+            if delivery_user:
+                db.session.delete(delivery_user)
+                db.session.commit()
+                return {"message": "Delivery user deleted successfully and orders reassigned."}
+            else:
+                return {"error": "Delivery user not found."}
+
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"(repo) Error deleting delivery user and reassigning orders: {e}"}
         
     ''' ============================ add/edit voucher =============================== '''
     # ---- view all vouchers ----
@@ -119,10 +150,7 @@ class AdminRepository:
                 
             }
         for raw_product in rawItems:
-            itemsList[raw_product.name] = {
-                "price": raw_product.price,
-               
-            }
+            itemsList[raw_product.name] = {"price": raw_product.price,}
         return itemsList
     def edit_product(self,price,product_id, rawItem=None):
         product = Inventory.query.filter_by(product_id=product_id)

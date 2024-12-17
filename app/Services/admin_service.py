@@ -1,12 +1,14 @@
 from app.Repositories.order_repository import OrderRepository
 from app.Repositories.admin_repository import AdminRepository
+from app.Repositories.delivery_repository import DeliveryRepository
 
 
 
 
 class AdminService:
     def __init__(self):
-        self.admin_repo = AdminRepository()
+        delivery_repo = DeliveryRepository()
+        self.admin_repo = AdminRepository(delivery_repo=delivery_repo)
         self.order_repo = OrderRepository()
     # -------- get list of staff users  ------
     def get_users(self):
