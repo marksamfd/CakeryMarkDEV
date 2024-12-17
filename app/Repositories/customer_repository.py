@@ -456,10 +456,12 @@ class CustomerRepository:
             if cart_item:
                 if action == "increment":
                     cart_item.quantity += 1
+                elif action == "decrement" and cart_item.quantity ==1:
+                    db.session.delete(cart_item)
                 elif action == "decrement" and cart_item.quantity > 0:
                     cart_item.quantity -= 1
                 db.session.commit()
-                return {"message": "Quantity updated successfully"}, 200
+                return {"message": "Quantity updated successfully","new_quantity": cart_item.quantity}, 200
             else:
                 return {"message": "Cart item not found"}, 404
         except Exception as e:
@@ -484,6 +486,11 @@ class CustomerRepository:
             if not (1 <= rating <= 5):
                 return {"message": "Rating must be between 1 and 5", "status": "error"}, 400
 
+            existing_review = db.session.query(Review).filter_by(customeremail=customer_email, productid=product_id).first()
+            if existing_review:
+                existing_review.rating = rating
+                db.session.commit()
+                return {"message": "User rating updated successfully", "status": "success"}, 200
             # Create new review
             new_review = Review(
                 customeremail=customer_email,
