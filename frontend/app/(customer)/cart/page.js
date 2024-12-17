@@ -53,7 +53,7 @@ export default function Cart() {
       .then((data) => {
         console.log(data);
         let tmpCart = [...cartItems];
-        tmpCart[pos].quantity = data.new_quantity * 1;
+        tmpCart[pos].quantity = data[0].new_quantity * 1;
         setCartItems(tmpCart);
       })
       .catch((error) => console.error('Error fetching cart:', error));

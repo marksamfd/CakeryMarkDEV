@@ -39,7 +39,9 @@ const CartItem = ({
             alt={`Image of ${productname}`}
             className="cart-item__image"
           />
-          <span className="cart-item__name-text">{productname}</span>
+          <span className="cart-item__name-text">
+            {productname ? productname : 'Custom Cake'}
+          </span>
         </h6>
       </td>
       <td>
