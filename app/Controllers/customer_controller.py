@@ -326,12 +326,6 @@ def increment_quantity():
             message:
               type: string
               example: "Product quantity updated successfully."
-            cart_id:
-              type: integer
-              example: 301
-            product_id:
-              type: integer
-              example: 1
             new_quantity:
               type: integer
               example: 3

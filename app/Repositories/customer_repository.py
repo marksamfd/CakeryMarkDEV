@@ -456,10 +456,12 @@ class CustomerRepository:
             if cart_item:
                 if action == "increment":
                     cart_item.quantity += 1
+                elif action == "decrement" and cart_item.quantity ==1:
+                    db.session.delete(cart_item)
                 elif action == "decrement" and cart_item.quantity > 0:
                     cart_item.quantity -= 1
                 db.session.commit()
-                return {"message": "Quantity updated successfully"}, 200
+                return {"message": "Quantity updated successfully","new_quantity": cart_item.quantity}, 200
             else:
                 return {"message": "Cart item not found"}, 404
         except Exception as e:
