@@ -6,7 +6,7 @@ async function Page() {
   const cookieStore = await cookies();
   const token = await cookieStore.get('token');
   const orders = await (
-    await fetch(`${process.env.backend}/user/baker/orders`, {
+    await fetch(`${process.env.backend}/cakery/user/baker/Orders`, {
       headers: {
         Authorization: `Bearer ${token.value}`,
         Accept: 'application/json',

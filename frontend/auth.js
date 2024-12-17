@@ -15,21 +15,24 @@ export const { auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user = await fetch(`${process.env.backend}/App/User/SignIn`, {
-            body: JSON.stringify({ email, password }),
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
+          const user = await fetch(
+            `${process.env.backend}/cakery/user/SignIn`,
+            {
+              body: JSON.stringify({ email, password }),
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              method: 'POST',
             },
-            method: 'POST',
-          });
+          );
           const res = await user.json();
           console.error(res);
           if (res.status !== 'success') return null;
           const cookieStore = await cookies();
           await cookieStore.set('token', res.access_token);
           await cookieStore.set('role', res.role);
-          await cookieStore.set('role', res?.name);
+          await cookieStore.set('name', res?.name);
 
           return res;
         }

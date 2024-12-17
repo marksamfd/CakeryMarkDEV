@@ -24,7 +24,7 @@ export const AddToCart = async (productid, quantity = 1) => {
 
   try {
     const cookie = await cookieStore.get('token');
-    const response = await fetch('/api/customer/Cart/Add', {
+    const response = await fetch('/api/cakery/user/customer/Cart/Add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,9 +32,12 @@ export const AddToCart = async (productid, quantity = 1) => {
       },
       body: JSON.stringify(product),
     });
-
     const data = await response.json();
-    console.log(data.message);
+    if (response.ok) {
+      console.log(data);
+    } else {
+      throw data.message;
+    }
   } catch (error) {
     console.error(error);
   }

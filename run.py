@@ -1,37 +1,67 @@
-from app.db import create_app, db  # Import the create_app function and db instance
-from app.routes.customer_routes import (
-    customer_routes,
-)  # import from the routes_file, this only customer as start
-from app.routes.baker_routes import baker_routes
-from app.Authentication import auth_routes
-from app.oAuth import google_oauth
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models import *  # all models from the models file
+from app.db import create_app, db
+from app.Controllers.customer_controller import customer_controller
+from app.Controllers.baker_controller import baker_controller
+from app.Controllers.auth_controller import auth_controller
+from app.Controllers.delivery_controller import delivery_controller
+from app.Controllers.admin_controller import admin_controller
+from app.Middlewares.error_middleware import error_middleware
+from app.utils.order_status_notifier import (
+    OrderStatusNotifier,
+    PushNotificationObserver,
+    DatabaseNotificationObserver,
+)
+from app.Services.otp_service import OTPService
+from app.Services.delivery_service import DeliveryService
+from flask_jwt_extended import JWTManager
+from flasgger import Swagger
 
-""" 
-This file will run to make the flask app run, 
-it will create the app, register the blueprint, create the table in the database, 
-so add other blueprints here when ant to test 
-"""
-from flask_cors import CORS
-
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "Cakery Admin API",
+        "description": "API documentation for Admin-related endpoints in Cakery",
+        "version": "2.0.0",
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Enter 'Bearer <your JWT token>'",
+        }
+    },
+    "produces": ["application/json"],
+    "consumes": ["application/json"],
+}
 
 app = create_app()
+jwt = JWTManager(app)
+error_middleware(app)
 
+# ------ Shared Dependencies ------
+notifier = OrderStatusNotifier()
+notifier.register_observer(PushNotificationObserver())
+notifier.register_observer(DatabaseNotificationObserver())
 
-CORS(
-    app,
-    resources={r"/*": {"origins": "http://localhost:3000"}},
-    supports_credentials=True,
-)
-# Register the customer_routes blueprint
-app.register_blueprint(customer_routes)
-app.register_blueprint(baker_routes)
-app.register_blueprint(auth_routes)
-app.register_blueprint(google_oauth)
+# Initialize services with shared dependencies
+otp_service = OTPService(notifier)
+delivery_service = DeliveryService(notifier)
 
-with app.app_context():
-    db.create_all()  # Create the table in the database
+# Inject shared dependencies into controllers
+delivery_controller.delivery_service = delivery_service
+customer_controller.otp_service = otp_service
+
+# Register Blueprints
+app.register_blueprint(customer_controller)
+app.register_blueprint(baker_controller)
+app.register_blueprint(auth_controller)
+app.register_blueprint(delivery_controller)
+app.register_blueprint(admin_controller)
+
+# Initialize Swagger
+swagger = Swagger(app, template=swagger_template)
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

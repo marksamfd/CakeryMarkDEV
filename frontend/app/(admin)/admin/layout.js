@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import BakerHeader from '@/componenets/bakerHeader';
+import AdminHeader from '@/app/(customer)/components/adminHeader';
+import SmallFooter from '@/app/(customer)/components/smallFooter';
 import '@/app/styles/barfiller.css';
 import '@/app/styles/bootstrap.min.css';
 import '@/app/styles/elegant-icons.css';
@@ -15,8 +16,9 @@ function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={``}>
-        <BakerHeader pos={'Admin'} />
+        <AdminHeader pos={'Admin'} />
         <div className="container-fluid h-100">{children}</div>
+        <SmallFooter />
       </body>
     </html>
   );
