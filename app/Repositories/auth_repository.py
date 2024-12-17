@@ -149,13 +149,20 @@ class AuthRepository:
             # Create JWT token with role as an additional claim
             additional_claims = {"role": role}
             access_token = create_access_token(identity=email, additional_claims=additional_claims)
+            if role != "admin":
+                return {
+                        "message": "Sign-in successful",
+                        "status": "success",
+                        "firstname":name,
+                        "role": role,
+                        "access_token": access_token
+                    }, 200
             return {
-                    "message": "Sign-in successful",
-                    "status": "success",
-                    "firstname":name,
-                    "role": role,
-                    "access_token": access_token
-                }, 200
+                        "message": "Sign-in successful",
+                        "status": "success",
+                        "role": role,
+                        "access_token": access_token
+                    }, 200
             # else:
             #     return {
             #         "message": "Wrong Password",

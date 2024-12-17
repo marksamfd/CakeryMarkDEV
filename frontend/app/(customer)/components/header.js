@@ -19,7 +19,7 @@ import { usePathname } from 'next/navigation';
  *
  * @returns {React.ReactElement} The rendered header navigation component.
  */
-function HeaderNav({ itemsInCart = 0, token }) {
+function HeaderNav({ itemsInCart = 0, sumInCart, token }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   const iconSize = 25;
   const logoHeight = 65;
@@ -48,9 +48,6 @@ function HeaderNav({ itemsInCart = 0, token }) {
                 />{' '}
                 <span>{itemsInCart}</span>
               </a>
-              <div className="cart__price">
-                Cart: <span>$0.00</span>
-              </div>
             </div>
           </div>
           <div className="offcanvas__logo">
@@ -109,7 +106,7 @@ function HeaderNav({ itemsInCart = 0, token }) {
                         <span>{itemsInCart}</span>
                       </a>
                       <div className="cart__price">
-                        Cart: <span>$0.00</span>
+                        Cart: <span>${sumInCart}</span>
                       </div>
                     </div>
                   </div>
