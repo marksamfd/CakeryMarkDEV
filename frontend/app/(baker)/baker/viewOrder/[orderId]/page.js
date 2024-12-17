@@ -1,21 +1,3 @@
-const j = {
-  customer: {
-    name: 'Anas Ahmad',
-    phone: '0123456789',
-  },
-  items: [
-    {
-      productID: 2,
-      quantity: 4,
-    },
-    {
-      productID: null,
-      quantity: 1,
-    },
-  ],
-  orderDate: '2024-11-23T02:06:47.172561',
-  orderID: 1,
-};
 export default async function Page({ params }) {
   const cookieStore = await cookies();
   const token = await cookieStore.get('token');
@@ -34,7 +16,17 @@ export default async function Page({ params }) {
   ).json();
   return (
     <>
-      <h1>{order.customer.name}'s Order</h1>
+      <h1>
+        <div className="d-flex flex-row">
+          <span>{order.customer.name}'s Order</span>
+          <select className="nice-select ">
+            <option value={'preparing'} selected>
+              Preparing
+            </option>
+            <option value={'prepared'}>Prepared</option>
+          </select>
+        </div>
+      </h1>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -46,6 +38,29 @@ export default async function Page({ params }) {
               <td>{item.productName}</td>
               <td>{item.quantity}</td>
             </tr>;
+          })}
+          {order?.customCake.map((cake, i) => {
+            return (
+              <tr key={'custom-' + i}>
+                <tr>
+                  <td>{cake.cakeshape}</td>
+                  <td>{cake.cakesize}</td>
+                  <td>{cake.caketype}</td>
+                  <td>{cake.message}</td>
+                </tr>
+                {cake.layers.map((layer, i) => {
+                  return (
+                    <tr>
+                      <td>{'layer ' + i + 1}</td>
+                      <td>{layer.innerFillings}</td>
+                      <td>{layer.innerToppings}</td>
+                      <td>{layer.outerCoating}</td>
+                      <td>{layer.outerToppings}</td>
+                    </tr>
+                  );
+                })}
+              </tr>
+            );
           })}
         </thead>
       </table>
