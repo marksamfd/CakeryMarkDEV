@@ -18,6 +18,7 @@ export default function ShopDetails() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState();
   const [quantity, setQuantity] = useState(1);
+  const [stars, setStars] = useState(1);
   const productId = window.location.pathname.split('/')[2];
 
   useEffect(() => {
@@ -63,6 +64,30 @@ export default function ShopDetails() {
       return prevQuantity;
     });
   };
+  const ratingChanged = (newRating) => {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api//cakery/user/customer/Review`, {
+          method: 'Post',
+          headers: {
+            Authorization: `Bearer ${cookie?.value}`,
+          },
+          body: { rating: newRating, productid: productId },
+        }),
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching product details:', error);
+        setLoading(false);
+      });
+    console.log(newRating);
+  };
 
   if (loading) return <p>Loading product details...</p>;
   if (!product) return <p>No product details found.</p>;
@@ -76,6 +101,8 @@ export default function ShopDetails() {
         handleThumbnailClick={handleThumbnailClick}
         quantity={quantity}
         handleQuantityChange={handleQuantityChange}
+        rating={stars}
+        handleRatingChange={ratingChanged}
       />
     </>
   );

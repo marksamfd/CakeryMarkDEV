@@ -27,33 +27,73 @@ const CartItem = ({
   price,
   total,
   onRemove,
-}) => (
-  <tr className="cart-item-row">
-    <td>
-      <h6 className="cart-item__name">
-        <Image
-          src={cart1}
-          alt={`Image of ${productname}`}
-          className="cart-item__image"
-        />
-        <span className="cart-item__name-text">{productname}</span>
-      </h6>
-    </td>
-    <td>
-      <h6>${price}</h6>
-    </td>
-    <td>
-      <h6>{quantity}</h6>
-    </td>
-    <td>
-      <h6>${total}</h6>
-    </td>
-    <td>
-      <button onClick={onRemove} className="remove-btn">
-        <i className="fa fa-times text-danger"></i>
-      </button>
-    </td>
-  </tr>
-);
+}) => {
+  function incOrDec(action) {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api/cakery/user/customer/Cart/Increment`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie.value}`,
+          },
+          body: JSON.stringify({
+            action,
+            product_id: productid,
+          }),
+        }),
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        quantity = data.new_quantity;
+      })
+      .catch((error) => console.error('Error fetching cart:', error));
+  }
+  return (
+    <tr className="cart-item-row">
+      <td>
+        <h6 className="cart-item__name">
+          <Image
+            src={cart1}
+            alt={`Image of ${productname}`}
+            className="cart-item__image"
+          />
+          <span className="cart-item__name-text">{productname}</span>
+        </h6>
+      </td>
+      <td>
+        <h6>${price}</h6>
+      </td>
+      <td>
+        <div className="d-flex flex-row justify-content-between">
+          <span
+            onClick={() => {
+              incOrDec('decrement');
+            }}
+          >
+            -
+          </span>
+          <h6>{quantity}</h6>
+          <span
+            onClick={() => {
+              incOrDec('increment');
+            }}
+          >
+            +
+          </span>
+        </div>
+      </td>
+      <td>
+        <h6>${total}</h6>
+      </td>
+      <td>
+        <button onClick={onRemove} className="remove-btn">
+          <i className="fa fa-times text-danger"></i>
+        </button>
+      </td>
+    </tr>
+  );
+};
 
 export default CartItem;

@@ -25,12 +25,39 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const cookieStore = await cookies();
-
+  let itemsInCart = 0;
+  let sumInCart = 0.0;
   let cookie = await cookieStore.get('token');
+  if (cookie) {
+    let cartReq = await fetch(
+      `${process.env.backend}/cakery/user/customer/Cart`,
+      {
+        headers: {
+          Authorization: `Bearer ${cookie.value}`,
+        },
+      },
+    );
+    let cartJson = await cartReq.json();
+    console.log(cartJson);
+    let cartItems = cartJson.items;
+    const calculateTotal = () => {
+      let total = 0;
+      for (let i = 0; i < cartItems.length; i++) {
+        total += cartItems[i].price * cartItems[i].quantity;
+      }
+      return total;
+    };
+    itemsInCart = cartItems.length;
+    sumInCart = calculateTotal();
+  }
   return (
     <html lang="en">
       <body className={``}>
-        <HeaderNav itemsInCart={0} token={cookie?.value} />
+        <HeaderNav
+          itemsInCart={itemsInCart}
+          sumInCart={sumInCart}
+          token={cookie?.value}
+        />
         {children}
         <FooterNav />
       </body>
