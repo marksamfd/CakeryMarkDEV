@@ -38,11 +38,15 @@ export default async function Page({ params }) {
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Due Date</th>
-            <th scope="col">Order ID</th>
-            <th scope="col">Phone</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Qty</th>
           </tr>
+          {order.items.map((item, i) => {
+            <tr>
+              <td>{item.productName}</td>
+              <td>{item.quantity}</td>
+            </tr>;
+          })}
         </thead>
       </table>
     </>
