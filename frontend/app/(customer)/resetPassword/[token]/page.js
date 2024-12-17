@@ -16,7 +16,7 @@ function resetPassword({params}) {
         ).json();
     }
     return (
-
+<></>
     )
 }
 
