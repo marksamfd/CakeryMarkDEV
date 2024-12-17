@@ -191,8 +191,13 @@ def delete_staff():
     """
 
     data = request.get_json()
-    response, status_code = admin_service.delete_user(data)
-    return jsonify(response), status_code
+    try :
+        response = admin_service.delete_user(data)
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": f" (route) can't delete a staff user: {e}"}), 500
+   
+    
 
 
 @admin_controller.route("/cakery/user/admin/Products", methods=["GET"])

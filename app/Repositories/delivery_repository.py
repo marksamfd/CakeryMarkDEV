@@ -1,4 +1,4 @@
-from app.models import DeliveryAssignments, Orders, CustomerUser, OrderItems
+from app.models import DeliveryAssignments, Orders, CustomerUser, OrderItems, DeliveryUser
 from app.db import db
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -36,31 +36,39 @@ class DeliveryRepository:
 
 
     ''' ============================ assign delivery user =============================== '''
+    def find_available_delivery_user(self):
+        # find delivery user with less than 5 orders assigned
+        try:
+            delivery_users = db.session.query(
+                DeliveryUser.deliveryemail
+            ).outerjoin(Orders, DeliveryUser.deliveryemail == Orders.deliveryemail).group_by(
+                DeliveryUser.deliveryemail
+            ).having(db.func.count(Orders.deliveryemail) < 5).first()
+            return delivery_users.deliveryemail if delivery_users else None
+        except Exception as e:
+            print(f"(repo) Error finding available delivery user: {e}")
+            return None
+    # -------------------------------------------------------------------------------
     def assign_delivery_user(self, order_id):
         try:
             order = Orders.query.get(order_id)
             if not order:
                 return {"error": "Order not found"}
             
-            # search for all delivery users and if he has < 5 orders assigned, get his mail and assign the order to him
-            delivery_users = DeliveryAssignments.query.all()
-            # ---- calculate the number of orders assigned to each delivery user ----
-            delivery_emails = [user.deliveryemail for user in delivery_users]
-            for delivery_user in delivery_users:
-                if delivery_emails.count(delivery_user.deliveryemail) < 5:
-                    delivery_email = delivery_user.deliveryemail
-                    break
+            # find available delivery user to assign the order -- using the function above
+            delivery_email = self.find_available_delivery_user()
+            if not delivery_email:
+                return {"error": "No available delivery users to assign the order"}
 
-            assignment = DeliveryAssignments(orderid=order_id,deliveryemail=delivery_email)
+            # assign the order to the delivery user
+            assignment = DeliveryAssignments(orderid=order_id, deliveryemail=delivery_email)
             db.session.add(assignment)
             db.session.commit()
             return {"message": f"Order {order_id} assigned to {delivery_email}"}
-        
+
         except SQLAlchemyError as e:
             db.session.rollback()
-            return {"error": f" (repo) {delivery_email} error assigning delivery user: {e}"}
-    # -------------------------------------------------------------------------------
-
+            return {"error": f"(repo) Error assigning delivery user: {e}"}
 
     ''' ============================ get deliveryman name =============================== '''
     def get_deliveryman_name(self, delivery_email):
