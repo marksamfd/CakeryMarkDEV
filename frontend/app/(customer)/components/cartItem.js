@@ -33,13 +33,15 @@ const CartItem = ({
       .get('token')
       .then((cookie) =>
         fetch(`/api/cakery/user/customer/Cart/Increment`, {
+          method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${cookie.value}`,
           },
-          body: {
+          body: JSON.stringify({
             action,
             product_id: productid,
-          },
+          }),
         }),
       )
       .then((res) => res.json())
@@ -64,21 +66,23 @@ const CartItem = ({
         <h6>${price}</h6>
       </td>
       <td>
-        <span
-          onClick={() => {
-            incOrDec('decrement');
-          }}
-        >
-          -
-        </span>
-        <h6>{quantity}</h6>
-        <span
-          onClick={() => {
-            incOrDec('increment');
-          }}
-        >
-          +
-        </span>
+        <div className="d-flex flex-row justify-content-between">
+          <span
+            onClick={() => {
+              incOrDec('decrement');
+            }}
+          >
+            -
+          </span>
+          <h6>{quantity}</h6>
+          <span
+            onClick={() => {
+              incOrDec('increment');
+            }}
+          >
+            +
+          </span>
+        </div>
       </td>
       <td>
         <h6>${total}</h6>
