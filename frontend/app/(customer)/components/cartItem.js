@@ -47,9 +47,9 @@ const CartItem = ({
       </td>
       <td>
         <div className="d-flex flex-row justify-content-between">
-          <span onClick={onIncrease}>-</span>
+          <span onClick={onDecrease}>-</span>
           <h6>{quantity}</h6>
-          <span onClick={onDecrease}>+</span>
+          <span onClick={onIncrease}>+</span>
         </div>
       </td>
       <td>
