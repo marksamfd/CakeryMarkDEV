@@ -16,7 +16,7 @@ export default function CustomerOrders() {
     cookieStore
       .get('token')
       .then((cookie) =>
-        fetch(`/api/customer/orders`, {
+        fetch(`/api/cakery/user/customer/Orders`, {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
@@ -47,18 +47,19 @@ export default function CustomerOrders() {
                     </tr>
                   </thead>
                   <tbody>
-                    {console.log(orderItems)}
-                    {orderItems?.map((item) => (
-                      <OrderItem
-                        key={item.orderID}
-                        productName={item.items[0].productName}
-                        orderId={item.orderID}
-                        quantity={item.items[0].quantity}
-                        totalPrice={item.totalPrice}
-                        status={item.status}
-                        orderDate={item.orderDate}
-                      />
-                    ))}
+                    {Array.isArray(orderItems)
+                      ? orderItems?.map((item) => (
+                          <OrderItem
+                            key={item.orderID}
+                            productName={item.items[0].productName}
+                            orderId={item.orderID}
+                            quantity={item.items[0].quantity}
+                            totalPrice={item.totalPrice}
+                            status={item.status}
+                            orderDate={item.orderDate}
+                          />
+                        ))
+                      : orderItems.message}
                   </tbody>
                 </table>
               </div>

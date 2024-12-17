@@ -1,15 +1,16 @@
 # Flask Configuration
-SECRET_KEY=YOUR-KEY  
+SECRET_KEY=1234
 FLASK_ENV=development
 
 # JWT Configuration
-JWT_SECRET_KEY=YOUR-KEY
+JWT_SECRET_KEY=1234
 
-DATABASE_URI = postgresql+psycopg2://postgres:PASS@localhost:5432/DATABASE
-CLIENT_ID = google_auth_id
+DATABASE_URI=postgresql+psycopg2://postgres:PASSWORD@localhost:5432/DATABASE
+
+# CLIENT_ID = google_auth_id
 CLIENT_SECRET = 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
 REDIRECT_URI = http://localhost:5000/App/User/Google-Callback
-SCOPE = https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile 
+SCOPE = https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
 
 # Reset Password email 
 SMTP_SERVER = smtp.gmail.com

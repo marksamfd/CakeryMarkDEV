@@ -3,7 +3,7 @@ import CheckoutInputField from './checkoutInput';
 import AllProducts from './allProducts';
 // import { cookies } from 'next/headers';
 import Button from './button';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 /**
  * Displays a summary of the cart items and their total cost.
@@ -14,10 +14,11 @@ import { useState } from 'react';
  */
 function CheckoutSummary() {
   const [items, setItems] = useState([]);
+  const voucherRef = useRef();
   cookieStore
     .get('token')
     .then((token) => {
-      return fetch(`api/customer/Cart`, {
+      return fetch(`api/cakery/user/customer/Cart`, {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
@@ -34,13 +35,13 @@ function CheckoutSummary() {
     total += item.price * 1.0 * item.quantity;
   });
   function PlaceOrder() {
-    fetch(`${process.env.backend}/customer/orders`, {
+    fetch(`api/cakery/user/customer/Checkout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token.value}`,
       },
-      body: JSON.stringify(items),
+      body: { voucher: voucherRef.current.value },
     });
   }
   return (
@@ -51,7 +52,11 @@ function CheckoutSummary() {
           Product <span>Total</span>
         </div>
         <AllProducts items={items} />
-        <CheckoutInputField requiredfield={false} label={'Voucher'} />
+        <CheckoutInputField
+          requiredfield={false}
+          label={'Voucher'}
+          ref={voucherRef}
+        />
         <ul className="checkout__total__all">
           <li>
             Total <span>${total}</span>

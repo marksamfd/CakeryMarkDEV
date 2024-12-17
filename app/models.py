@@ -1,5 +1,8 @@
 from app.db import db
 
+from datetime import datetime, timezone
+
+
 ''' The main difference here is that we are dealing with the database as models, where each table
 is represented by a class, the class taking the db.model from the initialized db instance in the db.py file.
 The class has the table name, and the columns as attributes, and the relationships as attributes as well.
@@ -168,6 +171,9 @@ class Inventory(db.Model):
     category = db.Column(db.String(255))
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+    reviews = db.relationship('Review', backref='inventory', cascade='all, delete-orphan')
+
+
     def as_dict(self):
         return {
             "productid": self.productid,
@@ -207,7 +213,6 @@ class Orders(db.Model):
 
     # Relationships
     payments = db.relationship('Payment', backref='order', cascade='all, delete-orphan')
-    reviews = db.relationship('Review', backref='order', cascade='all, delete-orphan')
     order_items = db.relationship('OrderItems', backref='order', cascade='all, delete-orphan')
 
     def as_dict(self):
@@ -313,7 +318,7 @@ class Review(db.Model):
     __tablename__ = 'review'
 
     reviewid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
+    productid = db.Column(db.Integer, db.ForeignKey('inventory.productid'))
     customeremail = db.Column(db.String(255), db.ForeignKey('customeruser.customeremail'))
     rating = db.Column(db.Integer, nullable=False)
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -322,7 +327,7 @@ class Review(db.Model):
     def as_dict(self):
         return {
             "reviewid": self.reviewid,
-            "orderid": self.orderid,
+            "productid": self.productid,
             "customeremail": self.customeremail,
             "rating": self.rating,
             "createdat": self.createdat.isoformat() if self.createdat else None
@@ -339,4 +344,44 @@ class Voucher(db.Model):
         return {
             "vouchercode": self.vouchercode,
             "discountpercentage": self.discountpercentage
+        }
+    
+# ---------- notification ---------------
+
+class OTP(db.Model):
+    __tablename__ = "otp"
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer_email = db.Column(db.String(100), nullable=False)
+    otp_code = db.Column(db.String(6), nullable=False)
+    expiry_time = db.Column(db.DateTime, nullable=False)
+    is_used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc)
+)
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "customer_email": self.customer_email,
+            "otp_code": self.otp_code,
+            "expiry_time": self.expiry_time.isoformat(),
+            "is_used": self.is_used,
+            "created_at": self.created_at.isoformat(),
+        }
+
+
+class Notification(db.Model):
+    __tablename__ = "notifications"
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer_email = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "customer_email": self.customer_email,
+            "message": self.message,
+            "created_at": self.created_at.isoformat(),
         }

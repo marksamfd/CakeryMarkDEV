@@ -5,30 +5,31 @@ import Breadcrumb from '../../components/breadcrumb';
 
 /**
  * ShopDetails
- * 
+ *
  * Fetches product details from the API and displays a detailed view of the product.
- * 
+ *
  * Handles loading and error states, and allows the user to change the selected image, and
  * increment or decrement the product quantity.
- * 
+ *
  * @returns {JSX.Element} A JSX element representing a product details page.
  */
 export default function ShopDetails() {
-  const [product, setProduct] = useState(null); 
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(); 
+  const [selectedImage, setSelectedImage] = useState();
   const [quantity, setQuantity] = useState(1);
+  const [stars, setStars] = useState(1);
   const productId = window.location.pathname.split('/')[2];
 
   useEffect(() => {
     cookieStore
       .get('token')
       .then((cookie) =>
-        fetch(`/api/Product/${productId}`, {
+        fetch(`/api/cakery/user/customer/Product/${productId}`, {
           headers: {
             Authorization: `Bearer ${cookie?.value}`,
           },
-        })
+        }),
       )
       .then((res) => res.json())
       .then((data) => {
@@ -49,7 +50,7 @@ export default function ShopDetails() {
   /**
    * Handles the increment or decrement of the product quantity when the user
    * clicks on the + or - buttons.
-   * 
+   *
    * @param {string} type - The type of change, either 'increment' or 'decrement'.
    */
 
@@ -62,6 +63,30 @@ export default function ShopDetails() {
       }
       return prevQuantity;
     });
+  };
+  const ratingChanged = (newRating) => {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api//cakery/user/customer/Review`, {
+          method: 'Post',
+          headers: {
+            Authorization: `Bearer ${cookie?.value}`,
+          },
+          body: { rating: newRating, productid: productId },
+        }),
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching product details:', error);
+        setLoading(false);
+      });
+    console.log(newRating);
   };
 
   if (loading) return <p>Loading product details...</p>;
@@ -76,6 +101,8 @@ export default function ShopDetails() {
         handleThumbnailClick={handleThumbnailClick}
         quantity={quantity}
         handleQuantityChange={handleQuantityChange}
+        rating={stars}
+        handleRatingChange={ratingChanged}
       />
     </>
   );

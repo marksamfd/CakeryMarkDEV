@@ -19,7 +19,7 @@ export default function Cart() {
     cookieStore
       .get('token')
       .then((cookie) =>
-        fetch(`/api/customer/Cart`, {
+        fetch(`/api/cakery/user/customer/Cart`, {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
@@ -36,7 +36,7 @@ export default function Cart() {
   async function RemoveItem(productid, quantity) {
     try {
       const cookie = await cookieStore.get('token');
-      const response = await fetch('/api/customer/Cart/Remove', {
+      const response = await fetch('/api/cakery/user/customer/Cart/Remove', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

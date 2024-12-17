@@ -49,7 +49,7 @@ export async function signUp(prevState, formData) {
       return { error: 'Passwords does not Match', prevState };
     }
     try {
-      let register = await fetch(`${process.env.backend}/App/User/SignUp`, {
+      let register = await fetch(`${process.env.backend}/cakery/user/SignUp`, {
         body: JSON.stringify(body),
         headers: {
           Accept: 'application/json',
