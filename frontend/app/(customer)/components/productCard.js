@@ -32,9 +32,12 @@ export const AddToCart = async (productid, quantity = 1) => {
       },
       body: JSON.stringify(product),
     });
-
     const data = await response.json();
-    console.log(data.message);
+    if (response.ok) {
+      console.log(data);
+    } else {
+      throw data.message;
+    }
   } catch (error) {
     console.error(error);
   }
