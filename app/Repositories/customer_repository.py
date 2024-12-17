@@ -486,6 +486,11 @@ class CustomerRepository:
             if not (1 <= rating <= 5):
                 return {"message": "Rating must be between 1 and 5", "status": "error"}, 400
 
+            existing_review = db.session.query(Review).filter_by(customeremail=customer_email, productid=product_id).first()
+            if existing_review:
+                existing_review.rating = rating
+                db.session.commit()
+                return {"message": "User rating updated successfully", "status": "success"}, 200
             # Create new review
             new_review = Review(
                 customeremail=customer_email,
