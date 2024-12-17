@@ -3,7 +3,11 @@ import Image from 'next/image';
 import { AddToCart } from './productCard';
 import productbig1 from '../../img/shop/details/productbig1.jpg';
 import productbig2 from '../../img/shop/details/productbig2.jpg';
+import Rating from 'react-rating';
+
 import productbig3 from '../../img/shop/details/productbig3.jpg';
+import { useState } from 'react';
+const starStyle = { fontSize: 50, color: '#ffd700' };
 
 export const addBtn = {
   fontsize: '14px',
@@ -30,6 +34,8 @@ export default function ProductDetails({
   handleThumbnailClick,
   quantity,
   handleQuantityChange,
+  rating,
+  handleRatingChange,
 }) {
   return (
     <>
@@ -111,6 +117,14 @@ export default function ProductDetails({
                     Add to cart
                   </button>
                 </div>
+                <Rating
+                  count={5}
+                  initialRating={rating}
+                  onChange={handleRatingChange}
+                  activeColor="#ffd700"
+                  emptySymbol={<span style={starStyle}>☆</span>}
+                  fullSymbol={<span style={starStyle}>★</span>}
+                />
               </div>
             </div>
           </div>
