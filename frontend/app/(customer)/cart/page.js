@@ -33,6 +33,32 @@ export default function Cart() {
       .catch((error) => console.error('Error fetching cart:', error));
   }, []);
 
+  function incOrDec(productId, action, pos) {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api/cakery/user/customer/Cart/Increment`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie.value}`,
+          },
+          body: JSON.stringify({
+            action,
+            product_id: productId,
+          }),
+        }),
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        let tmpCart = [...cartItems];
+        tmpCart[pos].quantity = data[0].new_quantity * 1;
+        setCartItems(tmpCart);
+      })
+      .catch((error) => console.error('Error fetching cart:', error));
+  }
+
   async function RemoveItem(productid, quantity) {
     try {
       const cookie = await cookieStore.get('token');
@@ -90,20 +116,29 @@ export default function Cart() {
                   </thead>
                   <tbody>
                     {Array.isArray(cartItems) &&
-                      cartItems.map((item) => (
-                        <CartItem
-                          key={item.productid}
-                          productname={item.productname}
-                          productId={item.productid}
-                          customCakeId={item.customcakeid}
-                          price={item.price}
-                          quantity={item.quantity}
-                          total={item.price * item.quantity}
-                          onRemove={() =>
-                            RemoveItem(item.productid, item.quantity)
-                          }
-                        />
-                      ))}
+                      cartItems.map((item, pos) => {
+                        console.log(item);
+                        return (
+                          <CartItem
+                            key={item.productid}
+                            productname={item.productname}
+                            productId={item.productid}
+                            customCakeId={item.customcakeid}
+                            price={item.price}
+                            quantity={item.quantity}
+                            total={item.price * item.quantity}
+                            onRemove={() =>
+                              RemoveItem(item.productid, item.quantity)
+                            }
+                            onIncrease={() =>
+                              incOrDec(item.productid, 'increment', pos)
+                            }
+                            onDecrease={() =>
+                              incOrDec(item.productid, 'decrement', pos)
+                            }
+                          />
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
