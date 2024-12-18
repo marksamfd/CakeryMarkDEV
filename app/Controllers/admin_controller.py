@@ -8,9 +8,12 @@ admin_controller = Blueprint("admin_controller", __name__)
 order_service = OrderService()
 admin_service = AdminService()
 
-'''=================================== Admin | Users ===================================='''
+"""=================================== Admin | Users ===================================="""
 
-@admin_controller.route("/cakery/user/admin/ViewCustomers", methods=["GET"])  # -- checked
+
+@admin_controller.route(
+    "/cakery/user/admin/ViewCustomers", methods=["GET"]
+)  # -- checked
 @jwt_required()
 def view_customers():
     """
@@ -48,7 +51,9 @@ def view_customers():
     return jsonify(customers), 200
 
 
-'''=================================== Admin | Staff ===================================='''
+"""=================================== Admin | Staff ===================================="""
+
+
 # ----------------------------- View Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/View", methods=["GET"])  # -- checked
 @jwt_required()
@@ -89,6 +94,7 @@ def view_staff():
 
     staff = admin_service.get_users()
     return jsonify(staff), 200
+
 
 # ----------------------------- Add Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/Add", methods=["POST"])
@@ -148,7 +154,7 @@ def add_staff():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": f" (route) can't add a staff user: {e}"}), 500
-    
+
 
 # ----------------------------- Delete Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/Delete", methods=["DELETE"])
@@ -191,13 +197,11 @@ def delete_staff():
     """
 
     data = request.get_json()
-    try :
+    try:
         response = admin_service.delete_user(data)
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": f" (route) can't delete a staff user: {e}"}), 500
-   
-    
 
 
 @admin_controller.route("/cakery/user/admin/Products", methods=["GET"])
@@ -234,7 +238,9 @@ def view_products():
     products = admin_service.get_products()
     return jsonify(products), 200
 
+
 # ----------------------------- Edit Product -----------------------------
+
 
 @admin_controller.route("/cakery/user/admin/Products/edit", methods=["PUT"])
 @jwt_required()
@@ -281,6 +287,7 @@ def edit_products():
     response, status_code = admin_service.edit_product(data)
     return jsonify(response), status_code
 
+
 # ----------------------------- Add Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Add", methods=["POST"])
 @jwt_required()
@@ -320,6 +327,7 @@ def add_voucher():
     data = request.get_json()
     response, status_code = admin_service.add_voucher(data)
     return jsonify(response), status_code
+
 
 # ----------------------------- Edit Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Edit", methods=["PUT"])
@@ -364,6 +372,7 @@ def edit_voucher():
     response, status_code = admin_service.edit_voucher(data)
     return jsonify(response), status_code
 
+
 # ----------------------------- Delete Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Delete", methods=["DELETE"])
 @jwt_required()
@@ -403,6 +412,8 @@ def delete_voucher():
     data = request.get_json()
     response, status_code = admin_service.delete_voucher(data)
     return jsonify(response), status_code
+
+
 # ----------------------------- View Vouchers -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers", methods=["GET"])
 @jwt_required()
@@ -427,12 +438,14 @@ def view_vouchers():
     vouchers = admin_service.get_vouchers()
     return jsonify(vouchers), 200
 
-'''=================================== Admin | Dashboard ===================================='''
+
+"""=================================== Admin | Dashboard ===================================="""
+
 
 @admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
 @jwt_required()
 def view_dashboard():
-  """
+    """
     View the admin dashboard
     ---
     tags:
@@ -449,11 +462,17 @@ def view_dashboard():
         description: Unauthorized
       500:
         description: Internal Server Error
-  """
-  try:
+    """
+    try:
         response = admin_service.dashboard_data()  # Ensure this call works
-        return jsonify(response), 200  # Return a proper JSON response with HTTP status code 200
-  except Exception as e:
+        return (
+            jsonify(response),
+            200,
+        )  # Return a proper JSON response with HTTP status code 200
+    except Exception as e:
         # Log the error for debugging purposes
         print(f"Error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500  # Return an error response with status code 500
+        return (
+            jsonify({"status": "error", "message": str(e)}),
+            500,
+        )  # Return an error response with status code 500

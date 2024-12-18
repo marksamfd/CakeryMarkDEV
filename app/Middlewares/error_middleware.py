@@ -4,6 +4,7 @@ import logging
 # Setup logging for error tracking (optional)
 logging.basicConfig(level=logging.ERROR)
 
+
 # Middleware to handle all errors globally
 def error_middleware(app):
     @app.errorhandler(Exception)

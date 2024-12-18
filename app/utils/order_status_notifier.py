@@ -1,6 +1,7 @@
 from app.models import Notification
 from app.db import db
 
+
 class Observer:
     def update(self, customer_email, message):
         raise NotImplementedError("not implemented")

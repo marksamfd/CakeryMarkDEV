@@ -6,9 +6,10 @@ from app.Middlewares.auth_middleware import token_required
 auth_controller = Blueprint("auth_controller", __name__)
 auth_service = AuthService()
 
-'''=================================== Customer | SignUp ====================================''' 
+"""=================================== Customer | SignUp ===================================="""
 
-@auth_controller.route("/cakery/user/SignUp", methods=["POST"]) 
+
+@auth_controller.route("/cakery/user/SignUp", methods=["POST"])
 def signup():
     """
     Customer Sign Up
@@ -105,11 +106,13 @@ def signup():
     response, status_code = auth_service.add_new_user(data)
     return jsonify(response), status_code
 
+
 # -------------------------------------------------------------------------------
 
-'''=================================== Users | SignIn ====================================''' 
+"""=================================== Users | SignIn ===================================="""
 
-@auth_controller.route("/cakery/user/SignIn", methods=["POST"]) 
+
+@auth_controller.route("/cakery/user/SignIn", methods=["POST"])
 def signin():
     """
     User Sign In
@@ -200,13 +203,15 @@ def signin():
     response, status_code = auth_service.sign_user_in(data)
     return jsonify(response), status_code
 
+
 # -------------------------------------------------------------------------------
 
 
-'''=================================== Test Auth Middleware ====================================''' 
+"""=================================== Test Auth Middleware ===================================="""
 
-@auth_controller.route("/cakery/user/Profile", methods=["GET"]) 
-@token_required(roles=['admin','customer'])
+
+@auth_controller.route("/cakery/user/Profile", methods=["GET"])
+@token_required(roles=["admin", "customer"])
 def get_profile():
     """
     Get User Profile
@@ -239,4 +244,4 @@ def get_profile():
               type: string
               example: error
     """
-    return jsonify({'message': f"Welcome {request.user}, your role is {request.role}"})
+    return jsonify({"message": f"Welcome {request.user}, your role is {request.role}"})
