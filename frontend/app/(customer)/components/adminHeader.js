@@ -20,8 +20,8 @@ function AdminHeader({ pos }) {
             </Nav.Link>
 
             <NavDropdown title="Manage Users" id="basic-nav-dropdown">
-              <NavDropdown.Item className="dropdown-item" href="/admin/manageUsers/baker">
-                Staff : Bakers & Delivery Guys
+              <NavDropdown.Item className="dropdown-item" href="/admin/manageUsers/staff">
+                Staff : Bakers & Deliverers
               </NavDropdown.Item>
               <NavDropdown.Item className="dropdown-item" href="/admin/manageUsers/customer">
                 Customers
