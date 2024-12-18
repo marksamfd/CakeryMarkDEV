@@ -204,7 +204,6 @@ class CustomerRepository:
             "data": {
                 "firstname": user.firstname,
                 "lastname": user.lastname,  # Example: Include more fields if needed
-                "email": user.customeremail,
                 "phonenum":user.phonenum,
                 "addressgooglemapurl":user.addressgooglemapurl
             }

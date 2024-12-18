@@ -139,18 +139,21 @@ class AdminRepository:
             db.session.delete(voucher)
 
     ''' ============================ edit raw product or raw materials prices =============================== '''
-    # ------ get all raw products ------
+        # ------ get all raw products ------
     def prducts_rawMats(self):
         rawItems = Rawmaterials.query.all()
         products = Inventory.query.all()
         itemsList = {}
         for product in products:
             itemsList[product.name] = {
+                "product_id": product.productid,
                 "price": product.price,
-                
             }
         for raw_product in rawItems:
-            itemsList[raw_product.name] = {"price": raw_product.price,}
+            itemsList[raw_product.name] = {
+                "item": raw_product.item,
+                "price": raw_product.price,
+            }
         return itemsList
     def edit_product(self,price,product_id, rawItem=None):
         product = Inventory.query.filter_by(product_id=product_id)
