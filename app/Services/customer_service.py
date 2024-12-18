@@ -51,11 +51,13 @@ class CustomerService:
     # ------------------- view customer orders -------------------
     def view_customer_orders(self, customer_email):
         return self.order_repo.get_orders_by_customer(customer_email)
+    # ------------------- Update/Edit customer data -------------------
+    def get_data(self,customer_email):
+        return self.customer_repo.check_customer_data(customer_email)
 
-    # ------------------- Update customer data -------------------
-    def update_data(self, customer_email, data):
-        return self.customer_repo.change_customer_data(customer_email, data)
-
+    def update_data(self, customer_email,data):
+        return self.customer_repo.change_customer_data(customer_email,data)
+    
     # ----------- User forget password -----------
     def new_password(self, data):
         return self.customer_repo.change_password(data)
