@@ -19,7 +19,7 @@ import cart1 from '../../img/shop/cart/cart1.jpg';
  */
 const CartItem = ({
   cartid,
-  productid,
+  productId,
   productname,
   cartitemid,
   customcakeid,
@@ -27,29 +27,9 @@ const CartItem = ({
   price,
   total,
   onRemove,
+  onIncrease,
+  onDecrease,
 }) => {
-  function incOrDec(action) {
-    cookieStore
-      .get('token')
-      .then((cookie) =>
-        fetch(`/api/cakery/user/customer/Cart/Increment`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${cookie.value}`,
-          },
-          body: JSON.stringify({
-            action,
-            product_id: productid,
-          }),
-        }),
-      )
-      .then((res) => res.json())
-      .then((data) => {
-        quantity = data.new_quantity;
-      })
-      .catch((error) => console.error('Error fetching cart:', error));
-  }
   return (
     <tr className="cart-item-row">
       <td>
@@ -59,7 +39,9 @@ const CartItem = ({
             alt={`Image of ${productname}`}
             className="cart-item__image"
           />
-          <span className="cart-item__name-text">{productname}</span>
+          <span className="cart-item__name-text">
+            {productname ? productname : 'Custom Cake'}
+          </span>
         </h6>
       </td>
       <td>
@@ -67,21 +49,9 @@ const CartItem = ({
       </td>
       <td>
         <div className="d-flex flex-row justify-content-between">
-          <span
-            onClick={() => {
-              incOrDec('decrement');
-            }}
-          >
-            -
-          </span>
+          <span onClick={onDecrease}>-</span>
           <h6>{quantity}</h6>
-          <span
-            onClick={() => {
-              incOrDec('increment');
-            }}
-          >
-            +
-          </span>
+          <span onClick={onIncrease}>+</span>
         </div>
       </td>
       <td>
