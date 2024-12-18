@@ -4,7 +4,6 @@ import Title from '@/app/(customer)/components/title';
 
 export default function ViewProducts() {
   const [products, setProducts] = useState([]);
-
   useEffect(() => {
     cookieStore
       .get('token')
@@ -20,8 +19,9 @@ export default function ViewProducts() {
       .then((res) => res.json())
       .then((data) => {
         console.log('Fetched products:', data);
-        setProducts(data); 
-      })
+      const productsArray = Object.values(data);  
+      setProducts(productsArray); 
+    })
       .catch((error) => console.error('Error fetching products:', error));
   }, []);
 
@@ -46,7 +46,7 @@ export default function ViewProducts() {
                 <tr key={product.product_id}>
                   <td>
                     <div className="d-flex align-items-center">
-                      <div>{product.name}</div>
+                      <div>{product.item}</div>
                     </div>
                   </td>
                   <td>{product.price} EGP</td>
