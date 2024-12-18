@@ -28,23 +28,20 @@ function AdminHeader({ pos }) {
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Manage Products" id="basic-nav-dropdown">
-              <NavDropdown.Item className="dropdown-item" href="#">
+              <NavDropdown.Item className="dropdown-item" href="/admin/viewProducts">
                 View Products
-              </NavDropdown.Item>
-              <NavDropdown.Item className="dropdown-item" href="#">
-                Edit Products
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Manage Vouchers" id="basic-nav-dropdown">
-              <NavDropdown.Item className="dropdown-item" href="#">
-                View Vouchers
+              <NavDropdown.Item className="dropdown-item" href="/admin/viewVouchers">
+                View  Vouchers
               </NavDropdown.Item>
-              <NavDropdown.Item className="dropdown-item" href="#">
+              <NavDropdown.Item className="dropdown-item" href="/admin/addVouchers">
                 Add Vouchers
               </NavDropdown.Item>
-              <NavDropdown.Item className="dropdown-item" href="#">
+              {/* <NavDropdown.Item className="dropdown-item" href="#">
                 Edit Vouchers
-              </NavDropdown.Item>
+              </NavDropdown.Item> */}
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
