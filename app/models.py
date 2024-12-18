@@ -237,6 +237,7 @@ class DeliveryUser(db.Model):
     lastname = db.Column(db.String(255))
     phonenum = db.Column(db.String(15))
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
 
     def as_dict(self):
         return {

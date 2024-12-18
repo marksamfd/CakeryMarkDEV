@@ -60,11 +60,15 @@ class AdminRepository:
     
     # ---- add delivery user ----
     def add_delivery_user(self,firstname, lastname, email, phone, password):
-        hashed_password = encrypt.hash(password)
-        delivery_user = DeliveryUser(firstname=firstname, lastname=lastname, deliveryemail=email, phone=phone, password=hashed_password)
-        db.session.add(delivery_user)
-        db.session.commit()
-        return {f"delivery user {email} was added"}
+        try:    
+        # phone number wont be used till we edit the model
+            hashed_password = encrypt.hash(password)
+            delivery_user = DeliveryUser(firstname=firstname, lastname=lastname,phonenum=phone, deliveryemail=email, password=hashed_password)
+            db.session.add(delivery_user)
+            db.session.commit()
+            return {"message" : f"delivery user {email} was added"}
+        except Exception as e:
+            return {"error": f"(repo) error adding delivery user: {e}"}
     
     ''' ============================ delete staff user =============================== '''
 
