@@ -1,13 +1,16 @@
 from flask import Blueprint, request, jsonify
 from app.Services.customer_service import CustomerService
-from app.Services.otp_service import OTPService 
+from app.Services.otp_service import OTPService
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 customer_controller = Blueprint("customer_controller", __name__)
 customer_service = CustomerService()
 
-'''=================================== Shop ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Shop", methods=["GET"])  # (Shop Page) 
+"""=================================== Shop ===================================="""  # - checked
+
+
+@customer_controller.route("/cakery/user/customer/Shop",
+                           methods=["GET"])  # (Shop Page)
 def list_products():
     """
     List All Available Products
@@ -57,11 +60,25 @@ def list_products():
         products = customer_service.list_products()
         return jsonify(products), 200
     except Exception as e:
-        return jsonify({"message": "An error occurred while fetching products.", "error": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while fetching products.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Product Detail ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Product/<int:product_id>", methods=["GET"])  # (Product Detail Page) 
+"""=================================== Product Detail ===================================="""  # - checked
+
+
+@customer_controller.route(
+    "/cakery/user/customer/Product/<int:product_id>", methods=["GET"]
+)  # (Product Detail Page)
 def get_product_details(product_id):
     """
     Get Specific Product Details
@@ -131,11 +148,24 @@ def get_product_details(product_id):
             return jsonify(product), 200
         return jsonify({"error": "Product not found"}), 404
     except Exception as e:
-        return jsonify({"message": "An error occurred while fetching product details.", "error": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while fetching product details.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Cart ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Cart", methods=["GET"])  # (Cart Page) 
+"""=================================== Cart ===================================="""  # - checked
+
+
+@customer_controller.route("/cakery/user/customer/Cart",
+                           methods=["GET"])  # (Cart Page)
 @jwt_required()
 def get_cart():
     """
@@ -203,11 +233,25 @@ def get_cart():
         cart = customer_service.view_cart(customer_email)
         return jsonify(cart), 200
     except Exception as e:
-        return jsonify({"message": "An error occurred while fetching the cart.", "error": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while fetching the cart.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Add to Cart ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Cart/Add", methods=["POST"])  # (Cart Page)
+"""=================================== Add to Cart ===================================="""  # - checked
+
+
+@customer_controller.route(
+    "/cakery/user/customer/Cart/Add", methods=["POST"]
+)  # (Cart Page)
 @jwt_required()
 def add_to_cart():
     """
@@ -277,15 +321,22 @@ def add_to_cart():
         product_id = data.get("product_id")
         quantity = data.get("quantity")
         custom_cake_id = data.get("custom_cake_id")
-        response = customer_service.add_to_cart(customer_email, product_id, quantity, custom_cake_id)
+        response = customer_service.add_to_cart(
+            customer_email, product_id, quantity, custom_cake_id
+        )
         return jsonify(response), 200
     except Exception as e:
-        return jsonify({"error": f" (route) can't add a product to the cart: {e}"}), 400
+        return jsonify(
+            {"error": f" (route) can't add a product to the cart: {e}"}), 400
+
+
 # *****************************************************************************************************
-# ------------------------------------ increment/decrement quantity ------------------------------------
+# ------------------------------------ increment/decrement quantity ------
 # *****************************************************************************************************
-@customer_controller.route("/cakery/user/customer/Cart/Increment", methods=["PUT"])  # (Cart Page)
-@jwt_required() 
+@customer_controller.route(
+    "/cakery/user/customer/Cart/Increment", methods=["PUT"]
+)  # (Cart Page)
+@jwt_required()
 def increment_quantity():
     """
     Update Cart Item Quantity
@@ -351,8 +402,13 @@ def increment_quantity():
     response = customer_service.incrementQuantity(data, customer_email)
     return jsonify(response), 200
 
-'''=================================== Remove from Cart ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Cart/Remove", methods=["DELETE"])  # (Cart Page)
+
+"""=================================== Remove from Cart ===================================="""  # - checked
+
+
+@customer_controller.route(
+    "/cakery/user/customer/Cart/Remove", methods=["DELETE"]
+)  # (Cart Page)
 @jwt_required()
 def remove_from_cart():
     """
@@ -411,159 +467,186 @@ def remove_from_cart():
         customer_email = get_jwt_identity()
         product_id = data.get("product_id")
 
-        response = customer_service.remove_from_cart(customer_email, product_id)
+        response = customer_service.remove_from_cart(
+            customer_email, product_id)
         return jsonify(response), 200
     except Exception as e:
-        return jsonify({"error": f"(route) error in removing product from cart: {e}"}), 400
+        return (
+            jsonify({"error": f"(route) error in removing product from cart: {e}"}),
+            400,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Customize Cake ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Customize_Cake", methods=["GET"])
+"""=================================== Customize Cake ===================================="""  # - checked
+
+
+@customer_controller.route("/cakery/user/customer/Customize_Cake",
+                           methods=["GET"])
 def view_raw_materials():
-     """
-     View Raw Materials for Cake Customization
-     ---
-     tags:
-       - Customer
-     summary: Retrieve a list of raw materials available for cake customization
-     produces:
-       - application/json
-     responses:
-       200:
-         description: A list of raw materials
-         schema:
-           type: array
-           items:
-             type: object
-             properties:
-               material_id:
-                 type: integer
-                 example: 201
-               name:
-                 type: string
-                 example: "Flour"
-               quantity_available:
-                 type: integer
-                 example: 500
-       500:
-         description: Internal Server Error
-         schema:
-           type: object
-           properties:
-             message:
-               type: string
-               example: "An error occurred while fetching raw materials."
-             error:
-               type: string
-               example: "Detailed error message."
-     """
-     try:
-         raw_materials = customer_service.view_raw_materials()
-         return jsonify(raw_materials), 200
-     except Exception as e:
-         return jsonify({"message": "An error occurred while fetching raw materials.", "error": str(e)}), 500
+    """
+    View Raw Materials for Cake Customization
+    ---
+    tags:
+      - Customer
+    summary: Retrieve a list of raw materials available for cake customization
+    produces:
+      - application/json
+    responses:
+      200:
+        description: A list of raw materials
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              material_id:
+                type: integer
+                example: 201
+              name:
+                type: string
+                example: "Flour"
+              quantity_available:
+                type: integer
+                example: 500
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while fetching raw materials."
+            error:
+              type: string
+              example: "Detailed error message."
+    """
+    try:
+        raw_materials = customer_service.view_raw_materials()
+        return jsonify(raw_materials), 200
+    except Exception as e:
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while fetching raw materials.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Create Custom Cake ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Customize_Cake/Create", methods=["POST"])  # (Customize Cake Page)
+"""=================================== Create Custom Cake ===================================="""  # - checked
+
+
+@customer_controller.route(
+    "/cakery/user/customer/Customize_Cake/Create", methods=["POST"]
+)  # (Customize Cake Page)
 @jwt_required()
 def create_custom_cake():
-     """
-     Create a Customized Cake and Add to Cart
-     ---
-     tags:
-       - Customer
-     summary: Create a customized cake based on customer preferences and add it to the cart
-     security:
-       - BearerAuth: []
-     consumes:
-       - application/json
-     produces:
-       - application/json
-     parameters:
-       - in: body
-         name: body
-         description: Details of the custom cake to be created
-         required: true
-         schema:
-           type: object
-           required:
-             - cakeshape
-             - cakesize
-             - caketype
-             - layers
-           properties:
-             cakeshape:
-               type: string
-               example: "Round"
-             cakesize:
-               type: string
-               example: "Medium"
-             caketype:
-               type: string
-               example: "Chocolate"
-             message:
-               type: string
-               example: "Happy Birthday!"
-             layers:
-               type: array
-               items:
-                 type: object
-                 properties:
-                   innerFillings:
-                     type: string
-                     example: "Cream"
-                   innerToppings:
-                     type: string
-                     example: "Sprinkles"
-                   outerCoating:
-                     type: string
-                     example: "Fondant"
-                   outerToppings:
-                     type: string
-                     example: "Cherries"
-     responses:
-       200:
-         description: Customized cake created and added to cart successfully
-         schema:
-           type: object
-           properties:
-             message:
-               type: string
-               example: "Cake customization created successfully!"
-             customizecakeid:
-               type: integer
-               example: 1001
-       400:
-         description: Bad Request - Missing required fields or validation errors
-         schema:
-           type: object
-           properties:
-             error:
-               type: string
-               example: "Missing cakeshape"
-       500:
-         description: Internal Server Error
-         schema:
-           type: object
-           properties:
-             message:
-               type: string
-               example: "An error occurred while creating the custom cake."
-             error:
-               type: string
-               example: "Detailed error message."
-     """
-     try:
-         customer_email = get_jwt_identity()
-         data = request.get_json()
-         response = customer_service.create_custom_cake(customer_email, data)
-         return jsonify(response), 200
-     except Exception as e:
-         return jsonify({"error": f"Error creating custom cake: {e}"}), 400
+    """
+    Create a Customized Cake and Add to Cart
+    ---
+    tags:
+      - Customer
+    summary: Create a customized cake based on customer preferences and add it to the cart
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        description: Details of the custom cake to be created
+        required: true
+        schema:
+          type: object
+          required:
+            - cakeshape
+            - cakesize
+            - caketype
+            - layers
+          properties:
+            cakeshape:
+              type: string
+              example: "Round"
+            cakesize:
+              type: string
+              example: "Medium"
+            caketype:
+              type: string
+              example: "Chocolate"
+            message:
+              type: string
+              example: "Happy Birthday!"
+            layers:
+              type: array
+              items:
+                type: object
+                properties:
+                  innerFillings:
+                    type: string
+                    example: "Cream"
+                  innerToppings:
+                    type: string
+                    example: "Sprinkles"
+                  outerCoating:
+                    type: string
+                    example: "Fondant"
+                  outerToppings:
+                    type: string
+                    example: "Cherries"
+    responses:
+      200:
+        description: Customized cake created and added to cart successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Cake customization created successfully!"
+            customizecakeid:
+              type: integer
+              example: 1001
+      400:
+        description: Bad Request - Missing required fields or validation errors
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Missing cakeshape"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while creating the custom cake."
+            error:
+              type: string
+              example: "Detailed error message."
+    """
+    try:
+        customer_email = get_jwt_identity()
+        data = request.get_json()
+        response = customer_service.create_custom_cake(customer_email, data)
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": f"Error creating custom cake: {e}"}), 400
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Checkout ===================================='''  # - issue (voucher code)
+"""=================================== Checkout ===================================="""  # - issue (voucher code)
+
+
 @customer_controller.route("/cakery/user/customer/Checkout", methods=["POST"])
 @jwt_required()
 def checkout():
@@ -633,10 +716,16 @@ def checkout():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": f"(route) error during checkout: {e}"}), 500
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== View Orders ===================================='''  # - checked
-@customer_controller.route("/cakery/user/customer/Orders", methods=["GET"])  # (Customer orders Page)
+"""=================================== View Orders ===================================="""  # - checked
+
+
+@customer_controller.route(
+    "/cakery/user/customer/Orders", methods=["GET"]
+)  # (Customer orders Page)
 @jwt_required()
 def view_orders():
     """
@@ -703,7 +792,17 @@ def view_orders():
         orders = customer_service.view_customer_orders(customer_email)
         return jsonify(orders), 200
     except Exception as e:
-        return jsonify({"error": "An error occurred while fetching orders.", "error_details": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while fetching orders.",
+                    "error_details": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
 '''=================================== Edit Customer Data ====================================''' 
@@ -798,7 +897,8 @@ def edit_customer_data():
     try:
         customer_email = get_jwt_identity()
         data = request.get_json()
-        response, status_code = customer_service.update_data(customer_email, data)
+        response, status_code = customer_service.update_data(
+            customer_email, data)
         return jsonify(response), status_code
     except Exception as e:
         return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
@@ -806,21 +906,29 @@ def edit_customer_data():
 # --------------------------
 # ----------------------------------------------------------------------------------
 
-'''=================================== Users | Reset Password ====================================''' 
+"""=================================== Users | Reset Password ===================================="""
 
-@customer_controller.route("/cakery/user/customer/ResetPassword/email", methods=["POST"]) 
+
+@customer_controller.route(
+    "/cakery/user/customer/ResetPassword/email", methods=["POST"]
+)
 def forget_pass_email():
     data = request.get_json()
     response, status_code = customer_service.send_email(data)
     return jsonify(response), status_code
 
-@customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"]) 
+
+@customer_controller.route("/cakery/user/customer/ResetPassword",
+                           methods=["PUT"])
 def forget_password():
     data = request.get_json()
     response, status_code = customer_service.new_password(data)
     return jsonify(response), status_code
 
-'''===================================== Verify OTP ====================================''' 
+
+"""===================================== Verify OTP ===================================="""
+
+
 @customer_controller.route("/cakery/user/customer/VerifyOTP", methods=["POST"])
 @jwt_required()
 def verify_otp():
@@ -883,14 +991,20 @@ def verify_otp():
         data = request.get_json()
         otp_code = data.get("otp_code")
         otp_service = customer_controller.otp_service
-        response, status_code = otp_service.validate_otp(customer_email, otp_code)
+        response, status_code = otp_service.validate_otp(
+            customer_email, otp_code)
         return jsonify(response), status_code
     except Exception as e:
         return jsonify({"error": f"Error validating OTP: {e}"}), 500
+
+
 # ----------------------------------------------------------------------------------
 
-'''===================================== My Notifications ====================================''' 
-@customer_controller.route("/cakery/user/customer/Notifications", methods=["GET"])
+"""===================================== My Notifications ===================================="""
+
+
+@customer_controller.route("/cakery/user/customer/Notifications",
+                           methods=["GET"])
 @jwt_required()
 def view_notifications():
     """
@@ -931,10 +1045,22 @@ def view_notifications():
         notifications = customer_service.view_notifications(customer_email)
         return jsonify(notifications), 200
     except Exception as e:
-        return jsonify({"error": "An error occurred while fetching notifications.", "error_details": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while fetching notifications.",
+                    "error_details": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''===================================== Get Customer Name ====================================''' 
+"""===================================== Get Customer Name ===================================="""
+
+
 @customer_controller.route("/cakery/user/customer/Name", methods=["GET"])
 @jwt_required()
 def get_customer_name():
@@ -971,22 +1097,45 @@ def get_customer_name():
         name = customer_service.get_customer_name(customer_email)
         return jsonify({"name": name}), 200
     except Exception as e:
-        return jsonify({"error": "An error occurred while fetching the customer name.", "error_details": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while fetching the customer name.",
+                    "error_details": str(e),
+                }
+            ),
+            500,
+        )
+
+
 # ----------------------------------------------------------------------------------
 
-'''===================================== Customer Review ====================================''' 
+"""===================================== Customer Review ===================================="""
+
+
 @customer_controller.route("/cakery/user/customer/Review", methods=["POST"])
 @jwt_required()
 def customer_review():
-   
+
     try:
         customer_email = get_jwt_identity()
         data = request.get_json()
         rating = data.get("rating")
         product_id = data.get("productid")
-        response, status_code = customer_service.add_review(customer_email, rating,product_id)
+        response, status_code = customer_service.add_review(
+            customer_email, rating, product_id
+        )
         return jsonify(response), status_code
     except Exception as e:
-        return jsonify({"error": "An error occurred while fetching the customer name.", "error_details": str(e)}), 500
-# ----------------------------------------------------------------------------------
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while fetching the customer name.",
+                    "error_details": str(e),
+                }
+            ),
+            500,
+        )
 
+
+# ----------------------------------------------------------------------------------

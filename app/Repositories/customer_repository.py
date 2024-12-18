@@ -1,4 +1,14 @@
-from app.models import Inventory, Cart, CartItems,Rawmaterials,CustomizeCake,Customize_Cake_Layers,CustomerUser,Notification,Review
+from app.models import (
+    Inventory,
+    Cart,
+    CartItems,
+    Rawmaterials,
+    CustomizeCake,
+    Customize_Cake_Layers,
+    CustomerUser,
+    Notification,
+    Review,
+)
 from app.db import db
 import smtplib
 from email.mime.text import MIMEText
@@ -10,7 +20,7 @@ load_dotenv()
 
 
 class CustomerRepository:
-    # ============================== get all products ==============================
+    # ============================== get all products ========================
     def get_all_products(self):
         try:
             products = Inventory.query.all()
@@ -18,11 +28,10 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get all products: {e}")
             return []
-        
-    #==============================================================================
 
+    # ==============================================================================
 
-    # ============================== get product by id ==============================
+    # ============================== get product by id =======================
     def get_product_by_id(self, product_id):
         try:
             product = Inventory.query.get(product_id)
@@ -30,34 +39,40 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get product by id: {e}")
             return None
-        
-
 
     # ============================== get cart ==============================
     def get_cart(self, customer_email):
         try:
-            cart = Cart.query.filter_by(customeremail=customer_email).first() # get the cart of the customer 
+            cart = Cart.query.filter_by(
+                customeremail=customer_email
+            ).first()  # get the cart of the customer
             if not cart:
                 return {"error": "Cart not found"}
-            
+
             cart_items = [
                 {
                     "productid": item.productid,
                     "customcakeid": item.customcakeid,
                     "quantity": item.quantity,
                     "price": item.price,
-                    "productname": Inventory.query.get(item.productid).name if Inventory.query.get(item.productid) else None,
+                    "productname": (
+                        Inventory.query.get(item.productid).name
+                        if Inventory.query.get(item.productid)
+                        else None
+                    ),
                 }
                 for item in cart.cart_items
             ]
-            return {"cart_id": cart.cartid,"items": cart_items}
+            return {"cart_id": cart.cartid, "items": cart_items}
         except Exception as e:
             print(f" (repo) cant get cart: {e}")
             return {"error": "An error occurred while fetching the cart"}
-        
-    # ============================== add item to cart ==============================
-    # edited to handle adding the custom cake to the cart 
-    def add_item_to_cart(self, customer_email, product_id=None, quantity=1, custom_cake_id=None):
+
+    # ============================== add item to cart ========================
+    # edited to handle adding the custom cake to the cart
+    def add_item_to_cart(
+        self, customer_email, product_id=None, quantity=1, custom_cake_id=None
+    ):
         try:
             # cart
             cart = Cart.query.filter_by(customeremail=customer_email).first()
@@ -69,17 +84,18 @@ class CustomerRepository:
                 product = Inventory.query.get(product_id)
                 if not product:
                     return {"error": "(repo) Product not found"}
-                
-                
-                cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
-                if cart_item: # if the product is already in the cart
+
+                cart_item = CartItems.query.filter_by(
+                    cartid=cart.cartid, productid=product_id
+                ).first()
+                if cart_item:  # if the product is already in the cart
                     cart_item.quantity += quantity
-                else: # if first time adding the product
+                else:  # if first time adding the product
                     cart_item = CartItems(
-                        cartid=cart.cartid, 
-                        productid=product_id, 
-                        quantity=quantity, 
-                        price=product.price
+                        cartid=cart.cartid,
+                        productid=product_id,
+                        quantity=quantity,
+                        price=product.price,
                     )
                     db.session.add(cart_item)
 
@@ -88,17 +104,18 @@ class CustomerRepository:
                 custom_cake = CustomizeCake.query.get(custom_cake_id)
                 if not custom_cake:
                     return {"error": "(repo) Customized cake not found"}
-                
+
                 cart_item = CartItems(
-                  cartid=cart.cartid, 
-                  customcakeid=custom_cake_id, 
-                  quantity=quantity, 
-                  price=custom_cake.price  # Assuming CustomizeCake has a price attribute
+                    cartid=cart.cartid,
+                    customcakeid=custom_cake_id,
+                    quantity=quantity,
+                    price=custom_cake.price,  # Assuming CustomizeCake has a price attribute
                 )
                 db.session.add(cart_item)
 
-            else: 
-                return {"error": "(repo) product_id or custom_cake_id must be provided"}
+            else:
+                return {
+                    "error": "(repo) product_id or custom_cake_id must be provided"}
 
             db.session.commit()
             return {"message": f"Added to cart successfully, cart id: {cart.cartid}"}
@@ -108,8 +125,7 @@ class CustomerRepository:
 
     # =========================================================================================
 
-
-    # ============================== remove item from cart ==============================
+    # ============================== remove item from cart ===================
     def remove_from_cart(self, customer_email, product_id):
         try:
             # ------- get cart --------
@@ -117,17 +133,23 @@ class CustomerRepository:
             if not cart:
                 return {"error": "(repo) Cart not found for this customer"}
             # ------ item in cart --------
-            cart_item = CartItems.query.filter_by(cartid=cart.cartid,productid=product_id).first()
+            cart_item = CartItems.query.filter_by(
+                cartid=cart.cartid, productid=product_id
+            ).first()
             if not cart_item:
                 return {"error": "(repo) Item not found in the cart"}
             # ---------------------------
             db.session.delete(cart_item)
             db.session.commit()
             return {"message": "Item removed from cart successfully"}
-        
+
         except Exception as e:
             db.session.rollback()
-            return {"error": "error occurred while removing the item from the cart", "error_details": str(e)}
+            return {
+                "error": "error occurred while removing the item from the cart",
+                "error_details": str(e),
+            }
+
     # ===========================================================================================================
 
     # ====================== Raw materials ========================
@@ -138,11 +160,11 @@ class CustomerRepository:
         serialized_data = [material.as_dict() for material in raw_materials]
 
         return serialized_data
+
     # ===========================================================
 
-
-    # --------------------------- Create custom cake ---------------------------
-    def create_custom_cake(self,customer_email, data):
+    # --------------------------- Create custom cake -------------------------
+    def create_custom_cake(self, customer_email, data):
         cake_shape = data.get("cakeshape")
         cake_size = data.get("cakesize")
         cake_type = data.get("caketype")
@@ -158,7 +180,7 @@ class CustomerRepository:
             cakeshape=cake_shape,
             cakesize=cake_size,
             cakeflavor=cake_flavor,
-            message=message
+            message=message,
         )
         db.session.add(new_customized_cake)
         db.session.commit()  # Commit to generate ID
@@ -176,15 +198,26 @@ class CustomerRepository:
                 innerfillings=inner_fillings,
                 innertoppings=inner_toppings,
                 outercoating=outer_coating,
-                outertoppings=outer_toppings
+                outertoppings=outer_toppings,
             )
             db.session.add(new_layer)
 
         db.session.commit()
 
-        return {"message": "Cake customization created successfully!", "customizecakeid": new_customized_cake.customizecakeid}
-    # -------------------------------------------------------------------------------  
+        return {
+            "message": "Cake customization created successfully!",
+            "customizecakeid": new_customized_cake.customizecakeid,
+        }
 
+    # --------------------------- Create custom cake -------------------------
+
+    def change_customer_data(self, customer_email, data):
+
+        email = data.get("email")
+        password = data.get("password")
+
+        # Validate required fields
+        if not email or not password:
     # --------------------------- Check then Edit Customer Data ---------------------------
     def check_customer_data(self, customer_email):
         # Query the database for the customer user
@@ -211,16 +244,18 @@ class CustomerRepository:
 
 
     def change_customer_data(self, customer_email, data):
-    # Extract the customer data from the input
+        # Extract the customer data from the input
         firstname = data.get("firstname", "")
         lastname = data.get("lastname", "")
         phonenum = data.get("phonenum", "")
         addressgooglemapurl = data.get("addressgooglemapurl", "")
-        password = data.get("password", "")  # If password is part of the update
+        # If password is part of the update
+        password = data.get("password", "")
 
         try:
             # Retrieve the customer based on email
-            user = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            user = CustomerUser.query.filter_by(
+                customeremail=customer_email).first()
 
             if not user:
                 return {"message": "User not found", "status": "error"}, 404
@@ -237,29 +272,37 @@ class CustomerRepository:
 
             # If a new password is provided, hash it and update it
             if password:
-                #hashed_password = self.hash_password(password)  # Ensure you have a hash function
-                user.password = password  # Assuming 'password' is the correct field name
+                # hashed_password = self.hash_password(password)  # Ensure you
+                # have a hash function
+                user.password = (
+                    password  # Assuming 'password' is the correct field name
+                )
 
             # Commit the changes to the database
             db.session.commit()
 
-            return {"message": "User's data updated successfully", "status": "success"}, 200
+            return {
+                "message": "User's data updated successfully",
+                "status": "success",
+            }, 200
 
         except Exception as e:
             # Rollback in case of error
             db.session.rollback()
-            return {"message": "An error occurred while editing user data", "error": str(e), "status": "error"}, 500
+            return {
+                "message": "An error occurred while editing user data",
+                "error": str(e),
+                "status": "error",
+            }, 500
 
+            # -------------------------------------------------------------------------------
 
-               # -------------------------------------------------------------------------------  
+    """ ============================ User Reset/Change password =============================== """
 
-    ''' ============================ User Reset/Change password =============================== '''
-
-    def change_password(self,data):
+    def change_password(self, data):
         email = data.get("email")
         domain = email.split("@")[1]
 
-        
         if domain == "cakery_baker.com":
             user = BakeryUser.query.filter_by(bakeryemail=email).first()
             role = "baker"
@@ -270,30 +313,28 @@ class CustomerRepository:
             user = DeliveryUser.query.filter_by(deliveryemail=email).first()
             role = "delivery"
         else:
-            return {
-                "message": "Invalid email domain",
-                "status": "error"
-            }, 400
+            return {"message": "Invalid email domain", "status": "error"}, 400
 
         try:
             if not user:
                 return {
                     "message": "User not found please sign up",
-                    "status": "error"
+                    "status": "error",
                 }, 401
 
             new_pass = data.get("newpassword")
-            new_pass_confirm = data.get("newpasswordconfirm")  # Fixed typo here
+            new_pass_confirm = data.get(
+                "newpasswordconfirm")  # Fixed typo here
 
             # Check if passwords match
             if new_pass != new_pass_confirm:
-                return {
-                    "message": "Passwords do not match",
-                    "status": "error"
-                }, 400
+                return {"message": "Passwords do not match",
+                        "status": "error"}, 400
 
             # Assuming you want to hash the password before saving it
-            hashed_password = self.hash_password(new_pass)  # Replace with actual hashing logic
+            hashed_password = self.hash_password(
+                new_pass
+            )  # Replace with actual hashing logic
 
             # Update the user's password
             if role == "baker":
@@ -302,23 +343,22 @@ class CustomerRepository:
                 user.customerpassword = hashed_password
             elif role == "delivery":
                 user.deliverypassword = hashed_password
-        
+
             # Commit the changes to the database
             db.session.commit()
 
             return {
                 "message": "Password changed successfully",
-                "status": "success"
+                "status": "success",
             }, 200
 
         except Exception as e:
             return {
-                "message": f"An error occurred: {str(e)}",
-                "status": "error"
-            }, 500
-               # -------------------------------------------------------------------------------  
+                "message": f"An error occurred: {str(e)}", "status": "error"}, 500
+            # -------------------------------------------------------------------------------
 
-    ''' ============================ User reset password_send email=============================== '''
+    """ ============================ User reset password_send email=============================== """
+
     def check_user(self, data):
         # Email Configuration
         email = data.get("email")
@@ -326,7 +366,6 @@ class CustomerRepository:
         SMTP_PORT = os.getenv("SMTP_PORT")
         EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
         EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-        
 
         # Check if user exists
         user = CustomerUser.query.filter_by(customeremail=email).first()
@@ -334,52 +373,67 @@ class CustomerRepository:
             return {"message": "User not found", "status": "error"}, 404
 
         # Create reset token (pseudo-code, replace with actual implementation)
-        #reset_link = f"https://your-app.com/reset-password?"  link to the reset pass page after deployment
-        
+        # reset_link = f"https://your-app.com/reset-password?"  link to the
+        # reset pass page after deployment
+
         # Email content
         subject = "Password Reset Request"
-        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
+        body = f"Hello {
+            user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
 
         # Send email
         try:
             msg = MIMEMultipart()
-            msg['From'] = EMAIL_ADDRESS
-            msg['To'] = email
-            msg['Subject'] = subject
-            msg.attach(MIMEText(body, 'plain'))
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = email
+            msg["Subject"] = subject
+            msg.attach(MIMEText(body, "plain"))
 
             with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
                 server.starttls()
                 server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                 server.send_message(msg)
 
-            return {"message": "Password reset email sent successfully", "status": "success"}, 200
+            return {
+                "message": "Password reset email sent successfully",
+                "status": "success",
+            }, 200
 
         except Exception as e:
             print(f"Error sending email: {e}")
-            return {"message": "Failed to send email", "error": str(e), "status": "error"}, 500
-        
+            return {
+                "message": "Failed to send email",
+                "error": str(e),
+                "status": "error",
+            }, 500
 
+    """============================ get notifications ==============================="""
 
-
-    '''============================ get notifications ==============================='''
     def get_notifications(self, customer_email):
         try:
-            notifications = Notification.query.filter_by(customer_email=customer_email).all()
+            notifications = Notification.query.filter_by(
+                customer_email=customer_email
+            ).all()
             # return only id and message
-            result = [{"id": notification.id, "message": notification.message} for notification in notifications]
+            result = [
+                {"id": notification.id, "message": notification.message}
+                for notification in notifications
+            ]
             return result
         except Exception as e:
             return {"error": f"(repo) error getting notifications: {e}"}, 500
-        
+
     def get_customer_name(self, customer_email):
         try:
-            customer = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            customer = CustomerUser.query.filter_by(
+                customeremail=customer_email
+            ).first()
             name = customer.firstname + " " + customer.lastname
             return name
         except Exception as e:
             print(f"(repo) can't get customer name: {e}")
             return None
+
     def increment_quantity(self, customer_email, product_id, action):
         try:
             #  cart for the customer
@@ -387,64 +441,86 @@ class CustomerRepository:
             if not cart:
                 return {"message": "Cart not found"}, 404
             #  cart id and product id
-            cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+            cart_item = CartItems.query.filter_by(
+                cartid=cart.cartid, productid=product_id
+            ).first()
             if cart_item:
                 if action == "increment":
                     cart_item.quantity += 1
-                elif action == "decrement" and cart_item.quantity ==1:
+                elif action == "decrement" and cart_item.quantity == 1:
                     db.session.delete(cart_item)
                 elif action == "decrement" and cart_item.quantity > 0:
                     cart_item.quantity -= 1
                 db.session.commit()
-                return {"message": "Quantity updated successfully","new_quantity": cart_item.quantity}, 200
+                return {
+                    "message": "Quantity updated successfully",
+                    "new_quantity": cart_item.quantity,
+                }, 200
             else:
                 return {"message": "Cart item not found"}, 404
         except Exception as e:
             db.session.rollback()
             return {"error": f"Error updating quantity: {e}"}, 500
 
+    """============================ add user review ==============================="""
 
-    '''============================ add user review ==============================='''
     def place_review(self, customer_email, rating, product_id):
         try:
             # Validate customer_email exists
-            customer = db.session.query(CustomerUser).filter_by(customeremail=customer_email).first()
+            customer = (
+                db.session.query(CustomerUser)
+                .filter_by(customeremail=customer_email)
+                .first()
+            )
             if not customer:
-                return {"message": "Customer does not exist", "status": "error"}, 404
+                return {"message": "Customer does not exist",
+                        "status": "error"}, 404
 
             # Validate product_id exists
-            product = db.session.query(Inventory).filter_by(productid=product_id).first()
+            product = (
+                db.session.query(Inventory).filter_by(
+                    productid=product_id).first()
+            )
             if not product:
-                return {"message": "Product does not exist", "status": "error"}, 404
+                return {"message": "Product does not exist",
+                        "status": "error"}, 404
 
             # Validate rating is within acceptable range
             if not (1 <= rating <= 5):
-                return {"message": "Rating must be between 1 and 5", "status": "error"}, 400
+                return {
+                    "message": "Rating must be between 1 and 5",
+                    "status": "error",
+                }, 400
 
-            existing_review = db.session.query(Review).filter_by(customeremail=customer_email, productid=product_id).first()
+            existing_review = (
+                db.session.query(Review)
+                .filter_by(customeremail=customer_email, productid=product_id)
+                .first()
+            )
             if existing_review:
                 existing_review.rating = rating
                 db.session.commit()
-                return {"message": "User rating updated successfully", "status": "success"}, 200
+                return {
+                    "message": "User rating updated successfully",
+                    "status": "success",
+                }, 200
             # Create new review
             new_review = Review(
-                customeremail=customer_email,
-                rating=rating,
-                productid=product_id
+                customeremail=customer_email, rating=rating, productid=product_id
             )
-        
+
             db.session.add(new_review)
             db.session.commit()
 
-            return {"message": "User rating added successfully", "status": "success"}, 201
-    
+            return {
+                "message": "User rating added successfully",
+                "status": "success",
+            }, 201
+
         except Exception as e:
             db.session.rollback()  # Ensure the transaction is rolled back in case of failure
-            return {"message": "An error occurred", "error": str(e), "status": "error"}, 500
-
-            
-
-
-
-  
-  
+            return {
+                "message": "An error occurred",
+                "error": str(e),
+                "status": "error",
+            }, 500

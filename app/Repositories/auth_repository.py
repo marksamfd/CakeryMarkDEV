@@ -15,24 +15,26 @@ ph = PasswordHasher()
 
 
 class AuthRepository:
-    ''' ============================ Hashing password during sign up =============================== '''
+    """============================ Hashing password during sign up ==============================="""
 
-    def hash_password(self,password):
+    def hash_password(self, password):
         return ph.hash(password)
-    # -------------------------------------------------------------------------------    
 
-    ''' ============================ Verify the password during sign-in =============================== '''
+    # -------------------------------------------------------------------------------
 
-    def verify_password(self,stored_password, provided_password):
+    """ ============================ Verify the password during sign-in =============================== """
+
+    def verify_password(self, stored_password, provided_password):
         try:
-        # Argon2 will automatically verify the password hash
+            # Argon2 will automatically verify the password hash
             ph.verify(stored_password, provided_password)
             return True
         except Exception:
             return False
-    # -------------------------------------------------------------------------------    
 
-    ''' ============================ Adding new customer =============================== '''
+    # -------------------------------------------------------------------------------
+
+    """ ============================ Adding new customer =============================== """
 
     def add_user(self, data):
         # Extract required fields
@@ -45,18 +47,34 @@ class AuthRepository:
         createdat = data.get("createdat", datetime.utcnow())
 
         # Handle missing input fields
-        if not customer_email or not password or not firstname or not lastname or not phonenum:
-            return {"message": "Missing required fields", "status": "error"}, 400
+        if (
+            not customer_email
+            or not password
+            or not firstname
+            or not lastname
+            or not phonenum
+        ):
+            return {"message": "Missing required fields",
+                    "status": "error"}, 400
 
         try:
             # Check if user already exists
             domain = customer_email.split("@")[1]
-            if domain in ["cakery_baker.com", "cakery_admin.com", "cakery_delivery.com"]:
-                return {"message": "Can't sign up for staff", "status": "error"}, 409
+            if domain in [
+                "cakery_baker.com",
+                "cakery_admin.com",
+                "cakery_delivery.com",
+            ]:
+                return {"message": "Can't sign up for staff",
+                        "status": "error"}, 409
 
-            result = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            result = CustomerUser.query.filter_by(
+                customeremail=customer_email).first()
             if result:
-                return {"message": "User already exists with this email", "status": "error"}, 409
+                return {
+                    "message": "User already exists with this email",
+                    "status": "error",
+                }, 409
 
             # Hash the password
             hashed_password = self.hash_password(password)
@@ -69,23 +87,28 @@ class AuthRepository:
                 lastname=lastname,
                 phonenum=phonenum,
                 addressgooglemapurl=addressgooglemapurl,
-                createdat=createdat
-                )
+                createdat=createdat,
+            )
 
             db.session.add(new_customer)
             db.session.commit()
 
-            return {"message": "User signed up successfully", "status": "success"}, 201
+            return {"message": "User signed up successfully",
+                    "status": "success"}, 201
 
         except Exception as e:
             db.session.rollback()
-            return {"message": "An error occurred while signing up", "error": str(e), "status": "error"}, 500
+            return {
+                "message": "An error occurred while signing up",
+                "error": str(e),
+                "status": "error",
+            }, 500
 
-    # -------------------------------------------------------------------------------    
+    # -------------------------------------------------------------------------------
 
-    ''' ============================ User sign in =============================== '''
+    """ ============================ User sign in =============================== """
 
-    def user_sign_in(self,data):
+    def user_sign_in(self, data):
 
         email = data.get("email")
         password = data.get("password")
@@ -93,18 +116,15 @@ class AuthRepository:
         # Validate required fields
         if not email or not password:
             return {
-            "message": "Email and password are required",
-            "status": "error"
+                "message": "Email and password are required",
+                "status": "error",
             }, 400
 
         # Extract user domain
         domain = email.split("@")[1] if "@" in email else None
 
         if not domain:
-            return {
-            "message": "Invalid email format",
-            "status": "error"
-            }, 400
+            return {"message": "Invalid email format", "status": "error"}, 400
 
         role = None
         user = None
@@ -126,56 +146,50 @@ class AuthRepository:
             role = "delivery"
             name = user.firstname
         else:
-            return {
-                "message": "Invalid email domain",
-                "status": "error"
-            }, 400
+            return {"message": "Invalid email domain", "status": "error"}, 400
 
         try:
             # User not found
             if not user:
-                return {
-                    "message": "User not found",
-                    "status": "error"
-                }, 401
+                return {"message": "User not found", "status": "error"}, 401
 
             # Compare the stored password and the input password
             stored_password = user.password
-            #stored_password == password
+            # stored_password == password
             """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ To be Edited later ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
             """ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Caution ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ """
-            ''' I commented the condition above because the password is hashed and can't be compared directly '''
-            #if self.verify_password(stored_password, password):
+            """ I commented the condition above because the password is hashed and can't be compared directly """
+            # if self.verify_password(stored_password, password):
             # Create JWT token with role as an additional claim
             additional_claims = {"role": role}
-            access_token = create_access_token(identity=email, additional_claims=additional_claims)
+            access_token = create_access_token(
+                identity=email, additional_claims=additional_claims
+            )
             if role != "admin":
                 return {
-                        "message": "Sign-in successful",
-                        "status": "success",
-                        "firstname":name,
-                        "role": role,
-                        "access_token": access_token
-                    }, 200
+                    "message": "Sign-in successful",
+                    "status": "success",
+                    "firstname": name,
+                    "role": role,
+                    "access_token": access_token,
+                }, 200
             return {
-                        "message": "Sign-in successful",
-                        "status": "success",
-                        "role": role,
-                        "access_token": access_token
-                    }, 200
+                "message": "Sign-in successful",
+                "status": "success",
+                "role": role,
+                "access_token": access_token,
+            }, 200
             # else:
             #     return {
             #         "message": "Wrong Password",
             #         "status": "error"
             #     }, 401
 
-
-
         except Exception as e:
             return {
                 "message": "An error occurred during sign-in",
                 "error": str(e),
-                "status": "error"
+                "status": "error",
             }, 500
 
-    # -------------------------------------------------------------------------------  
+    # -------------------------------------------------------------------------------

@@ -5,8 +5,10 @@ from flask_jwt_extended import jwt_required
 baker_controller = Blueprint("baker_controller", __name__)
 baker_service = BakerService()
 
-'''=================================== Baker | Orders ===================================='''  # - checked
-@baker_controller.route("/cakery/user/baker/Orders", methods=["GET"]) 
+"""=================================== Baker | Orders ===================================="""  # - checked
+
+
+@baker_controller.route("/cakery/user/baker/Orders", methods=["GET"])
 @jwt_required()
 def get_baker_orders():
     """
@@ -58,10 +60,16 @@ def get_baker_orders():
     """
     orders = baker_service.view_baker_orders()
     return jsonify(orders), 200
+
+
 # -------------------------------------------------------------------------------
 
-'''=================================== Baker | Order Details ===================================='''  # - checked
-@baker_controller.route("/cakery/user/baker/Orders/<int:order_id>/details", methods=["GET"])
+"""=================================== Baker | Order Details ===================================="""  # - checked
+
+
+@baker_controller.route(
+    "/cakery/user/baker/Orders/<int:order_id>/details", methods=["GET"]
+)
 @jwt_required()
 def get_order_details(order_id):
     """
@@ -136,10 +144,16 @@ def get_order_details(order_id):
     if "error" in order_details:
         return jsonify(order_details), 404
     return jsonify(order_details), 200
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Baker | Update Order Status ===================================='''
-@baker_controller.route("/cakery/user/baker/Orders/Update_status", methods=["POST"])  # - checked (changing DB too)
+"""=================================== Baker | Update Order Status ===================================="""
+
+
+@baker_controller.route(
+    "/cakery/user/baker/Orders/Update_status", methods=["POST"]
+)  # - checked (changing DB too)
 @jwt_required()
 def update_order_status():
     """
@@ -230,4 +244,6 @@ def update_order_status():
     if "error" in result:
         return jsonify(result), 400
     return jsonify(result), 200
+
+
 # ----------------------------------------------------------------------------------
