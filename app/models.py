@@ -94,7 +94,7 @@ class CustomizeCake(db.Model):
     cakesize = db.Column(db.String(255), nullable=False)
     cakeflavor = db.Column(db.String(255), nullable=False)
     message = db.Column(db.String(500))
-
+    price = db.Column(db.Integer())
     # Relationships
     layers = db.relationship(
         "Customize_Cake_Layers", backref="custom_cake", cascade="all, delete-orphan"
