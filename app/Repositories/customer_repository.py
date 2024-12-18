@@ -211,13 +211,7 @@ class CustomerRepository:
 
     # --------------------------- Create custom cake -------------------------
 
-    def change_customer_data(self, customer_email, data):
-
-        email = data.get("email")
-        password = data.get("password")
-
-        # Validate required fields
-        if not email or not password:
+    
     # --------------------------- Check then Edit Customer Data ---------------------------
     def check_customer_data(self, customer_email):
         # Query the database for the customer user
@@ -378,8 +372,7 @@ class CustomerRepository:
 
         # Email content
         subject = "Password Reset Request"
-        body = f"Hello {
-            user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
+        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
 
         # Send email
         try:
