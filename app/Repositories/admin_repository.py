@@ -117,10 +117,10 @@ class AdminRepository:
     # ---- delete delivery user ----
     def delete_delivery_user(self, email):
         try:
-            # Step 1: Find all orders assigned to this delivery user
+            # get all orders assigned to the delivery user
             orders = Orders.query.filter_by(deliveryemail=email).all()
             if orders:
-                # Step 2: Reassign orders to other delivery users
+                # reassign the orders
                 for order in orders:
                     new_delivery_email = (
                         self.delivery_repo.find_available_delivery_user()
@@ -133,7 +133,7 @@ class AdminRepository:
                         }
                 db.session.commit()
 
-            # Step 3: Delete the delivery user
+            # delete the delivery user
             delivery_user = DeliveryUser.query.filter_by(
                 deliveryemail=email).first()
             if delivery_user:
