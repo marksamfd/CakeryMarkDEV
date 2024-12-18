@@ -165,49 +165,130 @@ class CustomerRepository:
 
     # --------------------------- Create custom cake -------------------------
     def create_custom_cake(self, customer_email, data):
-        cake_shape = data.get("cakeshape")
-        cake_size = data.get("cakesize")
-        cake_type = data.get("caketype")
-        cake_flavor = cake_type  # Assuming type is flavor
-        message = data.get("message", "")
-        layers = data.get("layers", [])
-        num_layers = len(layers)
+        try:
+            cake_shape = data.get("cakeshape")
+            cake_size = data.get("cakesize")
+            cake_type = data.get("caketype")
+            cake_flavor = cake_type  # Assuming type is flavor
+            message = data.get("message", "")
+            layers = data.get("layers", [])
+            num_layers = len(layers)
 
-        # Create the parent CustomizeCake record
-        new_customized_cake = CustomizeCake(
-            numlayers=num_layers,
-            customeremail=customer_email,
-            cakeshape=cake_shape,
-            cakesize=cake_size,
-            cakeflavor=cake_flavor,
-            message=message,
-        )
-        db.session.add(new_customized_cake)
-        db.session.commit()  # Commit to generate ID
+            if not cake_shape or not cake_size or not cake_type:
+                return {
+                "error": "Cake shape, size, and type are required fields.",
+                "message": "An error occurred while creating the custom cake."
+                }
+            # Calculate price for the custom cake
+            total_price = 0.0
 
-        # Add layers
-        for i, layer in enumerate(layers):
-            inner_fillings = layer.get("innerFillings", "")
-            inner_toppings = layer.get("innerToppings", "")
-            outer_coating = layer.get("outerCoating", "")
-            outer_toppings = layer.get("outerToppings", "")
+            # Query raw material prices for each component in layers
+            for layer in layers:
+                inner_fillings = layer.get("innerFillings", "")
+                inner_toppings = layer.get("innerToppings", "")
+                outer_coating = layer.get("outerCoating", "")
+                outer_toppings = layer.get("outerToppings", "")
 
-            new_layer = Customize_Cake_Layers(
-                customizecakeid=new_customized_cake.customizecakeid,
-                layer=i + 1,
-                innerfillings=inner_fillings,
-                innertoppings=inner_toppings,
-                outercoating=outer_coating,
-                outertoppings=outer_toppings,
+                if inner_fillings:
+                    filling_price = (
+                        db.session.query(Rawmaterials.price)
+                        .filter_by(item=inner_fillings)
+                        .scalar()
+                        or 0.0
+                    )
+                    total_price += filling_price
+
+                if inner_toppings:
+                    topping_price = (
+                        db.session.query(Rawmaterials.price)
+                        .filter_by(item=inner_toppings)
+                        .scalar()
+                        or 0.0
+                    )
+                    total_price += topping_price
+
+                if outer_coating:
+                    coating_price = (
+                        db.session.query(Rawmaterials.price)
+                        .filter_by(item=outer_coating)
+                        .scalar()
+                        or 0.0
+                    )
+                    total_price += coating_price
+
+                if outer_toppings:
+                    topping_price = (
+                        db.session.query(Rawmaterials.price)
+                        .filter_by(item=outer_toppings)
+                        .scalar()
+                        or 0.0
+                    )
+                    total_price += topping_price
+
+            # Essentials
+            essentials = {
+                "cakeshape": cake_shape,
+                "cakesize": cake_size,
+                "cakeflavor": cake_flavor,
+            }
+
+            for key, value in essentials.items():
+                if value:  # Ensure the value is provided
+                    essential_price = (
+                        db.session.query(Rawmaterials.price)
+                        .filter_by(item=value)
+                        .scalar()
+                        or 0.0
+                    )
+                    total_price += essential_price
+
+            # Create the parent CustomizeCake record
+            new_customized_cake = CustomizeCake(
+                numlayers=num_layers,
+                customeremail=customer_email,
+                cakeshape=cake_shape,
+                cakesize=cake_size,
+                cakeflavor=cake_flavor,
+                message=message,
+                price=total_price,  # Save calculated price here
             )
-            db.session.add(new_layer)
+            db.session.add(new_customized_cake)
+            db.session.commit()  # Commit to generate ID
 
-        db.session.commit()
+            # Add layers
+            for i, layer in enumerate(layers):
+                inner_fillings = layer.get("innerFillings", "")
+                inner_toppings = layer.get("innerToppings", "")
+                outer_coating = layer.get("outerCoating", "")
+                outer_toppings = layer.get("outerToppings", "")
 
-        return {
-            "message": "Cake customization created successfully!",
-            "customizecakeid": new_customized_cake.customizecakeid,
-        }
+                new_layer = Customize_Cake_Layers(
+                    customizecakeid=new_customized_cake.customizecakeid,
+                    layer=i + 1,
+                    innerfillings=inner_fillings,
+                    innertoppings=inner_toppings,
+                    outercoating=outer_coating,
+                    outertoppings=outer_toppings,
+                )
+                db.session.add(new_layer)
+
+            db.session.commit()
+
+            return {
+                "message": "Cake customization created successfully!",
+                "customizecakeid": new_customized_cake.customizecakeid,
+                "totalprice": total_price,
+            }
+
+        except Exception as e:
+            # Rollback all changes if any error occurs
+            db.session.rollback()
+
+            # Return an error response
+            return {
+                "message": "An error occurred while creating the custom cake.",
+                "error": str(e),
+            }
 
     # --------------------------- Create custom cake -------------------------
 
