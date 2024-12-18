@@ -14,7 +14,8 @@ class OTPService:
             otp_code = self.otp_generator.generate_otp()
             expiry_time = self.otp_generator.get_expiry_time()
 
-            otp_entry = self.otp_repo.save_otp(customer_email, otp_code, expiry_time)
+            otp_entry = self.otp_repo.save_otp(
+                customer_email, otp_code, expiry_time)
             if otp_entry:
                 self.notifier.notify_observers(
                     customer_email,
@@ -33,7 +34,8 @@ class OTPService:
             if not otp_entry:
                 return {"error": "Invalid OTP"}, 400
 
-            # delted time zone to be able to compare with the normal time stamp from db
+            # delted time zone to be able to compare with the normal time stamp
+            # from db
             if otp_entry.expiry_time < datetime.now().replace(tzinfo=None):
                 return {"error": "OTP expired"}, 400
 

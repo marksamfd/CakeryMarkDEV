@@ -8,8 +8,10 @@ class OrderService:
         self.delivery_repo = DeliveryRepository()
 
     # ----------- make order -------------------
-    def create_order_from_cart(self, customer_email, cart_items, voucher_code=None):
-        return self.order_repo.create_order(customer_email, cart_items, voucher_code)
+    def create_order_from_cart(
+            self, customer_email, cart_items, voucher_code=None):
+        return self.order_repo.create_order(
+            customer_email, cart_items, voucher_code)
 
     # ----------- update order status -------------------
     def update_order_status(self, order_id, status):

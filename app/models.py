@@ -56,8 +56,14 @@ class CustomerUser(db.Model):
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     # Relationships
-    carts = db.relationship("Cart", backref="customer", cascade="all, delete-orphan")
-    orders = db.relationship("Orders", backref="customer", cascade="all, delete-orphan")
+    carts = db.relationship(
+        "Cart",
+        backref="customer",
+        cascade="all, delete-orphan")
+    orders = db.relationship(
+        "Orders",
+        backref="customer",
+        cascade="all, delete-orphan")
     reviews = db.relationship(
         "Review", backref="customer", cascade="all, delete-orphan"
     )
@@ -76,7 +82,10 @@ class CustomerUser(db.Model):
 # CustomCake model
 class CustomizeCake(db.Model):
 
-    customizecakeid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    customizecakeid = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True)
     numlayers = db.Column(db.Integer, nullable=False)
     customeremail = db.Column(
         db.String(255), db.ForeignKey("customeruser.customeremail")
@@ -227,7 +236,10 @@ class Orders(db.Model):
     deliverydate = db.Column(db.DateTime)
 
     # Relationships
-    payments = db.relationship("Payment", backref="order", cascade="all, delete-orphan")
+    payments = db.relationship(
+        "Payment",
+        backref="order",
+        cascade="all, delete-orphan")
     order_items = db.relationship(
         "OrderItems", backref="order", cascade="all, delete-orphan"
     )
@@ -275,7 +287,10 @@ class DeliveryAssignments(db.Model):
     deliveryemail = db.Column(
         db.String(255), db.ForeignKey("deliveryuser.deliveryemail"), nullable=False
     )
-    orderid = db.Column(db.Integer, db.ForeignKey("orders.orderid"), nullable=False)
+    orderid = db.Column(
+        db.Integer,
+        db.ForeignKey("orders.orderid"),
+        nullable=False)
 
     # Relationships
     delivery_user = db.relationship("DeliveryUser", backref="assignments")

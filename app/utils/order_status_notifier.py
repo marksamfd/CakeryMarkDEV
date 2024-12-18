@@ -16,7 +16,8 @@ class PushNotificationObserver(Observer):
 class DatabaseNotificationObserver(Observer):
     def update(self, customer_email, message):
         try:
-            notification = Notification(customer_email=customer_email, message=message)
+            notification = Notification(
+                customer_email=customer_email, message=message)
             db.session.add(notification)
             db.session.commit()
         except Exception as e:

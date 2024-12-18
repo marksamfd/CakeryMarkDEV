@@ -30,7 +30,8 @@ class AdminService:
                 firstname, lastname, email, phone, password
             )
         else:
-            return {f"passed role is wrong, error in adding user (service)"}, 400
+            return {
+                f"passed role is wrong, error in adding user (service)"}, 400
 
     def delete_user(self, data):
         role = data["role"]
@@ -58,7 +59,8 @@ class AdminService:
                 product_id=None, rawItem=rawItem, price=price
             )
         else:
-            return self.admin_repo.edit_product(product_id, rawItem=None, price=price)
+            return self.admin_repo.edit_product(
+                product_id, rawItem=None, price=price)
 
     def add_voucher(self, data):
         discount = data["discount"]

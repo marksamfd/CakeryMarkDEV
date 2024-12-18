@@ -20,7 +20,7 @@ load_dotenv()
 
 
 class CustomerRepository:
-    # ============================== get all products ==============================
+    # ============================== get all products ========================
     def get_all_products(self):
         try:
             products = Inventory.query.all()
@@ -31,7 +31,7 @@ class CustomerRepository:
 
     # ==============================================================================
 
-    # ============================== get product by id ==============================
+    # ============================== get product by id =======================
     def get_product_by_id(self, product_id):
         try:
             product = Inventory.query.get(product_id)
@@ -68,7 +68,7 @@ class CustomerRepository:
             print(f" (repo) cant get cart: {e}")
             return {"error": "An error occurred while fetching the cart"}
 
-    # ============================== add item to cart ==============================
+    # ============================== add item to cart ========================
     # edited to handle adding the custom cake to the cart
     def add_item_to_cart(
         self, customer_email, product_id=None, quantity=1, custom_cake_id=None
@@ -114,7 +114,8 @@ class CustomerRepository:
                 db.session.add(cart_item)
 
             else:
-                return {"error": "(repo) product_id or custom_cake_id must be provided"}
+                return {
+                    "error": "(repo) product_id or custom_cake_id must be provided"}
 
             db.session.commit()
             return {"message": f"Added to cart successfully, cart id: {cart.cartid}"}
@@ -124,7 +125,7 @@ class CustomerRepository:
 
     # =========================================================================================
 
-    # ============================== remove item from cart ==============================
+    # ============================== remove item from cart ===================
     def remove_from_cart(self, customer_email, product_id):
         try:
             # ------- get cart --------
@@ -162,7 +163,7 @@ class CustomerRepository:
 
     # ===========================================================
 
-    # --------------------------- Create custom cake ---------------------------
+    # --------------------------- Create custom cake -------------------------
     def create_custom_cake(self, customer_email, data):
         cake_shape = data.get("cakeshape")
         cake_size = data.get("cakesize")
@@ -208,7 +209,7 @@ class CustomerRepository:
             "customizecakeid": new_customized_cake.customizecakeid,
         }
 
-    # --------------------------- Create custom cake ---------------------------
+    # --------------------------- Create custom cake -------------------------
 
     def change_customer_data(self, customer_email, data):
 
@@ -295,11 +296,13 @@ class CustomerRepository:
         lastname = data.get("lastname", "")
         phonenum = data.get("phonenum", "")
         addressgooglemapurl = data.get("addressgooglemapurl", "")
-        password = data.get("password", "")  # If password is part of the update
+        # If password is part of the update
+        password = data.get("password", "")
 
         try:
             # Retrieve the customer based on email
-            user = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            user = CustomerUser.query.filter_by(
+                customeremail=customer_email).first()
 
             if not user:
                 return {"message": "User not found", "status": "error"}, 404
@@ -316,7 +319,8 @@ class CustomerRepository:
 
             # If a new password is provided, hash it and update it
             if password:
-                # hashed_password = self.hash_password(password)  # Ensure you have a hash function
+                # hashed_password = self.hash_password(password)  # Ensure you
+                # have a hash function
                 user.password = (
                     password  # Assuming 'password' is the correct field name
                 )
@@ -366,11 +370,13 @@ class CustomerRepository:
                 }, 401
 
             new_pass = data.get("newpassword")
-            new_pass_confirm = data.get("newpasswordconfirm")  # Fixed typo here
+            new_pass_confirm = data.get(
+                "newpasswordconfirm")  # Fixed typo here
 
             # Check if passwords match
             if new_pass != new_pass_confirm:
-                return {"message": "Passwords do not match", "status": "error"}, 400
+                return {"message": "Passwords do not match",
+                        "status": "error"}, 400
 
             # Assuming you want to hash the password before saving it
             hashed_password = self.hash_password(
@@ -394,7 +400,8 @@ class CustomerRepository:
             }, 200
 
         except Exception as e:
-            return {"message": f"An error occurred: {str(e)}", "status": "error"}, 500
+            return {
+                "message": f"An error occurred: {str(e)}", "status": "error"}, 500
             # -------------------------------------------------------------------------------
 
     """ ============================ User reset password_send email=============================== """
@@ -413,11 +420,13 @@ class CustomerRepository:
             return {"message": "User not found", "status": "error"}, 404
 
         # Create reset token (pseudo-code, replace with actual implementation)
-        # reset_link = f"https://your-app.com/reset-password?"  link to the reset pass page after deployment
+        # reset_link = f"https://your-app.com/reset-password?"  link to the
+        # reset pass page after deployment
 
         # Email content
         subject = "Password Reset Request"
-        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
+        body = f"Hello {
+            user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
 
         # Send email
         try:
@@ -511,14 +520,17 @@ class CustomerRepository:
                 .first()
             )
             if not customer:
-                return {"message": "Customer does not exist", "status": "error"}, 404
+                return {"message": "Customer does not exist",
+                        "status": "error"}, 404
 
             # Validate product_id exists
             product = (
-                db.session.query(Inventory).filter_by(productid=product_id).first()
+                db.session.query(Inventory).filter_by(
+                    productid=product_id).first()
             )
             if not product:
-                return {"message": "Product does not exist", "status": "error"}, 404
+                return {"message": "Product does not exist",
+                        "status": "error"}, 404
 
             # Validate rating is within acceptable range
             if not (1 <= rating <= 5):

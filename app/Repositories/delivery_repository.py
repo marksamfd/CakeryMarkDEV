@@ -67,7 +67,8 @@ class DeliveryRepository:
             if not order:
                 return {"error": "Order not found"}
 
-            # find available delivery user to assign the order -- using the function above
+            # find available delivery user to assign the order -- using the
+            # function above
             delivery_email = self.find_available_delivery_user()
             if not delivery_email:
                 return {"error": "No available delivery users to assign the order"}

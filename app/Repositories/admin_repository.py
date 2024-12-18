@@ -109,7 +109,8 @@ class AdminRepository:
                 db.session.commit()
                 return {"message": "baker deleted successfully"}
             else:
-                return {"error": f"(repo) error deleting baker user: user not found"}
+                return {
+                    "error": f"(repo) error deleting baker user: user not found"}
         except Exception as e:
             return {"error": f"(repo) error deleting baker user: {e}"}
 
@@ -133,7 +134,8 @@ class AdminRepository:
                 db.session.commit()
 
             # Step 3: Delete the delivery user
-            delivery_user = DeliveryUser.query.filter_by(deliveryemail=email).first()
+            delivery_user = DeliveryUser.query.filter_by(
+                deliveryemail=email).first()
             if delivery_user:
                 db.session.delete(delivery_user)
                 db.session.commit()
@@ -193,10 +195,12 @@ class AdminRepository:
         itemsList = {}
         for product in products:
             itemsList[product.name] = {
+                "product_id": product.productid,
                 "price": product.price,
             }
         for raw_product in rawItems:
             itemsList[raw_product.name] = {
+                "item": raw_product.item,
                 "price": raw_product.price,
             }
         return itemsList
@@ -213,7 +217,7 @@ class AdminRepository:
 
     """ ============================ get dashboard data =============================== """
 
-    # ============================ get dashboard data ===============================
+    # ============================ get dashboard data ========================
     def get_dashboard_data(
         self,
     ):  # top 5 sold items of all time, total of all prices in the last 5 days

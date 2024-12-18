@@ -11,7 +11,8 @@ class OrderRepository:
             discount = 0
             # calculate discount if applicable
             if voucher_code:
-                voucher = Voucher.query.filter_by(vouchercode=voucher_code).first()
+                voucher = Voucher.query.filter_by(
+                    vouchercode=voucher_code).first()
                 if not voucher:
                     return {"error": "(repo) Invalid voucher code"}
                 discount = voucher.discountpercentage / 100
@@ -38,7 +39,8 @@ class OrderRepository:
                     priceatorder=item["price"],
                 )
                 db.session.add(order_item)
-                order_items.append(order_item)  # add order item to order_items list
+                # add order item to order_items list
+                order_items.append(order_item)
             # ---------------- empty the cart ----------------
             cart = Cart.query.filter_by(customeremail=customer_email).first()
             if cart:
@@ -76,7 +78,7 @@ class OrderRepository:
             # list of ids
         return [order.orderid for order in orders]
 
-    # --------------------------- function to get orders by customer email ---------------------------
+    # --------------------------- function to get orders by customer email ---
     def get_orders_by_customer(self, customer_email):
         try:
             # Get a list of order IDs for the customer
@@ -117,7 +119,8 @@ class OrderRepository:
                         ),
                         "quantity": item.quantity,
                         "priceAtOrder": (
-                            float(item.priceatorder) if item.priceatorder else 0
+                            float(
+                                item.priceatorder) if item.priceatorder else 0
                         ),
                     }
                     for item in order.order_items

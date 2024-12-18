@@ -55,7 +55,8 @@ def view_customers():
 
 
 # ----------------------------- View Staff -----------------------------
-@admin_controller.route("/cakery/user/admin/Staff/View", methods=["GET"])  # -- checked
+@admin_controller.route("/cakery/user/admin/Staff/View",
+                        methods=["GET"])  # -- checked
 @jwt_required()
 def view_staff():
     """
@@ -201,7 +202,8 @@ def delete_staff():
         response = admin_service.delete_user(data)
         return jsonify(response), 200
     except Exception as e:
-        return jsonify({"error": f" (route) can't delete a staff user: {e}"}), 500
+        return jsonify(
+            {"error": f" (route) can't delete a staff user: {e}"}), 500
 
 
 @admin_controller.route("/cakery/user/admin/Products", methods=["GET"])
@@ -374,7 +376,8 @@ def edit_voucher():
 
 
 # ----------------------------- Delete Voucher -----------------------------
-@admin_controller.route("/cakery/user/admin/Vouchers/Delete", methods=["DELETE"])
+@admin_controller.route("/cakery/user/admin/Vouchers/Delete",
+                        methods=["DELETE"])
 @jwt_required()
 def delete_voucher():
     """

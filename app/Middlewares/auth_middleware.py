@@ -13,7 +13,8 @@ def token_required(roles=None):
                 verify_jwt_in_request()
                 claims = get_jwt()
 
-                # Check if the user's role matches the allowed roles (if specified)
+                # Check if the user's role matches the allowed roles (if
+                # specified)
                 if roles and claims.get("role") not in roles:
                     return jsonify({"message": "Permission denied!"}), 403
 

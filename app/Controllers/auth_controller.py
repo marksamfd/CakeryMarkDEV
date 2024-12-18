@@ -244,4 +244,5 @@ def get_profile():
               type: string
               example: error
     """
-    return jsonify({"message": f"Welcome {request.user}, your role is {request.role}"})
+    return jsonify(
+        {"message": f"Welcome {request.user}, your role is {request.role}"})

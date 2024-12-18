@@ -54,7 +54,8 @@ class AuthRepository:
             or not lastname
             or not phonenum
         ):
-            return {"message": "Missing required fields", "status": "error"}, 400
+            return {"message": "Missing required fields",
+                    "status": "error"}, 400
 
         try:
             # Check if user already exists
@@ -64,9 +65,11 @@ class AuthRepository:
                 "cakery_admin.com",
                 "cakery_delivery.com",
             ]:
-                return {"message": "Can't sign up for staff", "status": "error"}, 409
+                return {"message": "Can't sign up for staff",
+                        "status": "error"}, 409
 
-            result = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            result = CustomerUser.query.filter_by(
+                customeremail=customer_email).first()
             if result:
                 return {
                     "message": "User already exists with this email",
@@ -90,7 +93,8 @@ class AuthRepository:
             db.session.add(new_customer)
             db.session.commit()
 
-            return {"message": "User signed up successfully", "status": "success"}, 201
+            return {"message": "User signed up successfully",
+                    "status": "success"}, 201
 
         except Exception as e:
             db.session.rollback()

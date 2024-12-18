@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 delivery_controller = Blueprint("delivery_controller", __name__)
 
 
-# ------------------------------- View Assigned Orders -------------------------------
+# ------------------------------- View Assigned Orders -------------------
 @delivery_controller.route("/cakery/user/delivery/orders", methods=["GET"])
 @jwt_required()
 def view_assigned_orders():
@@ -94,7 +94,7 @@ def view_assigned_orders():
         )
 
 
-# ------------------------------- Change Order Status -------------------------------
+# ------------------------------- Change Order Status --------------------
 @delivery_controller.route(
     "/cakery/user/delivery/orders/change_status", methods=["POST"]
 )
@@ -178,7 +178,8 @@ def change_order_status():
         assigned_order_ids = [order["orderID"] for order in assigned_orders]
         if order_id not in assigned_order_ids:
             return (
-                jsonify({"error": "This order isn't assigned to this delivery user."}),
+                jsonify(
+                    {"error": "This order isn't assigned to this delivery user."}),
                 403,
             )
         # ---------------------------------
@@ -199,7 +200,7 @@ def change_order_status():
         )
 
 
-# ------------------------------- Get Deliveryman Name -------------------------------
+# ------------------------------- Get Deliveryman Name -------------------
 @delivery_controller.route("/cakery/user/delivery/name", methods=["GET"])
 @jwt_required()
 def get_deliveryman_name():

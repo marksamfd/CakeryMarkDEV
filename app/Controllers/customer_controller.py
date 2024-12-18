@@ -9,7 +9,8 @@ customer_service = CustomerService()
 """=================================== Shop ===================================="""  # - checked
 
 
-@customer_controller.route("/cakery/user/customer/Shop", methods=["GET"])  # (Shop Page)
+@customer_controller.route("/cakery/user/customer/Shop",
+                           methods=["GET"])  # (Shop Page)
 def list_products():
     """
     List All Available Products
@@ -163,7 +164,8 @@ def get_product_details(product_id):
 """=================================== Cart ===================================="""  # - checked
 
 
-@customer_controller.route("/cakery/user/customer/Cart", methods=["GET"])  # (Cart Page)
+@customer_controller.route("/cakery/user/customer/Cart",
+                           methods=["GET"])  # (Cart Page)
 @jwt_required()
 def get_cart():
     """
@@ -324,11 +326,12 @@ def add_to_cart():
         )
         return jsonify(response), 200
     except Exception as e:
-        return jsonify({"error": f" (route) can't add a product to the cart: {e}"}), 400
+        return jsonify(
+            {"error": f" (route) can't add a product to the cart: {e}"}), 400
 
 
 # *****************************************************************************************************
-# ------------------------------------ increment/decrement quantity ------------------------------------
+# ------------------------------------ increment/decrement quantity ------
 # *****************************************************************************************************
 @customer_controller.route(
     "/cakery/user/customer/Cart/Increment", methods=["PUT"]
@@ -464,7 +467,8 @@ def remove_from_cart():
         customer_email = get_jwt_identity()
         product_id = data.get("product_id")
 
-        response = customer_service.remove_from_cart(customer_email, product_id)
+        response = customer_service.remove_from_cart(
+            customer_email, product_id)
         return jsonify(response), 200
     except Exception as e:
         return (
@@ -478,7 +482,8 @@ def remove_from_cart():
 """=================================== Customize Cake ===================================="""  # - checked
 
 
-@customer_controller.route("/cakery/user/customer/Customize_Cake", methods=["GET"])
+@customer_controller.route("/cakery/user/customer/Customize_Cake",
+                           methods=["GET"])
 def view_raw_materials():
     """
     View Raw Materials for Cake Customization
@@ -882,7 +887,8 @@ def edit_customer_data():
     try:
         customer_email = get_jwt_identity()
         data = request.get_json()
-        response, status_code = customer_service.update_data(customer_email, data)
+        response, status_code = customer_service.update_data(
+            customer_email, data)
         return jsonify(response), status_code
     except Exception as e:
         return (
@@ -910,7 +916,8 @@ def forget_pass_email():
     return jsonify(response), status_code
 
 
-@customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"])
+@customer_controller.route("/cakery/user/customer/ResetPassword",
+                           methods=["PUT"])
 def forget_password():
     data = request.get_json()
     response, status_code = customer_service.new_password(data)
@@ -982,7 +989,8 @@ def verify_otp():
         data = request.get_json()
         otp_code = data.get("otp_code")
         otp_service = customer_controller.otp_service
-        response, status_code = otp_service.validate_otp(customer_email, otp_code)
+        response, status_code = otp_service.validate_otp(
+            customer_email, otp_code)
         return jsonify(response), status_code
     except Exception as e:
         return jsonify({"error": f"Error validating OTP: {e}"}), 500
@@ -993,7 +1001,8 @@ def verify_otp():
 """===================================== My Notifications ===================================="""
 
 
-@customer_controller.route("/cakery/user/customer/Notifications", methods=["GET"])
+@customer_controller.route("/cakery/user/customer/Notifications",
+                           methods=["GET"])
 @jwt_required()
 def view_notifications():
     """

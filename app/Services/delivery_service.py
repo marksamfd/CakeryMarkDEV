@@ -28,7 +28,8 @@ class DeliveryService:
             return "Order status updated successfully"
 
         elif new_status == "out_for_delivery":  # just message to customer
-            customer_email = self.order_repo.get_customerEmail_by_order_id(order_id)
+            customer_email = self.order_repo.get_customerEmail_by_order_id(
+                order_id)
             message = "Your order is out for delivery"
             self.notifier.notify_observers(customer_email, message)
             return "Order status updated successfully"

@@ -45,7 +45,8 @@ class CustomerService:
         if "error, cart not found" in cart:
             return cart  # Return error if cart not found
         cart_items = cart.get("items", [])
-        return self.order_repo.create_order(customer_email, cart_items, voucher_code)
+        return self.order_repo.create_order(
+            customer_email, cart_items, voucher_code)
 
     # ------------------- view customer orders -------------------
     def view_customer_orders(self, customer_email):
@@ -74,7 +75,9 @@ class CustomerService:
         customer_email = customer_email
         product_id = data["product_id"]
         action = data["action"]
-        return self.customer_repo.increment_quantity(customer_email, product_id, action)
+        return self.customer_repo.increment_quantity(
+            customer_email, product_id, action)
 
     def add_review(self, customer_email, rating, product_id):
-        return self.customer_repo.place_review(customer_email, rating, product_id)
+        return self.customer_repo.place_review(
+            customer_email, rating, product_id)
