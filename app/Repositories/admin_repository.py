@@ -170,6 +170,7 @@ class AdminRepository:
         )
         db.session.add(voucher)
         db.session.commit()
+        
         return voucher
 
     # ---- edit voucher ----
