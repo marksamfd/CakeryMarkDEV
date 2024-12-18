@@ -199,8 +199,7 @@ class AdminRepository:
                 "price": product.price,
             }
         for raw_product in rawItems:
-            itemsList[raw_product.name] = {
-                "item": raw_product.item,
+            itemsList[raw_product.item] = {
                 "price": raw_product.price,
             }
         return itemsList
