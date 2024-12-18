@@ -314,6 +314,9 @@ def add_voucher():
         schema:
           type: object
           properties:
+            voucher_code:
+              type: string
+              example: VOUCHER123
             discount:
               type: number
               example: 20

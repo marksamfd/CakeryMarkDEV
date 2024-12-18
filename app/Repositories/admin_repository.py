@@ -170,6 +170,7 @@ class AdminRepository:
         )
         db.session.add(voucher)
         db.session.commit()
+        
         return voucher
 
     # ---- edit voucher ----
@@ -198,13 +199,13 @@ class AdminRepository:
                 "product_id": product.productid,
                 "price": product.price,
             }
+            
         for raw_product in rawItems:
-            itemsList[raw_product.name] = {
-                "item": raw_product.item,
+            itemsList[raw_product.item] = {
                 "price": raw_product.price,
             }
         return itemsList
-
+      
     def edit_product(self, price, product_id, rawItem=None):
         product = Inventory.query.filter_by(product_id=product_id)
         if product:
