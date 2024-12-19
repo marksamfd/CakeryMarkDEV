@@ -72,27 +72,27 @@ class CustomerRepository:
 
     # ============================== add item to cart ========================
     # edited to handle adding the custom cake to the cart
-    def add_item_to_cart(
-        self, customer_email, product_id=None, quantity=1, custom_cake_id=None
-    ):
+    def add_item_to_cart(self, customer_email, product_id=None, quantity=1, custom_cake_id=None):
         try:
-            # cart
+            # Validate if either product_id or custom_cake_id is provided
+            if not product_id and not custom_cake_id:
+                return {"error": "(repo) product_id or custom_cake_id must be provided"}
+
+            # Cart retrieval
             cart = Cart.query.filter_by(customeremail=customer_email).first()
             if not cart:
                 return {"error": "(repo) Cart not found for this customer"}
 
-            #  ---------- normal product  ------------
+            # Handling normal product addition
             if product_id:
                 product = Inventory.query.get(product_id)
                 if not product:
                     return {"error": "(repo) Product not found"}
-
-                cart_item = CartItems.query.filter_by(
-                    cartid=cart.cartid, productid=product_id
-                ).first()
-                if cart_item:  # if the product is already in the cart
+                    
+                cart_item = CartItems.query.filter_by(cartid=cart.cartid, productid=product_id).first()
+                if cart_item:  # Product already in cart
                     cart_item.quantity += quantity
-                else:  # if first time adding the product
+                else:  # New product
                     cart_item = CartItems(
                         cartid=cart.cartid,
                         productid=product_id,
@@ -101,7 +101,7 @@ class CustomerRepository:
                     )
                     db.session.add(cart_item)
 
-            # ---------- customized cake  ------------
+            # Handling customized cake addition
             elif custom_cake_id:
                 custom_cake = CustomizeCake.query.get(custom_cake_id)
                 if not custom_cake:
@@ -115,15 +115,15 @@ class CustomerRepository:
                 )
                 db.session.add(cart_item)
 
-            else:
-                return {
-                    "error": "(repo) product_id or custom_cake_id must be provided"}
-
+            # Commit changes to the database
             db.session.commit()
             return {"message": f"Added to cart successfully, cart id: {cart.cartid}"}
+
         except Exception as e:
+            # Rollback in case of error
             db.session.rollback()
-            return {"error": f"(repo) Can't add item to cart: {e}"}
+            return {"error": f"(repo) Can't add item to cart: {str(e)}"}
+
 
     # =========================================================================================
 
@@ -176,15 +176,22 @@ class CustomerRepository:
             layers = data.get("layers", [])
             num_layers = len(layers)
 
+            # Validate cake shape, size, and type
             if not cake_shape or not cake_size or not cake_type:
                 return {
-                "error": "Cake shape, size, and type are required fields.",
-                "message": "An error occurred while creating the custom cake."
+                    "error": "Cake shape, size, and type are required fields.",
+                    "message": "An error occurred while creating the custom cake."
                 }
+
+            # Validate that there are enough layers
+            if num_layers < 1:  # Assuming at least two layers are required
+                return {
+                    "error": "At least 1 layers are required for the custom cake.",
+                    "message": "Not enough segments"
+                }
+            print(1)
             # Calculate price for the custom cake
             total_price = 0.0
-
-            # Query raw material prices for each component in layers
             for layer in layers:
                 inner_fillings = layer.get("innerFillings", "")
                 inner_toppings = layer.get("innerToppings", "")
@@ -243,6 +250,7 @@ class CustomerRepository:
                         or 0.0
                     )
                     total_price += essential_price
+            
 
             # Create the parent CustomizeCake record
             new_customized_cake = CustomizeCake(
@@ -257,6 +265,8 @@ class CustomerRepository:
             db.session.add(new_customized_cake)
             db.session.commit()  # Commit to generate ID
 
+            self.add_item_to_cart(customer_email=customer_email, product_id=None, quantity=1, custom_cake_id=new_customized_cake.customizecakeid)
+        
             # Add layers
             for i, layer in enumerate(layers):
                 inner_fillings = layer.get("innerFillings", "")
@@ -291,6 +301,7 @@ class CustomerRepository:
                 "message": "An error occurred while creating the custom cake.",
                 "error": str(e),
             }
+
 
     # --------------------------- Create custom cake -------------------------
 

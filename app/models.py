@@ -135,9 +135,9 @@ class CartItems(db.Model):
 
     cartitemid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cartid = db.Column(db.Integer, db.ForeignKey("cart.cartid"))
-    productid = db.Column(db.Integer, db.ForeignKey("inventory.productid"))
+    productid = db.Column(db.Integer, db.ForeignKey("inventory.productid"),nullable=True)
     customcakeid = db.Column(
-        db.Integer, db.ForeignKey("customize_cake.customizecakeid")
+        db.Integer, db.ForeignKey("customize_cake.customizecakeid"),nullable=True
     )
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)

@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.models import CustomerUser, DeliveryUser, Admin, BakeryUser
+from app.models import CustomerUser, DeliveryUser, Admin, BakeryUser,Cart
 from app.db import db
 from sqlalchemy.exc import SQLAlchemyError
 from argon2 import PasswordHasher
@@ -91,6 +91,10 @@ class AuthRepository:
             )
 
             db.session.add(new_customer)
+            db.session.commit()
+
+            new_cart = Cart(customeremail=customer_email,cartid=5)
+            db.session.add(new_cart)
             db.session.commit()
 
             return {"message": "User signed up successfully",
