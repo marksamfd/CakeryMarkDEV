@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
+from app.Middlewares.auth_middleware import token_required
 delivery_controller = Blueprint("delivery_controller", __name__)
 
 
 # ------------------------------- View Assigned Orders -------------------
 @delivery_controller.route("/cakery/user/delivery/orders", methods=["GET"])
-@jwt_required()
+@token_required(roles=['delivery'])
 def view_assigned_orders():
     """
     View All Assigned Orders
@@ -69,7 +69,7 @@ def view_assigned_orders():
               example: "(delivery controller) error fetching assigned orders: Detailed error message."
     """
     try:
-        delivery_email = get_jwt_identity()
+        delivery_email = request.user
         delivery_service = (
             delivery_controller.delivery_service
         )  # Injected delivery service
@@ -98,7 +98,7 @@ def view_assigned_orders():
 @delivery_controller.route(
     "/cakery/user/delivery/orders/change_status", methods=["POST"]
 )
-@jwt_required()
+@token_required(roles=['delivery'])
 def change_order_status():
     """
     Change Order Status
@@ -165,7 +165,7 @@ def change_order_status():
               example: "(delivery controller) Error changing order status: Detailed error message."
     """
     try:
-        delivery_email = get_jwt_identity()
+        delivery_email = request.user
         delivery_service = delivery_controller.delivery_service  # Injected delivery service
         data = request.get_json()
 
@@ -202,7 +202,7 @@ def change_order_status():
 
     # ------------------------------- Get Deliveryman Name -------------------
 @delivery_controller.route("/cakery/user/delivery/name", methods=["GET"])
-@jwt_required()
+@token_required(roles=['delivery'])
 def get_deliveryman_name():
     """
     Get Deliveryman's Name
@@ -241,7 +241,7 @@ def get_deliveryman_name():
               example: "(delivery controller) can't get deliveryman name: Detailed error message."
     """
     try:
-        delivery_email = get_jwt_identity()
+        delivery_email = request.user
         delivery_service = delivery_controller.delivery_service
         name = delivery_service.get_deliveryman_name(delivery_email)
         if not name:
