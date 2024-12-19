@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.Services.customer_service import CustomerService
 from app.Services.otp_service import OTPService
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.Middlewares.auth_middleware import token_required
 
 customer_controller = Blueprint("customer_controller", __name__)
 customer_service = CustomerService()
@@ -11,6 +12,7 @@ customer_service = CustomerService()
 
 @customer_controller.route("/cakery/user/customer/Shop",
                            methods=["GET"])  # (Shop Page)
+@token_required(roles=['customer'])
 def list_products():
     """
     List All Available Products
@@ -79,6 +81,7 @@ def list_products():
 @customer_controller.route(
     "/cakery/user/customer/Product/<int:product_id>", methods=["GET"]
 )  # (Product Detail Page)
+@token_required(roles=['customer'])
 def get_product_details(product_id):
     """
     Get Specific Product Details
@@ -166,7 +169,7 @@ def get_product_details(product_id):
 
 @customer_controller.route("/cakery/user/customer/Cart",
                            methods=["GET"])  # (Cart Page)
-@jwt_required()
+@token_required(roles=['customer'])
 def get_cart():
     """
     Get Customer's Cart
@@ -229,7 +232,7 @@ def get_cart():
               example: "Detailed error message."
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user 
         cart = customer_service.view_cart(customer_email)
         return jsonify(cart), 200
     except Exception as e:
@@ -252,7 +255,7 @@ def get_cart():
 @customer_controller.route(
     "/cakery/user/customer/Cart/Add", methods=["POST"]
 )  # (Cart Page)
-@jwt_required()
+@token_required(roles=['customer'])
 def add_to_cart():
     """
     Add Product to Cart
@@ -316,7 +319,7 @@ def add_to_cart():
               example: "Detailed error message."
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         data = request.get_json()
         product_id = data.get("product_id")
         quantity = data.get("quantity")
@@ -336,7 +339,7 @@ def add_to_cart():
 @customer_controller.route(
     "/cakery/user/customer/Cart/Increment", methods=["PUT"]
 )  # (Cart Page)
-@jwt_required()
+@token_required(roles=['customer'])
 def increment_quantity():
     """
     Update Cart Item Quantity
@@ -397,7 +400,7 @@ def increment_quantity():
               type: string
               example: "An error occurred while updating product quantity."
     """
-    customer_email = get_jwt_identity()
+    customer_email = request.user
     data = request.get_json()
     response = customer_service.incrementQuantity(data, customer_email)
     return jsonify(response), 200
@@ -409,7 +412,7 @@ def increment_quantity():
 @customer_controller.route(
     "/cakery/user/customer/Cart/Remove", methods=["DELETE"]
 )  # (Cart Page)
-@jwt_required()
+@token_required(roles=['customer'])
 def remove_from_cart():
     """
     Remove Product from Cart
@@ -464,7 +467,7 @@ def remove_from_cart():
     """
     try:
         data = request.get_json()
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         product_id = data.get("product_id")
 
         response = customer_service.remove_from_cart(
@@ -484,6 +487,7 @@ def remove_from_cart():
 
 @customer_controller.route("/cakery/user/customer/Customize_Cake",
                            methods=["GET"])
+@token_required(roles=['customer'])
 def view_raw_materials():
     """
     View Raw Materials for Cake Customization
@@ -545,7 +549,7 @@ def view_raw_materials():
 @customer_controller.route(
     "/cakery/user/customer/Customize_Cake/Create", methods=["POST"]
 )  # (Customize Cake Page)
-@jwt_required()
+@token_required(roles=['customer'])
 def create_custom_cake():
     """
     Create a Customized Cake and Add to Cart
@@ -634,7 +638,7 @@ def create_custom_cake():
               example: "Detailed error message."
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         data = request.get_json()
         response = customer_service.create_custom_cake(customer_email, data)
         return jsonify(response), 200
@@ -648,7 +652,7 @@ def create_custom_cake():
 
 
 @customer_controller.route("/cakery/user/customer/Checkout", methods=["POST"])
-@jwt_required()
+@token_required(roles=['customer'])
 def checkout():
     """
     Checkout Customer's Cart
@@ -708,7 +712,7 @@ def checkout():
     """
     try:
         data = request.get_json()
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         voucher_code = data.get("voucher")
         response = customer_service.checkout(customer_email, voucher_code)
         if "error" in response:
@@ -726,7 +730,7 @@ def checkout():
 @customer_controller.route(
     "/cakery/user/customer/Orders", methods=["GET"]
 )  # (Customer orders Page)
-@jwt_required()
+@token_required(roles=['customer'])
 def view_orders():
     """
     View Customer's Orders
@@ -788,7 +792,7 @@ def view_orders():
               example: "An error occurred while fetching orders."
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         orders = customer_service.view_customer_orders(customer_email)
         return jsonify(orders), 200
     except Exception as e:
@@ -808,29 +812,29 @@ def view_orders():
 '''=================================== Edit Customer Data ====================================''' 
 
 @customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"]) 
-@jwt_required()
+@token_required(roles=['customer'])
 def get_customer():
   
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         response, status_code = customer_service.get_user(customer_email)
         return jsonify(response), status_code
     except Exception as e:
         return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
 
 @customer_controller.route("/cakery/user/customer/CheckData", methods=["GET"]) 
-@jwt_required()
+@token_required(roles=['customer'])
 def get_customer_data():
     
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         response, status_code = customer_service.get_data(customer_email)
         return jsonify(response), status_code
     except Exception as e:
         return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
 
 @customer_controller.route("/cakery/user/customer/EditData", methods=["PUT"]) 
-@jwt_required()
+@token_required(roles=['customer'])
 def edit_customer_data():
     """
     Edit Customer Data
@@ -906,7 +910,7 @@ def edit_customer_data():
               example: "error"
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         data = request.get_json()
         response, status_code = customer_service.update_data(
             customer_email, data)
@@ -950,7 +954,7 @@ def forget_password():
 
 
 @customer_controller.route("/cakery/user/customer/VerifyOTP", methods=["POST"])
-@jwt_required()
+@token_required(roles=['customer'])
 def verify_otp():
     """
     Verify OTP Code
@@ -1007,7 +1011,7 @@ def verify_otp():
               example: "Error validating OTP"
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         data = request.get_json()
         otp_code = data.get("otp_code")
         otp_service = customer_controller.otp_service
@@ -1025,7 +1029,7 @@ def verify_otp():
 
 @customer_controller.route("/cakery/user/customer/Notifications",
                            methods=["GET"])
-@jwt_required()
+@token_required(roles=['customer'])
 def view_notifications():
     """
     View Customer's Notifications
@@ -1061,7 +1065,7 @@ def view_notifications():
               example: "An error occurred while fetching notifications."
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         notifications = customer_service.view_notifications(customer_email)
         return jsonify(notifications), 200
     except Exception as e:
@@ -1082,7 +1086,7 @@ def view_notifications():
 
 
 @customer_controller.route("/cakery/user/customer/Name", methods=["GET"])
-@jwt_required()
+@token_required(roles=['customer'])
 def get_customer_name():
     """
     Get Customer's Name
@@ -1113,7 +1117,7 @@ def get_customer_name():
               example: "An error occurred while fetching the customer name."
     """
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         name = customer_service.get_customer_name(customer_email)
         return jsonify({"name": name}), 200
     except Exception as e:
@@ -1134,11 +1138,11 @@ def get_customer_name():
 
 
 @customer_controller.route("/cakery/user/customer/Review", methods=["POST"])
-@jwt_required()
+@token_required(roles=['customer'])
 def customer_review():
 
     try:
-        customer_email = get_jwt_identity()
+        customer_email = request.user
         data = request.get_json()
         rating = data.get("rating")
         product_id = data.get("productid")
