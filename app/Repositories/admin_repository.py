@@ -170,7 +170,7 @@ class AdminRepository:
         )
         db.session.add(voucher)
         db.session.commit()
-        
+
         return voucher
 
     # ---- edit voucher ----
@@ -206,15 +206,24 @@ class AdminRepository:
             }
         return itemsList
       
-    def edit_product(self, price, product_id, rawItem=None):
-        product = Inventory.query.filter_by(product_id=product_id)
-        if product:
-            product.price = price
-            db.session.commit()
+    def edit_product(self, price, product_id=None, rawItem=None):
+        if not product_id and not rawItem:
+            return {"error": "product_id or rawItem must be provided"}
+        
+        if product_id:
+            product = Inventory.query.filter_by(productid=product_id).first()
+            if product:
+                product.price = price
+                db.session.commit()
+                return {"message": "Product price updated successfully"}
+        if rawItem:
+            raw_material = Rawmaterials.query.filter_by(item=rawItem).first()
+            if raw_material:
+                raw_material.price = price
+                db.session.commit()
+                return {"message": "Raw material price updated successfully"}
 
-        elif rawItem:
-            rawItem.price = price
-            db.session.commit()
+        return {"error": f"Product or raw material not found, readed product_id: {product_id}, rawItem: {rawItem}"}
 
     """ ============================ get dashboard data =============================== """
 
