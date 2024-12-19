@@ -59,7 +59,7 @@ function EditProduct() {
         <section className="sign-up spad">
             <div className="container">
                 <div className="d-flex align-items-center justify-content-between mb-3">
-                    <Title>Edit Product</Title>
+                    <Title>Edit Item</Title>
                     <a className="primary-btn" href="/admin/viewProducts">
                         Go Back
                     </a>
@@ -70,6 +70,7 @@ function EditProduct() {
                             <div className="col-lg-11 col-md-12">
                                 <div className="row">
                                     <div className="col-md-12 mt-4 mb-4">
+                                        <p>Item to be edited: {slug}</p>
                                         <CheckoutInputField
                                             name="Price"
                                             type="number"
@@ -83,7 +84,7 @@ function EditProduct() {
                                 </div>
 
                                 <div className="d-flex justify-content-center mt-4">
-                                    <Button type="submit" className="btn-black">
+                                    <Button type="submit" className="btn-black" >
                                         Update
                                     </Button>
                                 </div>

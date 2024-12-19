@@ -27,6 +27,7 @@ const DeleteButton = ({ userEmail, role, token }) => {
             onClick={() => handleDeleteClick(userEmail, role, token)}
             className="btn btn-light"
             style={{ marginRight: '10px' }}
+            title='Delete User'
         >
             <i className="fa fa-trash" style={{ color: 'red' }}></i>
         </button>

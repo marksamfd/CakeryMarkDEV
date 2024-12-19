@@ -67,6 +67,7 @@ export default function ViewProducts() {
                           href={`/admin/editProducts/${product.product_id || encodeURIComponent(product.item)}`}
                           className="btn btn-light"
                           style={{ marginRight: '10px' }}
+                          title="Edit Price"
                         >
                           <i className="fa fa-pencil" style={{color:'#f08632'}}></i>
                         </a>

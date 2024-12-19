@@ -91,12 +91,13 @@ useEffect(() => {
                       href={`/admin/editVoucher/${voucherCode}`}
                       className="btn btn-light"
                       style={{ marginRight: '10px' }}
+                      title='Edit Voucher'
                     >
                       <i className="fa fa-pencil" style={{color:'#f08632'}}></i>
                     </a>
                     <button
                       onClick={() => handleDelete(voucherCode)}
-                      className="btn btn-light" >
+                      className="btn btn-light" title='Delete Voucher'>
                       <i className="fa fa-trash" style={{color:'darkred' }} ></i>
                     </button>
                   </td> 
