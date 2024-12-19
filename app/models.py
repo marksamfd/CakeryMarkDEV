@@ -395,6 +395,7 @@ class OTP(db.Model):
     expiry_time = db.Column(db.DateTime, nullable=False)
     is_used = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.orderid"))
 
     def as_dict(self):
         return {

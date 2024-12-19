@@ -20,9 +20,7 @@ class DeliveryService:
             customer_email = self.order_repo.get_customerEmail_by_order_id(
                 order_id
             )  # get customer email
-            otp_code = self.otp_service.generate_and_save_otp(
-                customer_email
-            )  # message sent to customer
+            otp_code = self.otp_service.generate_and_save_otp(customer_email, order_id)  # message sent to customer
             if not otp_code:
                 return {"error": "Error generating OTP"}
             return "Order status updated successfully"

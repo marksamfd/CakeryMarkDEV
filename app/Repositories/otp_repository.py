@@ -5,20 +5,24 @@ from datetime import datetime, timezone
 
 class OTPRepository:
     # ------------------------- save otp to database ------------------------- (WILL BE UPDATED TO ENCRYPT)
-    def save_otp(self, customer_email, otp_code, expiry_time):
+    def save_otp(self, customer_email, otp_code, expiry_time, order_id):
         try:
             otp_entry = OTP(
                 customer_email=customer_email,
                 otp_code=otp_code,
                 expiry_time=expiry_time,
+                order_id=order_id,
             )
             db.session.add(otp_entry)
+            
+
             db.session.commit()
             return otp_entry
         except Exception as e:
             db.session.rollback()
             print(f"(OTPRepository) Error saving OTP: {e}")
             return None
+
 
     # ------------------------- get otp from database -------------------------
     def get_otp(self, customer_email, otp_code):
@@ -37,3 +41,4 @@ class OTPRepository:
         except Exception as e:
             db.session.rollback()
             print(f"(OTPRepository) Error marking OTP as used: {e}")
+

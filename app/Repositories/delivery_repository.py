@@ -36,6 +36,7 @@ class DeliveryRepository:
                         "numberOfItems": number_of_items,
                         "status": order.status,
                         "price": float(order.totalprice),
+                        "order_id": order.orderid,
                     }
                 )
             return result
@@ -77,6 +78,8 @@ class DeliveryRepository:
             assignment = DeliveryAssignments(
                 orderid=order_id, deliveryemail=delivery_email
             )
+            # write the assigned delivery user to the order table 
+            order.deliveryemail = delivery_email
             db.session.add(assignment)
             db.session.commit()
             return {"message": f"Order {order_id} assigned to {delivery_email}"}
@@ -103,3 +106,8 @@ class DeliveryRepository:
                 return None
         except SQLAlchemyError as e:
             return {"error": f"(repo) can't get deliveryman name: {e}"}
+
+
+
+
+  

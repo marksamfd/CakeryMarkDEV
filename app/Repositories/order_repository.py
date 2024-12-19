@@ -1,4 +1,4 @@
-from app.models import Orders, OrderItems, Inventory, Voucher, Cart
+from app.models import Orders, OrderItems, Inventory, Voucher, Cart, DeliveryAssignments
 from app.db import db
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -186,3 +186,35 @@ class OrderRepository:
             return order.customeremail
         except SQLAlchemyError as e:
             return {"error": f" (repo) error getting customer email: {e}"}
+
+
+    def close_order(self, order_id): # to delete the order from deliveryuser assigments table and mark as Done
+        try:
+            order = Orders.query.get(order_id)
+            if not order:
+                return {"error": " (repo) order not found"}
+            order.status = "Done"
+            # delete the order from deliveryuser assignments
+            delivery_assignment = DeliveryAssignments.query.filter_by(orderid=order_id).first()
+            if delivery_assignment:
+                db.session.delete(delivery_assignment)
+            
+            db.session.commit()
+            return {"message": f" (repo) order closed successfully"}
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return {"error": f" (repo) error closing order: {e}"}
+        
+
+    def get_active_order_by_customer(self, customer_email):
+     try:
+        # get last order with status out_for_delivery ( used in the order closing in otp verification)
+        order = (
+            Orders.query.filter_by(customeremail=customer_email, status="out_for_delivery")
+            .order_by(Orders.orderdate.desc())
+            .first()
+        )
+        return order
+     except SQLAlchemyError as e:
+        print(f"(OrderRepository) Error fetching active order: {e}")
+        return None
