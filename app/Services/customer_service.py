@@ -61,8 +61,8 @@ class CustomerService:
     # ----------- User forget password -----------
     def new_password(self, data):
         return self.customer_repo.change_password(data)
-
-    # ----------- User forget password -----------
+    def verify_token(self,token):
+        return self.customer_repo.verify_reset_token(token)
     def send_email(self, data):
         return self.customer_repo.check_user(data)
 
