@@ -807,6 +807,17 @@ def view_orders():
 
 '''=================================== Edit Customer Data ====================================''' 
 
+@customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"]) 
+@jwt_required()
+def get_customer():
+    
+    try:
+        customer_email = get_jwt_identity()
+        response, status_code = customer_service.get_user(customer_email)
+        return jsonify(response), status_code
+    except Exception as e:
+        return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
+
 @customer_controller.route("/cakery/user/customer/CheckData", methods=["GET"]) 
 @jwt_required()
 def get_customer_data():

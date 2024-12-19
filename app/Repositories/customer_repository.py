@@ -296,6 +296,55 @@ class CustomerRepository:
 
     
     # --------------------------- Check then Edit Customer Data ---------------------------
+
+    #--------- Check customer present or not in database ---------
+    def check_customer(self, customer_email):
+    
+        # Validate input
+        if not customer_email:
+            return {
+                "message": "Customer email is required.",
+                "status": "error"
+            }, 400
+
+        # Query the database for the user
+        user = CustomerUser.query.filter_by(customeremail=customer_email).first()
+
+        # Handle user not found
+        if not user:
+            return {
+                "message": f"No user found with email: {customer_email}",
+                "status": "error"
+            }, 404
+
+        # Check for data completeness
+        missing_fields = []
+        if not user.firstname:
+            missing_fields.append("firstname")
+        if not user.lastname:  
+            missing_fields.append("lastname")
+        if not user.phonenum:  
+            missing_fields.append("phonenum")
+        if not user.addressgooglemapurl:  
+            missing_fields.append("addressgooglemapurl")
+
+        if missing_fields:
+            return {
+                "message": "User's data is incomplete.",
+                "status": "error",
+                "missing_fields": missing_fields  # Provide details about missing fields
+            }, 422  # 422: Unprocessable Entity
+
+        # User exists and data is complete
+        return {
+            "message": f"User with firstname {user.firstname} is present in the database with completed data.",
+            "status": "success"
+        }, 200
+
+
+        
+
+    # --------- Check customer data for reviewing ---------
     def check_customer_data(self, customer_email):
         # Query the database for the customer user
         user = CustomerUser.query.filter_by(customeremail=customer_email).first()
@@ -319,7 +368,7 @@ class CustomerRepository:
             }
         }, 200
 
-
+    # --------- Change customer data ---------
     def change_customer_data(self, customer_email, data):
         # Extract the customer data from the input
         firstname = data.get("firstname", "")
@@ -327,7 +376,7 @@ class CustomerRepository:
         phonenum = data.get("phonenum", "")
         addressgooglemapurl = data.get("addressgooglemapurl", "")
         # If password is part of the update
-        password = data.get("password", "")
+        #password = data.get("password", "")
 
         try:
             # Retrieve the customer based on email
@@ -348,12 +397,12 @@ class CustomerRepository:
                 user.addressgooglemapurl = addressgooglemapurl
 
             # If a new password is provided, hash it and update it
-            if password:
+            #if password:
                 # hashed_password = self.hash_password(password)  # Ensure you
                 # have a hash function
-                user.password = (
-                    password  # Assuming 'password' is the correct field name
-                )
+            #    user.password = (
+            #        password  # Assuming 'password' is the correct field name
+            #    )
 
             # Commit the changes to the database
             db.session.commit()
