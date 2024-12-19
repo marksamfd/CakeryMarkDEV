@@ -810,7 +810,7 @@ def view_orders():
 @customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"]) 
 @jwt_required()
 def get_customer():
-    
+  
     try:
         customer_email = get_jwt_identity()
         response, status_code = customer_service.get_user(customer_email)
