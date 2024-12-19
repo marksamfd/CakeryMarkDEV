@@ -918,6 +918,15 @@ def forget_pass_email():
     return jsonify(response), status_code
 
 
+@customer_controller.route(
+    "/cakery/user/customer/ResetPassword/CheckToken", methods=["GET"]
+)
+def forget_pass__check_token():
+    data = request.get_json()
+    token = data.get("token")
+    response, status_code = customer_service.verify_token(token)
+    return jsonify(response), status_code
+
 @customer_controller.route("/cakery/user/customer/ResetPassword",
                            methods=["PUT"])
 def forget_password():

@@ -10,6 +10,8 @@ from app.models import (
     Review,
 )
 from app.db import db
+from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -447,13 +449,16 @@ class CustomerRepository:
         if not user:
             return {"message": "User not found", "status": "error"}, 404
 
-        # Create reset token (pseudo-code, replace with actual implementation)
-        # reset_link = f"https://your-app.com/reset-password?"  link to the
-        # reset pass page after deployment
+        # Creating the reset token 
+        serializer = URLSafeTimedSerializer(os.getenv("SECRET_KEY"))  # Use a secret key for token signing
+        token = serializer.dumps(email, salt='password-reset')  # Use the user's email and a salt to generate the token
+
+        # Create reset link (Link will be updated after deployment)
+        reset_link = f"https://your-app.com/reset-password?token={token}"
 
         # Email content
         subject = "Password Reset Request"
-        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n\nIf you did not request a password reset, please ignore this email."
+        body = f"Hello {user.firstname},\n\nClick the link below to reset your password:\n{reset_link}\n\nIf you did not request a password reset, please ignore this email."
 
         # Send email
         try:
@@ -480,6 +485,18 @@ class CustomerRepository:
                 "error": str(e),
                 "status": "error",
             }, 500
+
+
+    def verify_reset_token(self,token):
+        serializer = URLSafeTimedSerializer(os.getenv("SECRET_KEY"))
+        try:
+            email = serializer.loads(token, salt='password-reset', max_age=3600)  # 1-hour expiration
+            return email
+        except SignatureExpired:
+            return None  # Token has expired
+        except BadSignature:
+            return None  # Invalid token
+
 
     """============================ get notifications ==============================="""
 
