@@ -52,6 +52,9 @@ class CustomerService:
     def view_customer_orders(self, customer_email):
         return self.order_repo.get_orders_by_customer(customer_email)
     # ------------------- Update/Edit customer data -------------------
+    def get_user(self,customer_email):
+        return self.customer_repo.check_customer(customer_email)
+
     def get_data(self,customer_email):
         return self.customer_repo.check_customer_data(customer_email)
 
