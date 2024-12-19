@@ -165,27 +165,34 @@ class AdminRepository:
 
     # ---- add voucher ----
     def add_voucher(self, voucher_code, discount_percentage):
-        voucher = Voucher(
-            vouchercode=voucher_code, discountpercentage=discount_percentage
-        )
-        db.session.add(voucher)
-        db.session.commit()
+        try: 
 
-        return voucher
+            voucher = Voucher(
+                vouchercode=voucher_code, discountpercentage=discount_percentage
+            )
+            db.session.add(voucher)
+            db.session.commit()
+        except Exception as e:
+            return {"error": f"(repo) error adding voucher: {e}"}, 500
+        
+        return {"message": "Voucher added successfully"}, 200
 
     # ---- edit voucher ----
     def edit_voucher(self, voucher_code, discount_percentage):
-        voucher = Voucher.query.filter_by(voucher_code=voucher_code)
+        voucher = Voucher.query.filter_by(vouchercode=voucher_code).first()
         if voucher:
             voucher.discountpercentage = discount_percentage
             db.session.commit()
-            return voucher
-        return None
+            return {"message": "Voucher updated successfully"}, 200
+        return {"error": "Voucher not found"}, 404
 
     def delete_voucher(self, voucher_code):
-        voucher = Voucher.query.filter_by(voucher_code=voucher_code)
+        voucher = Voucher.query.filter_by(vouchercode=voucher_code).first()
         if voucher:
             db.session.delete(voucher)
+            db.session.commit()
+            return {"message": "Voucher deleted successfully"}, 200
+        return {"error": "Voucher not found"}, 404
 
     """ ============================ edit raw product or raw materials prices =============================== """
 

@@ -248,11 +248,11 @@ def view_products():
 @jwt_required()
 def edit_products():
     """
-    Edit product or raw material prices
+    Edit an existing voucher
     ---
     tags:
       - Admin
-    summary: Update product or raw material price
+    summary: Update a voucher's discount
     security:
       - BearerAuth: []
     consumes:
@@ -262,29 +262,51 @@ def edit_products():
     parameters:
       - in: body
         name: body
-        description: Product or raw material details to update
+        description: Details of the voucher to edit
         required: true
         schema:
           type: object
           properties:
-            product_id:
-              type: integer
-              example: 1
-            rawItem:
+            voucher_code:
               type: string
-              example: Flour
-            price:
+              example: VOUCHER123
+            discount:
               type: number
-              example: 15.99
+              example: 25
     responses:
       200:
-        description: Product or raw material updated successfully
+        description: Voucher updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher updated successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher data"
+      404:
+        description: Voucher not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Voucher not found"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while updating the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.edit_product(data)
     return jsonify(response), status_code
@@ -309,7 +331,7 @@ def add_voucher():
     parameters:
       - in: body
         name: body
-        description: Voucher details
+        description: Details of the voucher to add
         required: true
         schema:
           type: object
@@ -323,12 +345,29 @@ def add_voucher():
     responses:
       200:
         description: Voucher added successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher added successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher data"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while adding the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.add_voucher(data)
     return jsonify(response), status_code
@@ -339,11 +378,11 @@ def add_voucher():
 @jwt_required()
 def edit_voucher():
     """
-    Edit an existing voucher
+    Delete a voucher
     ---
     tags:
       - Admin
-    summary: Update a voucher's discount
+    summary: Remove a voucher by its code
     security:
       - BearerAuth: []
     consumes:
@@ -353,26 +392,48 @@ def edit_voucher():
     parameters:
       - in: body
         name: body
-        description: Voucher details to update
+        description: Details of the voucher to delete
         required: true
         schema:
           type: object
           properties:
-            voucher_id:
-              type: integer
-              example: 101
-            discount:
-              type: number
-              example: 25
+            voucher_code:
+              type: string
+              example: VOUCHER123
     responses:
       200:
-        description: Voucher updated successfully
+        description: Voucher deleted successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher deleted successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher code"
+      404:
+        description: Voucher not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Voucher not found"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while deleting the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.edit_voucher(data)
     return jsonify(response), status_code
@@ -388,7 +449,7 @@ def delete_voucher():
     ---
     tags:
       - Admin
-    summary: Remove a voucher by its ID
+    summary: Remove a voucher by its code
     security:
       - BearerAuth: []
     consumes:
@@ -398,23 +459,48 @@ def delete_voucher():
     parameters:
       - in: body
         name: body
-        description: Voucher identification
+        description: Details of the voucher to delete
         required: true
         schema:
           type: object
           properties:
-            voucher_id:
-              type: integer
-              example: 101
+            voucher_code:
+              type: string
+              example: VOUCHER123
     responses:
       200:
         description: Voucher deleted successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher deleted successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher code"
+      404:
+        description: Voucher not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Voucher not found"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while deleting the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.delete_voucher(data)
     return jsonify(response), status_code
