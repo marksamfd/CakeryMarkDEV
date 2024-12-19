@@ -3,18 +3,19 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../components/breadcrumb';
 import CartItem from '../components/cartItem';
 
+
 /**
- * Cart component.
+ * Displays the customer's cart and allows them to modify its contents.
+ * Retrieves the customer's cart from the server and displays the items in a
+ * table. The customer can remove items from the cart, increase or decrease the
+ * quantity of an item, or proceed to checkout.
  *
- * This component is responsible for displaying the shopping cart of the user.
- * It fetches the cart items from the server using a token for authentication,
- * and allows the user to view, remove items, and see the total cost.
- *
- * @returns {ReactElement} The Cart component.
+ * @returns {JSX.Element} The Shopping Cart page.
  */
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
+  
   useEffect(() => {
     cookieStore
       .get('token')
@@ -73,22 +74,27 @@ export default function Cart() {
           quantity: quantity,
         }),
       });
+  
       const data = await response.json();
-      console.log(data.cartItems);
-      setCartItems(data);
+  
+      if (response.ok) {
+        setCartItems(prevItems => prevItems.filter(item => item.productid !== productid));
+      } else {
+        console.error('Failed to delete item');
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error deleting item:', error);
     }
   }
-
-  /**
+  
+/**
    * Calculates the total price of items in the cart.
    *
    * Iterates through each item in the cart and multiplies the price
    * by the quantity for each item, accumulating the result in the total.
    *
    * @returns {number} The total price of all items in the cart.
-   */
+   */  
   const calculateTotal = () => {
     let total = 0;
     for (let i = 0; i < cartItems.length; i++) {
@@ -116,29 +122,23 @@ export default function Cart() {
                   </thead>
                   <tbody>
                     {Array.isArray(cartItems) &&
-                      cartItems.map((item, pos) => {
-                        console.log(item);
-                        return (
-                          <CartItem
-                            key={item.productid}
-                            productname={item.productname}
-                            productId={item.productid}
-                            customCakeId={item.customcakeid}
-                            price={item.price}
-                            quantity={item.quantity}
-                            total={item.price * item.quantity}
-                            onRemove={() =>
-                              RemoveItem(item.productid, item.quantity)
-                            }
-                            onIncrease={() =>
-                              incOrDec(item.productid, 'increment', pos)
-                            }
-                            onDecrease={() =>
-                              incOrDec(item.productid, 'decrement', pos)
-                            }
-                          />
-                        );
-                      })}
+                      cartItems.map((item, pos) => (
+                        <CartItem
+                          key={item.productid}
+                          productname={item.productname}
+                          productId={item.productid}
+                          customCakeId={item.customcakeid}
+                          price={item.price}
+                          quantity={item.quantity}
+                          total={item.price * item.quantity}
+                          onRemove={() => 
+                            RemoveItem(item.productid, item.quantity)}
+                          onIncrease={() =>
+                             incOrDec(item.productid, 'increment', pos)}
+                          onDecrease={() => 
+                            incOrDec(item.productid, 'decrement', pos)}
+                        />
+                      ))}
                   </tbody>
                 </table>
               </div>
