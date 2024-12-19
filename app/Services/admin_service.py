@@ -74,13 +74,13 @@ class AdminService:
         voucher_code = data["voucher_code"]
         return self.admin_repo.add_voucher(voucher_code,discount)
 
-    def edit_vocher(self, data):
-        voucher_id = data["voucher_id"]
+    def edit_voucher(self, data):
+        voucher_id = data["voucher_code"]
         discount = data["discount"]
         return self.admin_repo.edit_voucher(voucher_id, discount)
 
     def delete_voucher(self, data):
-        voucher_id = data["voucher_id"]
+        voucher_id = data["voucher_code"]
         return self.admin_repo.delete_voucher(voucher_id)
 
     def get_vouchers(self):
