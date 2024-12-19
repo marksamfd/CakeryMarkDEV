@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.Services.admin_service import AdminService
 from app.Services.order_service import OrderService
 from flask_jwt_extended import jwt_required
+from app.Middlewares.auth_middleware import token_required
 
 admin_controller = Blueprint("admin_controller", __name__)
 
@@ -14,7 +15,7 @@ admin_service = AdminService()
 @admin_controller.route(
     "/cakery/user/admin/ViewCustomers", methods=["GET"]
 )  # -- checked
-@jwt_required()
+@token_required(roles=['admin'])
 def view_customers():
     """
     View all customers
@@ -57,7 +58,7 @@ def view_customers():
 # ----------------------------- View Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/View",
                         methods=["GET"])  # -- checked
-@jwt_required()
+@token_required(roles=['admin'])
 def view_staff():
     """
     View all staff users
@@ -99,7 +100,7 @@ def view_staff():
 
 # ----------------------------- Add Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/Add", methods=["POST"])
-@jwt_required()
+@token_required(roles=['admin'])
 def add_staff():
     """
     Add a new staff user
@@ -159,7 +160,7 @@ def add_staff():
 
 # ----------------------------- Delete Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/Delete", methods=["DELETE"])
-@jwt_required()
+@token_required(roles=['admin'])
 def delete_staff():
     """
     Delete a staff user
@@ -207,7 +208,7 @@ def delete_staff():
 
 
 @admin_controller.route("/cakery/user/admin/Products", methods=["GET"])
-@jwt_required()
+@token_required(roles=['admin'])
 def view_products():
     """
     View all products and raw materials
@@ -245,7 +246,7 @@ def view_products():
 
 
 @admin_controller.route("/cakery/user/admin/Products/edit", methods=["PUT"])
-@jwt_required()
+@token_required(roles=['admin'])
 def edit_products():
     """
     Edit an existing voucher
@@ -314,7 +315,7 @@ def edit_products():
 
 # ----------------------------- Add Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Add", methods=["POST"])
-@jwt_required()
+@token_required(roles=['admin'])
 def add_voucher():
     """
     Add a new voucher
@@ -375,7 +376,7 @@ def add_voucher():
 
 # ----------------------------- Edit Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Edit", methods=["PUT"])
-@jwt_required()
+@token_required(roles=['admin'])
 def edit_voucher():
     """
     Delete a voucher
@@ -442,7 +443,7 @@ def edit_voucher():
 # ----------------------------- Delete Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Delete",
                         methods=["DELETE"])
-@jwt_required()
+@token_required(roles=['admin'])
 def delete_voucher():
     """
     Delete a voucher
@@ -508,7 +509,7 @@ def delete_voucher():
 
 # ----------------------------- View Vouchers -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers", methods=["GET"])
-@jwt_required()
+@token_required(roles=['admin'])
 def view_vouchers():
     """
     View all vouchers
@@ -535,7 +536,7 @@ def view_vouchers():
 
 
 @admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
-@jwt_required()
+@token_required(roles=['admin'])
 def view_dashboard():
     """
     View the admin dashboard
