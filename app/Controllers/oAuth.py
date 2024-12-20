@@ -3,6 +3,7 @@ import os
 from app.models import CustomerUser, DeliveryUser, Admin, BakeryUser, Cart
 from app.db import db
 from datetime import datetime
+from flask_jwt_extended import create_access_token
 import requests
 import logging
 from dotenv import load_dotenv
@@ -102,12 +103,14 @@ def google_callback():
                 return jsonify({"message": "Invalid email format", "status": "error"}), 400
 
             # Check if user already exists
+            additional_claims = {"role": 'customer'}
+            jwt_access_token = create_access_token(identity=email, additional_claims=additional_claims)
             existing_user = CustomerUser.query.filter_by(customeremail=email).first()
             if existing_user:
                 return jsonify({
                     "message": "User already exists with this email",
                     "status": "error",
-                    "access_token": access_token,
+                    "jwt_access_token": jwt_access_token,
                     "refresh_token": refresh_token,
                     "expires_in": expires_in,
                     "scope": scope
@@ -128,7 +131,7 @@ def google_callback():
                 lastname=lastname,
                 createdat=createdat
             )
-
+            
             try:
                 db.session.add(new_customer)
                 db.session.commit()
@@ -141,7 +144,7 @@ def google_callback():
                 "message": "User info successfully fetched and stored.",
                 "email": email,
                 "name": name,
-                "access_token": access_token,
+                "jwt_access_token": jwt_access_token,
                 "refresh_token": refresh_token,
                 "expires_in": expires_in,
                 "scope": scope
