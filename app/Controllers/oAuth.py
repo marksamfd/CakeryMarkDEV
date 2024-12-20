@@ -28,7 +28,7 @@ google_oauth = Blueprint("google_oauth", __name__)
 
 
 # Initiate Google Sign-In and taking permissions from user
-@google_oauth.route("/App/User/Google-Signin")
+@google_oauth.route("/App/User/Google-Signin", methods=["GET"])
 def google_signin():
     """
     Redirects the user to Google's OAuth consent screen where they will
