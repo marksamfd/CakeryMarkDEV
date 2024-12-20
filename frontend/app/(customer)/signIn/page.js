@@ -6,6 +6,12 @@ import { useActionState, useEffect } from 'react';
 import { authenticate, loginWithGoogle } from '@/app/lib/actions';
 import { useSearchParams, redirect } from 'next/navigation';
 import GoogleBtn from '../components/googleBtn';
+import {
+  isAdminPage,
+  isBakerPage,
+  isDeliveryPage,
+  isUserPage,
+} from '@/authUtils';
 
 /**
  * Renders a sign in form with email and password fields, and a button to
@@ -17,7 +23,11 @@ import GoogleBtn from '../components/googleBtn';
  */
 export default function SignIn({ providers }) {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  console.log(searchParams?.get('callbackUrl') || '');
+  const callbackUrl = searchParams?.get('callbackUrl')
+    ? new URL(searchParams?.get('callbackUrl')).pathname
+    : '';
+
   const googleStyle = {
     width: '500px',
     height: '60px',
@@ -34,33 +44,43 @@ export default function SignIn({ providers }) {
     gap: '10px',
   };
   useEffect(() => {
-    cookieStore
-      .get('token')
-      .then((c) => {
-        if (c) {
-          if (callbackUrl) {
-            redirect(callbackUrl);
+    if (searchParams)
+      cookieStore
+        .get('token')
+        .then((c) => {
+          if (c) {
+            if (
+              (isAdminPage(callbackUrl) &&
+                cookieStore.get('role') == 'admin') ||
+              (isDeliveryPage(callbackUrl) &&
+                cookieStore.get('role') == 'delivery') ||
+              (isBakerPage(callbackUrl) &&
+                cookieStore.get('role') == 'baker') ||
+              (isUserPage(callbackUrl) && cookieStore.get('role') == 'customer')
+            ) {
+              redirect(callbackUrl);
+            } else {
+              // redirect('/');
+            }
           }
-          return cookieStore.get('role');
-        }
-      })
-      .then((role) => {
-        if (role) {
-          switch (role) {
-            case 'baker':
-              redirect('../baker');
-              break;
-            case 'delivary':
-              redirect('../delivary');
-              break;
-            case 'admin':
-              redirect('../admin');
-              break;
-            default:
-              redirect('../');
+        })
+        .then((role) => {
+          if (role) {
+            switch (role) {
+              case 'baker':
+                redirect('../baker');
+                break;
+              case 'delivary':
+                redirect('../delivery');
+                break;
+              case 'admin':
+                redirect('../admin');
+                break;
+              default:
+                redirect('../');
+            }
           }
-        }
-      });
+        });
   });
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,

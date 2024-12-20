@@ -60,6 +60,7 @@ export async function signUp(prevState, formData) {
       });
       if (!register.ok)
         return { error: 'an Error occured in the registeration' };
+      else return { registered: true };
     } catch (error) {
       // return { error };
     }
