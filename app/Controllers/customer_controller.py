@@ -1464,7 +1464,100 @@ def get_customer_name():
 @customer_controller.route("/cakery/user/customer/Review", methods=["POST"])
 @token_required(roles=["customer"])
 def customer_review():
-
+    """
+    Submit a Review for a Product
+    ---
+    tags:
+      - Customer
+    summary: Allows a customer to submit a review with a rating for a product
+    description: This endpoint allows customers to submit a review for a product. If the customer has already reviewed the product, the review is updated.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              rating:
+                type: integer
+                description: The rating for the product (between 1 and 5)
+                example: 4
+              productid:
+                type: string
+                description: The ID of the product being reviewed
+                example: "prod12345"
+    responses:
+      200:
+        description: Review updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User rating updated successfully"
+                status:
+                  type: string
+                  example: "success"
+      201:
+        description: Review added successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User rating added successfully"
+                status:
+                  type: string
+                  example: "success"
+      400:
+        description: Bad request (e.g., invalid rating or missing parameters)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Rating must be between 1 and 5"
+                status:
+                  type: string
+                  example: "error"
+      404:
+        description: Customer or product not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Customer does not exist"
+                status:
+                  type: string
+                  example: "error"
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "An error occurred"
+                error:
+                  type: string
+                  example: "Detailed error message"
+                status:
+                  type: string
+                  example: "error"
+    security:
+      - BearerAuth: []
+    """
     try:
         customer_email = request.user
         data = request.get_json()
