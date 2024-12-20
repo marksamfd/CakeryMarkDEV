@@ -113,3 +113,30 @@ export async function editData(prevState, formData) {
     return { error: 'Check your input' };
   }
 }
+
+export async function loginWithGoogle(gcback) {
+  console.log(gcback);
+  const body = { code: gcback.credential };
+  try {
+    let register = await fetch(
+      `${process.env.backend}/App/User/Google-Callback`,
+      {
+        body: JSON.stringify(body),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post',
+      },
+    );
+    if (!register.ok) return { error: 'an Error occured in the registeration' };
+    else {
+      let response = await register.json();
+      const cookieStore = await cookies();
+      await cookieStore.set('token', response.jwt_access_token);
+      await cookieStore.set('role', 'customer');
+    }
+  } catch (error) {
+    // return { error };
+  }
+}

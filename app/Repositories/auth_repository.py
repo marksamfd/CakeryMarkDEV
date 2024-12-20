@@ -9,6 +9,7 @@ import re
 
 ph = PasswordHasher()
 
+
 class AuthRepository:
     """============================ Hashing password during sign up ==============================="""
 
@@ -42,7 +43,13 @@ class AuthRepository:
         createdat = data.get("createdat", datetime.utcnow())
 
         # Handle missing input fields
-        if not customer_email or not password or not firstname or not lastname or not phonenum:
+        if (
+            not customer_email
+            or not password
+            or not firstname
+            or not lastname
+            or not phonenum
+        ):
             return {"message": "Missing required fields", "status": "error"}, 400
 
         try:
@@ -59,9 +66,14 @@ class AuthRepository:
                 return {"message": "Invalid email domain", "status": "error"}, 400
 
             # Check if the email is already used
-            existing_user = CustomerUser.query.filter_by(customeremail=customer_email).first()
+            existing_user = CustomerUser.query.filter_by(
+                customeremail=customer_email
+            ).first()
             if existing_user:
-                return {"message": "User already exists with this email", "status": "error"}, 409
+                return {
+                    "message": "User already exists with this email",
+                    "status": "error",
+                }, 409
 
             # Hash the password
             hashed_password = self.hash_password(password)
@@ -81,7 +93,7 @@ class AuthRepository:
             db.session.commit()
 
             # Create an associated cart
-            new_cart = Cart(customeremail=customer_email, cartid=5)
+            new_cart = Cart(customeremail=customer_email)
             db.session.add(new_cart)
             db.session.commit()
 
@@ -89,7 +101,11 @@ class AuthRepository:
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            return {"message": "An error occurred while signing up", "status": "error", "error": str(e)}, 500
+            return {
+                "message": "An error occurred while signing up",
+                "status": "error",
+                "error": str(e),
+            }, 500
 
     # -------------------------------------------------------------------------------
 
@@ -101,7 +117,10 @@ class AuthRepository:
 
         # Validate required fields
         if not email or not password:
-            return {"message": "Email and password are required", "status": "error"}, 400
+            return {
+                "message": "Email and password are required",
+                "status": "error",
+            }, 400
 
         # Validate email format
         if not self.is_valid_email(email):
@@ -146,7 +165,9 @@ class AuthRepository:
 
             # Create JWT token with role as an additional claim
             additional_claims = {"role": role}
-            access_token = create_access_token(identity=email, additional_claims=additional_claims)
+            access_token = create_access_token(
+                identity=email, additional_claims=additional_claims
+            )
 
             return {
                 "message": "Sign-in successful",
@@ -157,13 +178,17 @@ class AuthRepository:
             }, 200
 
         except Exception as e:
-            return {"message": "An error occurred during sign-in", "status": "error", "error": str(e)}, 500
+            return {
+                "message": "An error occurred during sign-in",
+                "status": "error",
+                "error": str(e),
+            }, 500
 
     # -------------------------------------------------------------------------------
 
     """ ============================ Email Format Validation =============================== """
 
     def is_valid_email(self, email):
-        """ Validate email format using regex """
+        """Validate email format using regex"""
         email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
         return re.match(email_regex, email) is not None

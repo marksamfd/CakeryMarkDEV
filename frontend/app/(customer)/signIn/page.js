@@ -3,7 +3,7 @@ import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';
 import { useActionState, useEffect } from 'react';
-import { authenticate } from '@/app/lib/actions';
+import { authenticate, loginWithGoogle } from '@/app/lib/actions';
 import { useSearchParams, redirect } from 'next/navigation';
 import GoogleBtn from '../components/googleBtn';
 
@@ -97,9 +97,7 @@ export default function SignIn({ providers }) {
                   </div>
 
                   <div className="col-8 d-flex justify-items-center mx-auto mb-3">
-                    <GoogleBtn
-                      googleCallback={(e) => console.log({ gcallback: e })}
-                    />
+                    <GoogleBtn googleCallback={loginWithGoogle} />
                   </div>
                 </div>
                 <div className="d-flex flex-column align-items-center mt-4">
@@ -130,20 +128,3 @@ export default function SignIn({ providers }) {
     </section>
   );
 }
-
-SignIn.getInitalProps = async (context) => {
-  const { req, res } = context;
-  const session = await getSession(context);
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token');
-  if (token) {
-    res.writeHead(302, {
-      Location: '/',
-    });
-    res.end();
-    return;
-  }
-  return {
-    providers: await providers(context),
-  };
-};
