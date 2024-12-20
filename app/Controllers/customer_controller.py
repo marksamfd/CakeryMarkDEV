@@ -809,7 +809,68 @@ def view_orders():
 @customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"])
 @token_required(roles=["customer"])
 def get_customer():
-
+    """
+    Get Customer
+    ---
+    tags:
+      - Customer
+    summary: Retrieve information about the authenticated customer
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Customer information retrieved successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User with firstname John is present in the database with completed data."
+            status:
+              type: string
+              example: "success"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "No user found with email: example@example.com"
+            status:
+              type: string
+              example: "error"
+      422:
+        description: User's data is incomplete
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User's data is incomplete."
+            status:
+              type: string
+              example: "error"
+            missing_fields:
+              type: array
+              items:
+                type: string
+                example: ["firstname", "lastname"]
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while editing user data."
+            error:
+              type: string
+              example: "Detailed error message."
+            status:
+              type: string
+              example: "error"
+    """
     try:
         customer_email = request.user
         response, status_code = customer_service.get_user(customer_email)
@@ -829,7 +890,67 @@ def get_customer():
 @customer_controller.route("/cakery/user/customer/CheckData", methods=["GET"])
 @token_required(roles=["customer"])
 def get_customer_data():
-
+    """
+    Get Customer Data
+    ---
+    tags:
+      - Customer
+    summary: Retrieve detailed personal data of the authenticated customer
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Customer data retrieved successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User data retrieved successfully"
+            status:
+              type: string
+              example: "success"
+            data:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: "John"
+                lastname:
+                  type: string
+                  example: "Doe"
+                phonenum:
+                  type: string
+                  example: "+123456789"
+                addressgooglemapurl:
+                  type: string
+                  example: "https://maps.google.com/?q=123+Main+St"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User not found"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while editing user data."
+            error:
+              type: string
+              example: "Detailed error message."
+            status:
+              type: string
+              example: "error"
+    """
     try:
         customer_email = request.user
         response, status_code = customer_service.get_data(customer_email)
