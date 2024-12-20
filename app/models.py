@@ -48,7 +48,7 @@ class CustomerUser(db.Model):
     __tablename__ = "customeruser"
 
     customeremail = db.Column(db.String(255), primary_key=True)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255),nullable=True)
     firstname = db.Column(db.String(255))
     lastname = db.Column(db.String(255))
     phonenum = db.Column(db.String(15))

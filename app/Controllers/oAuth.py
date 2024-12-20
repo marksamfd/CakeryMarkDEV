@@ -1,5 +1,8 @@
 from flask import Blueprint, redirect, request, jsonify
 import os
+from app.models import CustomerUser, DeliveryUser, Admin, BakeryUser, Cart
+from app.db import db
+from datetime import datetime
 import requests
 import logging
 from dotenv import load_dotenv
@@ -13,7 +16,9 @@ logging.basicConfig(level=logging.DEBUG)
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 REDIRECT_URI = os.getenv("REDIRECT_URI")
-SCOPE = os.getenv("SCOPE")
+#SCOPE = os.getenv("SCOPE")
+SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+
 
 # OAuth Blueprint
 google_oauth = Blueprint('google_oauth', __name__)
@@ -46,46 +51,107 @@ def google_signin():
 def google_callback():
     """
     Handles the callback from Google after the user authorizes the application. 
-    It exchanges the authorization code for an access token and refresh token. 
+    It exchanges the authorization code for an access token and fetches the user's email.
     """
-    # Retrieve the authorization code from the query parameters
     auth_code = request.args.get('code')
 
-    # If the authorization code is missing, log an error and return an error response
     if not auth_code:
         logging.error("Authorization code not found in callback request.")
         return jsonify({"error": "Authorization code not found"}), 400
 
-    # Log the received authorization code for debugging purposes
     logging.debug(f"Received authorization code: {auth_code}")
 
-    # Google token URL used to exchange the authorization code for access tokens
+    # Exchange authorization code for tokens
     token_url = 'https://oauth2.googleapis.com/token'
-
-    # Prepare the payload to exchange the authorization code for access and refresh tokens
     payload = {
-        'code': auth_code,  # The authorization code returned by Google
-        'client_id': CLIENT_ID,  
-        'client_secret': CLIENT_SECRET,  
-        'redirect_uri': REDIRECT_URI,  
-        'grant_type': 'authorization_code'  # The grant type indicating it's an authorization code exchange
+        'code': auth_code,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'redirect_uri': REDIRECT_URI,
+        'grant_type': 'authorization_code'
     }
-
-    # Send a POST request to Google to exchange the authorization code for tokens
     response = requests.post(token_url, data=payload)
 
-    # Check if the token exchange was successful (HTTP 200)
     if response.status_code == 200:
-        # Parse the JSON response to extract the tokens
         token_data = response.json()
+        access_token = token_data.get("access_token")
+        refresh_token = token_data.get("refresh_token")
+        expires_in = token_data.get("expires_in")
+        scope = token_data.get("scope")
         logging.info("Successfully obtained access token.")
 
-        # Return the token data (access token, refresh token)
-        return jsonify(token_data)
+        # Use the access token to fetch the user's profile information
+        userinfo_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
+        headers = {'Authorization': f'Bearer {access_token}'}
+        userinfo_response = requests.get(userinfo_url, headers=headers)
+
+        if userinfo_response.status_code == 200:
+            userinfo = userinfo_response.json()
+            email = userinfo.get("email")  # Extract the email address
+            name = userinfo.get("name")  # Extract the name if needed
+            
+            # Validate email and name
+            if not email or not name:
+                return jsonify({"error": "User information is incomplete"}), 400
+            
+            logging.info(f"User email: {email}, User name: {name}")
+
+            # Extract domain
+            domain = email.split("@")[1] if "@" in email else None
+            if not domain:
+                return jsonify({"message": "Invalid email format", "status": "error"}), 400
+
+            # Check if user already exists
+            existing_user = CustomerUser.query.filter_by(customeremail=email).first()
+            if existing_user:
+                return jsonify({
+                    "message": "User already exists with this email",
+                    "status": "error",
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "expires_in": expires_in,
+                    "scope": scope
+                }), 409
+
+            # Split name into first and last name
+            name_parts = name.split(" ", 1)
+            firstname = name_parts[0]
+            lastname = name_parts[1] if len(name_parts) > 1 else ""
+
+            # Current timestamp for createdat
+            createdat = datetime.utcnow()
+
+            # Add new user to database
+            new_customer = CustomerUser(
+                customeremail=email,
+                firstname=firstname,
+                lastname=lastname,
+                createdat=createdat
+            )
+
+            try:
+                db.session.add(new_customer)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                logging.error(f"Database commit failed: {e}")
+                return jsonify({"error": "Failed to save user in the database"}), 500
+
+            return jsonify({
+                "message": "User info successfully fetched and stored.",
+                "email": email,
+                "name": name,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "expires_in": expires_in,
+                "scope": scope
+            })
+        else:
+            logging.error("Failed to fetch user info.")
+            return jsonify({"error": "Failed to fetch user info"}), 400
     else:
-        # If the token exchange fails, log the error and return a failure response
         logging.error(f"Failed to obtain access token: {response.json()}")
         return jsonify({
             "error": "Failed to obtain access token",
-            "details": response.json()  # Show error details in the response
+            "details": response.json()
         }), 400
