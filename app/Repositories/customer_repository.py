@@ -514,7 +514,7 @@ class CustomerRepository:
         token = serializer.dumps(email, salt='password-reset')  # Use the user's email and a salt to generate the token
 
         # Create reset link (Link will be updated after deployment)
-        reset_link = f"https://your-app.com/reset-password?token={token}"
+        reset_link = f"https://your-app.com/resetPassword/{token}"
 
         # Email content
         subject = "Password Reset Request"
