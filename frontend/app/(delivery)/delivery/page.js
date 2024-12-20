@@ -1,90 +1,93 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Breadcrumb from '@/app/(customer)/components/breadcrumb';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-export default function DeliveryOrders() {
+function DeliveryOrders() {
   const [orderItems, setOrderItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [DeliveryName, setDeliveryName] = useState('');
+  const [deliveryName, setDeliveryName] = useState('');
 
-//need an endpoint here for the name
-//   useEffect(() => {
-//     const cookie = cookieStore.get('name'); 
-//     if (cookie) {
-//       setCustomerName(cookie.value);
-//     }
-//   }, []);
+  useEffect(() => {
+    cookieStore
+    .get('token')
+      .then((cookie) => {
+        return fetch(`/api/cakery/user/delivery/name`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        });
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setDeliveryName(data.name);
+      })
+      .catch((err) => {
+        console.error('Error fetching name:', err);
+      });
+  }, []);
 
   useEffect(() => {
     cookieStore
       .get('token')
-      .then((cookie) =>
-        fetch(`/api/user/delivery/order_details`, {
+      .then((cookie) => {
+        return fetch(`/api/cakery/user/delivery/orders`, {
           headers: {
             Authorization: `Bearer ${cookie.value}`,
           },
-        })
-      )
+        });
+      })
       .then((res) => res.json())
       .then((data) => {
-        setOrderItems(data);
-        setLoading(false);
+        console.log('Fetched orders:', data); 
+        setOrderItems(data.orders);
       })
-      .catch((error) => {
-        console.error('Error fetching orders:', error);
-        setLoading(false);
+      .catch((err) => {
+        console.error('Error fetching orders:', err);
       });
   }, []);
+  
+
+ 
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 0: return 'blue';    //out for delivery
-      case 1: return 'green';   //Delivered
-      case 2: return 'red';     //cancelled
-      default: return 'black';
+      case 'out_for_delivery': return 'blue';
+      case 'delivered': return 'green';
+      
+      default: return '#f08632';
     }
   };
-
-  const handleChangeOrderStatus = (orderId, newStatus) => {
-    cookieStore
-      .get('token')
-      .then((cookie) =>
-        fetch('/api/user/delivery/Order_Status', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${cookie.value}`,
-          },
-          body: JSON.stringify({
-            OrderId: orderId,
-            Status: newStatus,
-          }),
-        })
-      )
-      .then((res) => res.json())
-      .then(() => {
-        setOrderItems((prevState) =>
-          prevState.map((item) =>
-            item.orderID === orderId ? { ...item, status: newStatus } : item
-          )
-        );
-      })
-      .catch((error) => console.error('error while updating order status:', error));
+  const handleChangeOrderStatus = async (orderId, newStatus) => {
+    try {
+      const token = await cookieStore.get('token');
+      const response = await fetch(`/api/cakery/user/delivery/orders/change_status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify({ order_id: orderId, status: newStatus }),
+      });
+      setOrderItems((prevState) =>
+        prevState.map((item) =>
+          item.order_id === orderId ? { ...item, status: newStatus } : item
+        )
+      );
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
   };
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+  
+  
   return (
     <>
-      <Breadcrumb title={`Welcome, ${DeliveryName}`} />
       <div className="breadcrumb-option">
         <div className="container">
           <div className="row">
             <div className="col-lg-6 col-md-6 col-sm-6">
               <div className="breadcrumb__text font-size">
-                <h2>Your Delivery Orders</h2>
+                <h2> Welcome, {deliveryName}</h2>
+                <br />
+                <h2>Your Orders to Deliver :</h2>
               </div>
             </div>
           </div>
@@ -96,7 +99,7 @@ export default function DeliveryOrders() {
           className="container-fluid"
           style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}
         >
-          <div style={{ width: '100%', maxWidth: '1200px', overflowX: 'auto' }}>
+          <div style={{ width: '100%', maxWidth: '1200px'}}>
             <table
               className="order-table"
               style={{
@@ -111,53 +114,38 @@ export default function DeliveryOrders() {
                   <th>Customer Name</th>
                   <th>Phone</th>
                   <th>Location</th>
+                  <th>Total Price</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {orderItems.map((item) => (
-                  <tr key={item.orderID}>
-                    <td>{item.orderID}</td>
-                    <td>{item.numberOfItemsinOrder}</td>
-                    <td>{item.customerName}</td>
-                    <td>
-                      <a href={`tel:${item.phone}`} style={{ color: 'blue' }}>
-                        {item.phone}
-                      </a>
-                    </td>
-                    <td>{item.location}</td>
-                    <td>
-                      <NavDropdown
-                        title={
-                          <span style={{ color: getStatusColor(item.status) }}>
-                            {item.status === 0
-                              ? 'In Delivery'
-                              : item.status === 1
-                              ? 'Delivered'
-                              : 'Cancelled'}
-                          </span>
-                        }
-                        id={`status-dropdown-${item.orderID}`}
-                      >
-                        <NavDropdown.Item
-                          onClick={() => handleChangeOrderStatus(item.orderID, 0)}
-                        >
-                          In Delivery
-                        </NavDropdown.Item>
-                        <NavDropdown.Item
-                          onClick={() => handleChangeOrderStatus(item.orderID, 1)}
-                        >
-                          Delivered
-                        </NavDropdown.Item>
-                        <NavDropdown.Item
-                          onClick={() => handleChangeOrderStatus(item.orderID, 2)}
-                        >
-                          Cancelled 
-                        </NavDropdown.Item>
-                      </NavDropdown>
-                    </td>
-                  </tr>
-                ))}
+              {orderItems.map((item, index) => (
+  <tr key={`${item.customerName}-${index}`}>
+    <td>{index + 1}</td>
+    <td>{item.numberOfItems}</td>
+    <td>{item.customerName}</td>
+    <td><a href={`tel:${item.phone}`}>{item.phone}</a></td>
+    <td>
+      <a href={item.location} target="_blank" rel="noopener noreferrer">
+        View Location
+      </a>
+    </td>
+    <td>${item.price}</td>
+    <td>
+      <NavDropdown
+        title={<span style={{ color: getStatusColor(item.status) }}>{item.status}</span>}
+        id={`status-dropdown-${index}`}
+      >
+        <NavDropdown.Item onClick={() => handleChangeOrderStatus(item.order_id, 'out_for_delivery')}>
+          Out for Delivery
+        </NavDropdown.Item>
+        <NavDropdown.Item onClick={() => handleChangeOrderStatus(item.order_id, 'delivered')}>
+          Delivered
+        </NavDropdown.Item>
+      </NavDropdown>
+    </td>
+  </tr>
+))}
               </tbody>
             </table>
           </div>
@@ -166,3 +154,5 @@ export default function DeliveryOrders() {
     </>
   );
 }
+
+export default DeliveryOrders;
