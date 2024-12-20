@@ -123,8 +123,4 @@ def google_callback():
             "name": name,
             "jwt_access_token": jwt_access_token,
         }
-<<<<<<< HEAD
     )
-=======
-    )
->>>>>>> c460086fc43bf276330a312eea682e254de9bc8b
