@@ -1066,29 +1066,213 @@ def edit_customer_data():
 """=================================== Users | Reset Password ===================================="""
 
 
-@customer_controller.route(
-    "/cakery/user/customer/ResetPassword/email", methods=["POST"]
-)
+@customer_controller.route("/cakery/user/customer/ResetPassword/email", methods=["POST"])
 def forget_pass_email():
+    """
+    Forget Password - Send Email
+    ---
+    tags:
+      - Customer
+    summary: Sends a password reset email to the user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "user@example.com"
+    responses:
+      200:
+        description: Password reset email sent successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Password reset email sent successfully"
+            status:
+              type: string
+              example: "success"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User not found"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Failed to send email"
+            error:
+              type: string
+              example: "Detailed error message"
+            status:
+              type: string
+              example: "error"
+    """
     data = request.get_json()
-    response, status_code = customer_service.send_email(data)
+    response, status_code = customer_service.check_user(data)  # Call check_user to send reset email
     return jsonify(response), status_code
 
 
-@customer_controller.route(
-    "/cakery/user/customer/ResetPassword/CheckToken", methods=["GET"]
-)
-def forget_pass__check_token():
+@customer_controller.route("/cakery/user/customer/ResetPassword/CheckToken", methods=["GET"])
+def forget_pass_check_token():
+    """
+    Forget Password - Check Token
+    ---
+    tags:
+      - Customer
+    summary: Verify the validity of a password reset token
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "reset-token"
+    responses:
+      200:
+        description: Token is valid
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Token is valid"
+            status:
+              type: string
+              example: "success"
+      400:
+        description: Invalid token
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Invalid token"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while verifying token"
+            error:
+              type: string
+              example: "Detailed error message"
+            status:
+              type: string
+              example: "error"
+    """
     data = request.get_json()
     token = data.get("token")
-    response, status_code = customer_service.verify_token(token)
-    return jsonify(response), status_code
+    email = customer_service.verify_reset_token(token)  # Call verify_reset_token to check the token
+    if email:
+        return jsonify({
+            "message": "Token is valid",
+            "status": "success"
+        }), 200
+    else:
+        return jsonify({
+            "message": "Invalid token",
+            "status": "error"
+        }), 400
 
 
 @customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"])
 def forget_password():
+    """
+    Forget Password - Reset Password
+    ---
+    tags:
+      - Customer
+    summary: Reset the user's password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "user@example.com"
+              newpassword:
+                type: string
+                example: "NewSecurePassword123"
+              newpasswordconfirm:
+                type: string
+                example: "NewSecurePassword123"
+    responses:
+      200:
+        description: Password changed successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Password changed successfully"
+            status:
+              type: string
+              example: "success"
+      400:
+        description: Bad request (e.g., passwords do not match)
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Passwords do not match"
+            status:
+              type: string
+              example: "error"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User not found"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Failed to reset password"
+            error:
+              type: string
+              example: "Detailed error message"
+            status:
+              type: string
+              example: "error"
+    """
     data = request.get_json()
-    response, status_code = customer_service.new_password(data)
+    response, status_code = customer_service.change_password(data)  # Call change_password to reset the password
     return jsonify(response), status_code
 
 
