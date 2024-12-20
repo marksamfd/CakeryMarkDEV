@@ -141,6 +141,7 @@ class AuthRepository:
                 return {"message": "User not found", "status": "error"}, 401
 
             # Verify password
+            
             if not self.verify_password(user.password, password):
                 return {"message": "Wrong password", "status": "error"}, 401
 

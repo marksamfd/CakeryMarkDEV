@@ -92,7 +92,7 @@ class DeliveryRepository:
 
     def get_deliveryman_name(self, delivery_email):
         try:
-            deliveryman = DeliveryAssignments.query.filter_by(
+            deliveryman = DeliveryUser.query.filter_by(
                 deliveryemail=delivery_email
             ).first()
             if deliveryman:
@@ -110,4 +110,4 @@ class DeliveryRepository:
 
 
 
-  
+    
