@@ -2,8 +2,10 @@ from app.models import Orders, Inventory, CustomizeCake, OrderItems
 from app.db import db
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class BakerRepository:
-    ''' ============================ get all orders =============================== '''
+    """============================ get all orders ==============================="""
+
     def get_all_orders(self):
         try:
             orders = Orders.query.all()
@@ -21,9 +23,11 @@ class BakerRepository:
             ]
         except SQLAlchemyError as e:
             return {"error": f"(repo) can't get all orders: {e}"}
-    # -------------------------------------------------------------------------------    
-    
-    ''' ============================ get order details =============================== '''
+
+    # -------------------------------------------------------------------------------
+
+    """ ============================ get order details =============================== """
+
     def get_order_details(self, order_id):
         try:
             order = Orders.query.get(order_id)
@@ -35,7 +39,7 @@ class BakerRepository:
                 "orderDate": order.orderdate.isoformat(),
                 "status": order.status,
                 "items": [],
-                "customCake": []
+                "customCake": [],
             }
 
             for item in order.order_items:
@@ -62,10 +66,10 @@ class BakerRepository:
                                 "innerFillings": layer.innerfillings,
                                 "innerToppings": layer.innertoppings,
                                 "outerCoating": layer.outercoating,
-                                "outerToppings": layer.outertoppings
+                                "outerToppings": layer.outertoppings,
                             }
                             for layer in custom_cake.layers
-                        ]
+                        ],
                     }
                     order_details["customCake"].append(custom_cake_details)
                 else:
@@ -76,8 +80,9 @@ class BakerRepository:
             return {"error": f"(repo) can't get order details: {e}"}
 
     # -------------------------------------------------------------------------------
-    ''' ============================ update order status =============================== '''
-    def update_order_status(self, order_id,status):
+    """ ============================ update order status =============================== """
+
+    def update_order_status(self, order_id, status):
         try:
             order = Orders.query.get(order_id)
             if not order:

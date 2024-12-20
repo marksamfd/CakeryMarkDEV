@@ -34,16 +34,17 @@ export async function signUp(prevState, formData) {
     phonenum: formData.get('Phone'),
     addressgooglemapurl: formData.get('Location'),
   };
-  const parsedCredentials = z
-    .object({
-      firstname: z.string(),
-      lastname: z.string(),
-      email: z.string().email(),
-      password: z.string().min(6),
-      phonenum: z.string().min('01200000000'.length).max('01200000000'.length),
-      addressgooglemapurl: z.string().url(),
-    })
-    .safeParse(body);
+
+  const parsedCredentials = z.object({
+    firstname: z.string(),
+    lastname: z.string(),
+    email: z.string().email(),
+    password: z.string().min(6),
+    phonenum: z.string().min('01200000000'.length).max('01200000000'.length),
+    addressgooglemapurl: z.string().url(),
+  });
+
+  parsedCredentials.safeParse(body);
   if (parsedCredentials.success) {
     if (body.password !== formData.get('confirmPassword')) {
       return { error: 'Passwords does not Match', prevState };
@@ -59,6 +60,7 @@ export async function signUp(prevState, formData) {
       });
       if (!register.ok)
         return { error: 'an Error occured in the registeration' };
+      else return { registered: true };
     } catch (error) {
       // return { error };
     }
@@ -66,4 +68,76 @@ export async function signUp(prevState, formData) {
     return { error: 'Check your inoput' };
   }
   redirect('/signIn');
+}
+
+export async function editData(prevState, formData) {
+  const body = {
+    firstname: formData.get('FirstName'),
+    lastname: formData.get('LastName'),
+    phonenum: formData.get('Phone'),
+    addressgooglemapurl: formData.get('Location'),
+  };
+
+  const parsedCredentials = z.object({
+    firstname: z.string(),
+    lastname: z.string(),
+    phonenum: z.string().min('01200000000'.length).max('01200000000'.length),
+    addressgooglemapurl: z.string().url(),
+  });
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token');
+
+  const result = parsedCredentials.safeParse(body);
+  if (result.success) {
+    try {
+      let editData = await fetch(
+        `${process.env.backend}/cakery/user/customer/EditData`,
+
+        {
+          body: JSON.stringify(body),
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token.value}`,
+          },
+          method: 'put',
+        },
+      );
+      if (!editData.ok) return { error: 'an Error occured During Editing' };
+      else return { edited: true };
+    } catch (error) {
+      return { error };
+    }
+  } else {
+    console.log(result);
+    return { error: 'Check your input' };
+  }
+}
+
+export async function loginWithGoogle(gcback) {
+  console.log(gcback);
+  const body = { code: gcback.credential };
+  try {
+    let register = await fetch(
+      `${process.env.backend}/App/User/Google-Callback`,
+      {
+        body: JSON.stringify(body),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post',
+      },
+    );
+    if (!register.ok) return { error: 'an Error occured in the registeration' };
+    else {
+      let response = await register.json();
+      const cookieStore = await cookies();
+      await cookieStore.set('token', response.jwt_access_token);
+      await cookieStore.set('role', 'customer');
+    }
+  } catch (error) {
+    // return { error };
+  }
 }

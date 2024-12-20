@@ -28,6 +28,7 @@ export default async function RootLayout({ children }) {
   let itemsInCart = 0;
   let sumInCart = 0.0;
   let cookie = await cookieStore.get('token');
+  let name = await cookieStore.get('name');
   if (cookie) {
     let cartReq = await fetch(
       `${process.env.backend}/cakery/user/customer/Cart`,
@@ -42,12 +43,12 @@ export default async function RootLayout({ children }) {
     let cartItems = cartJson.items;
     const calculateTotal = () => {
       let total = 0;
-      for (let i = 0; i < cartItems.length; i++) {
+      for (let i = 0; i < cartItems?.length; i++) {
         total += cartItems[i].price * cartItems[i].quantity;
       }
       return total;
     };
-    itemsInCart = cartItems.length;
+    itemsInCart = cartItems?.length;
     sumInCart = calculateTotal();
   }
   return (
@@ -56,6 +57,7 @@ export default async function RootLayout({ children }) {
         <HeaderNav
           itemsInCart={itemsInCart}
           sumInCart={sumInCart}
+          name={name?.value}
           token={cookie?.value}
         />
         {children}

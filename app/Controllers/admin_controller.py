@@ -2,16 +2,20 @@ from flask import Blueprint, request, jsonify
 from app.Services.admin_service import AdminService
 from app.Services.order_service import OrderService
 from flask_jwt_extended import jwt_required
+from app.Middlewares.auth_middleware import token_required
 
 admin_controller = Blueprint("admin_controller", __name__)
 
 order_service = OrderService()
 admin_service = AdminService()
 
-'''=================================== Admin | Users ===================================='''
+"""=================================== Admin | Users ===================================="""
 
-@admin_controller.route("/cakery/user/admin/ViewCustomers", methods=["GET"])  # -- checked
-@jwt_required()
+
+@admin_controller.route(
+    "/cakery/user/admin/ViewCustomers", methods=["GET"]
+)  # -- checked
+@token_required(roles=['admin'])
 def view_customers():
     """
     View all customers
@@ -48,10 +52,13 @@ def view_customers():
     return jsonify(customers), 200
 
 
-'''=================================== Admin | Staff ===================================='''
+"""=================================== Admin | Staff ===================================="""
+
+
 # ----------------------------- View Staff -----------------------------
-@admin_controller.route("/cakery/user/admin/Staff/View", methods=["GET"])  # -- checked
-@jwt_required()
+@admin_controller.route("/cakery/user/admin/Staff/View",
+                        methods=["GET"])  # -- checked
+@token_required(roles=['admin'])
 def view_staff():
     """
     View all staff users
@@ -90,9 +97,10 @@ def view_staff():
     staff = admin_service.get_users()
     return jsonify(staff), 200
 
+
 # ----------------------------- Add Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/Add", methods=["POST"])
-@jwt_required()
+@token_required(roles=['admin'])
 def add_staff():
     """
     Add a new staff user
@@ -148,11 +156,11 @@ def add_staff():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": f" (route) can't add a staff user: {e}"}), 500
-    
+
 
 # ----------------------------- Delete Staff -----------------------------
 @admin_controller.route("/cakery/user/admin/Staff/Delete", methods=["DELETE"])
-@jwt_required()
+@token_required(roles=['admin'])
 def delete_staff():
     """
     Delete a staff user
@@ -191,17 +199,16 @@ def delete_staff():
     """
 
     data = request.get_json()
-    try :
+    try:
         response = admin_service.delete_user(data)
         return jsonify(response), 200
     except Exception as e:
-        return jsonify({"error": f" (route) can't delete a staff user: {e}"}), 500
-   
-    
+        return jsonify(
+            {"error": f" (route) can't delete a staff user: {e}"}), 500
 
 
 @admin_controller.route("/cakery/user/admin/Products", methods=["GET"])
-@jwt_required()
+@token_required(roles=['admin'])
 def view_products():
     """
     View all products and raw materials
@@ -234,17 +241,19 @@ def view_products():
     products = admin_service.get_products()
     return jsonify(products), 200
 
+
 # ----------------------------- Edit Product -----------------------------
 
+
 @admin_controller.route("/cakery/user/admin/Products/edit", methods=["PUT"])
-@jwt_required()
+@token_required(roles=['admin'])
 def edit_products():
     """
-    Edit product or raw material prices
+    Edit an existing voucher
     ---
     tags:
       - Admin
-    summary: Update product or raw material price
+    summary: Update a voucher's discount
     security:
       - BearerAuth: []
     consumes:
@@ -254,36 +263,59 @@ def edit_products():
     parameters:
       - in: body
         name: body
-        description: Product or raw material details to update
+        description: Details of the voucher to edit
         required: true
         schema:
           type: object
           properties:
-            product_id:
-              type: integer
-              example: 1
-            rawItem:
+            voucher_code:
               type: string
-              example: Flour
-            price:
+              example: VOUCHER123
+            discount:
               type: number
-              example: 15.99
+              example: 25
     responses:
       200:
-        description: Product or raw material updated successfully
+        description: Voucher updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher updated successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher data"
+      404:
+        description: Voucher not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Voucher not found"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while updating the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.edit_product(data)
     return jsonify(response), status_code
 
+
 # ----------------------------- Add Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Add", methods=["POST"])
-@jwt_required()
+@token_required(roles=['admin'])
 def add_voucher():
     """
     Add a new voucher
@@ -300,37 +332,58 @@ def add_voucher():
     parameters:
       - in: body
         name: body
-        description: Voucher details
+        description: Details of the voucher to add
         required: true
         schema:
           type: object
           properties:
+            voucher_code:
+              type: string
+              example: VOUCHER123
             discount:
               type: number
               example: 20
     responses:
       200:
         description: Voucher added successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher added successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher data"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while adding the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.add_voucher(data)
     return jsonify(response), status_code
 
+
 # ----------------------------- Edit Voucher -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers/Edit", methods=["PUT"])
-@jwt_required()
+@token_required(roles=['admin'])
 def edit_voucher():
     """
-    Edit an existing voucher
+    Delete a voucher
     ---
     tags:
       - Admin
-    summary: Update a voucher's discount
+    summary: Remove a voucher by its code
     security:
       - BearerAuth: []
     consumes:
@@ -340,40 +393,64 @@ def edit_voucher():
     parameters:
       - in: body
         name: body
-        description: Voucher details to update
+        description: Details of the voucher to delete
         required: true
         schema:
           type: object
           properties:
-            voucher_id:
-              type: integer
-              example: 101
-            discount:
-              type: number
-              example: 25
+            voucher_code:
+              type: string
+              example: VOUCHER123
     responses:
       200:
-        description: Voucher updated successfully
+        description: Voucher deleted successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher deleted successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher code"
+      404:
+        description: Voucher not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Voucher not found"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while deleting the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.edit_voucher(data)
     return jsonify(response), status_code
 
+
 # ----------------------------- Delete Voucher -----------------------------
-@admin_controller.route("/cakery/user/admin/Vouchers/Delete", methods=["DELETE"])
-@jwt_required()
+@admin_controller.route("/cakery/user/admin/Vouchers/Delete",
+                        methods=["DELETE"])
+@token_required(roles=['admin'])
 def delete_voucher():
     """
     Delete a voucher
     ---
     tags:
       - Admin
-    summary: Remove a voucher by its ID
+    summary: Remove a voucher by its code
     security:
       - BearerAuth: []
     consumes:
@@ -383,29 +460,56 @@ def delete_voucher():
     parameters:
       - in: body
         name: body
-        description: Voucher identification
+        description: Details of the voucher to delete
         required: true
         schema:
           type: object
           properties:
-            voucher_id:
-              type: integer
-              example: 101
+            voucher_code:
+              type: string
+              example: VOUCHER123
     responses:
       200:
         description: Voucher deleted successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Voucher deleted successfully"
       400:
-        description: Invalid data
+        description: Invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Invalid voucher code"
+      404:
+        description: Voucher not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Voucher not found"
       500:
         description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "An error occurred while deleting the voucher"
     """
-
     data = request.get_json()
     response, status_code = admin_service.delete_voucher(data)
     return jsonify(response), status_code
+
+
 # ----------------------------- View Vouchers -----------------------------
 @admin_controller.route("/cakery/user/admin/Vouchers", methods=["GET"])
-@jwt_required()
+@token_required(roles=['admin'])
 def view_vouchers():
     """
     View all vouchers
@@ -427,12 +531,14 @@ def view_vouchers():
     vouchers = admin_service.get_vouchers()
     return jsonify(vouchers), 200
 
-'''=================================== Admin | Dashboard ===================================='''
+
+"""=================================== Admin | Dashboard ===================================="""
+
 
 @admin_controller.route("/cakery/user/admin/Dashboard", methods=["GET"])
-@jwt_required()
+@token_required(roles=['admin'])
 def view_dashboard():
-  """
+    """
     View the admin dashboard
     ---
     tags:
@@ -449,11 +555,17 @@ def view_dashboard():
         description: Unauthorized
       500:
         description: Internal Server Error
-  """
-  try:
+    """
+    try:
         response = admin_service.dashboard_data()  # Ensure this call works
-        return jsonify(response), 200  # Return a proper JSON response with HTTP status code 200
-  except Exception as e:
+        return (
+            jsonify(response),
+            200,
+        )  # Return a proper JSON response with HTTP status code 200
+    except Exception as e:
         # Log the error for debugging purposes
         print(f"Error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500  # Return an error response with status code 500
+        return (
+            jsonify({"status": "error", "message": str(e)}),
+            500,
+        )  # Return an error response with status code 500

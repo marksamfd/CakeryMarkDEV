@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
+
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 
@@ -32,11 +34,15 @@ export const { auth, signIn, signOut } = NextAuth({
           const cookieStore = await cookies();
           await cookieStore.set('token', res.access_token);
           await cookieStore.set('role', res.role);
-          await cookieStore.set('name', res?.name);
+          await cookieStore.set('name', res?.firstname);
 
           return res;
         }
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
 });

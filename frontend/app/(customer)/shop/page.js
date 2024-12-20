@@ -34,16 +34,7 @@ function Shop() {
   const [allCategories, setAllCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   useEffect(() => {
-    cookieStore
-      .get('token')
-      .then((cookie) => {
-        console.log(cookie);
-        return fetch(`/api/cakery/user/customer/Shop`, {
-          headers: {
-            Authorization: `Bearer ${cookie.value}`,
-          },
-        });
-      })
+    fetch(`/api/cakery/user/customer/Shop`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -62,6 +53,28 @@ function Shop() {
             <div className="row">
               <div className="col-lg-7 col-md-7">
                 <div className="shop__option__search">
+                  <form action="#">
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      onInput={(event) => {
+                        console.log(event.target.value.length);
+                        if (event.target.value.length > 0) {
+                          setFilteredProducts(
+                            allProducts.filter((e) =>
+                              e.name.toLowerCase().includes(event.target.value),
+                            ),
+                          );
+                        } else {
+                          setFilteredProducts(allProducts);
+                        }
+                      }}
+                    />
+                  </form>
+                </div>
+              </div>
+              <div className="col-lg-5 col-md-5">
+                <div className="shop__option__filter">
                   <form action="#">
                     <select
                       onChange={(event) => {
@@ -86,42 +99,10 @@ function Shop() {
                         </option>
                       ))}
                     </select>
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      onInput={(event) => {
-                        console.log(event.target.value.length);
-                        if (event.target.value.length > 0) {
-                          setFilteredProducts(
-                            allProducts.filter((e) =>
-                              e.name.toLowerCase().includes(event.target.value),
-                            ),
-                          );
-                        } else {
-                          setFilteredProducts(allProducts);
-                        }
-                      }}
-                    />
                   </form>
                 </div>
               </div>
-              <div className="col-lg-5 col-md-5">
-                <div className="shop__option__right">
-                  <select>
-                    <option value="">Default sorting</option>
-                    <option value="A-Z">A to Z</option>
-                    <option value="1-8">1 - 8</option>
-                    <option value="name">Name</option>
-                  </select>
-                  <a href="#">
-                    <i className="fa fa-list" />
-                  </a>
-                  <a href="#">
-                    <i className="fa fa-reorder" />
-                  </a>
-                </div>
-              </div>
-            </div>
+            </div>{' '}
           </div>
           <div className="row">
             <div className="col-lg-3 col-md-6 col-sm-6">
@@ -162,7 +143,7 @@ function Shop() {
             ))}
           </div>
 
-          <div className="shop__last__option">
+          {/* <div className="shop__last__option">
             <div className="row">
               <div className="col-lg-6 col-md-6 col-sm-6">
                 <div className="shop__pagination">
@@ -175,12 +156,10 @@ function Shop() {
                 </div>
               </div>
               <div className="col-lg-6 col-md-6 col-sm-6">
-                <div className="shop__last__text">
-                  <p>Showing 1-9 of 10 results</p>
-                </div>
+
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
     </>

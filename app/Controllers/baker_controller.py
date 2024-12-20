@@ -1,13 +1,16 @@
 from flask import Blueprint, jsonify, request
 from app.Services.baker_service import BakerService
 from flask_jwt_extended import jwt_required
+from app.Middlewares.auth_middleware import token_required
 
 baker_controller = Blueprint("baker_controller", __name__)
 baker_service = BakerService()
 
-'''=================================== Baker | Orders ===================================='''  # - checked
-@baker_controller.route("/cakery/user/baker/Orders", methods=["GET"]) 
-@jwt_required()
+"""=================================== Baker | Orders ===================================="""  # - checked
+
+
+@baker_controller.route("/cakery/user/baker/Orders", methods=["GET"])
+@token_required(roles=['baker'])
 def get_baker_orders():
     """
     Get All Baker Orders
@@ -58,11 +61,17 @@ def get_baker_orders():
     """
     orders = baker_service.view_baker_orders()
     return jsonify(orders), 200
+
+
 # -------------------------------------------------------------------------------
 
-'''=================================== Baker | Order Details ===================================='''  # - checked
-@baker_controller.route("/cakery/user/baker/Orders/<int:order_id>/details", methods=["GET"])
-@jwt_required()
+"""=================================== Baker | Order Details ===================================="""  # - checked
+
+
+@baker_controller.route(
+    "/cakery/user/baker/Orders/<int:order_id>/details", methods=["GET"]
+)
+@token_required(roles=['baker'])
 def get_order_details(order_id):
     """
     Get Specific Order Details
@@ -136,11 +145,17 @@ def get_order_details(order_id):
     if "error" in order_details:
         return jsonify(order_details), 404
     return jsonify(order_details), 200
+
+
 # ----------------------------------------------------------------------------------
 
-'''=================================== Baker | Update Order Status ===================================='''
-@baker_controller.route("/cakery/user/baker/Orders/Update_status", methods=["POST"])  # - checked (changing DB too)
-@jwt_required()
+"""=================================== Baker | Update Order Status ===================================="""
+
+
+@baker_controller.route(
+    "/cakery/user/baker/Orders/Update_status", methods=["POST"]
+)  # - checked (changing DB too)
+@token_required(roles=['baker'])
 def update_order_status():
     """
     Update Order Status to Prepared
@@ -230,4 +245,6 @@ def update_order_status():
     if "error" in result:
         return jsonify(result), 400
     return jsonify(result), 200
+
+
 # ----------------------------------------------------------------------------------

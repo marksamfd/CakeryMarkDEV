@@ -15,11 +15,12 @@ import { usePathname } from 'next/navigation';
  *
  * @param {Object} props - The component properties.
  * @param {number} props.itemsInCart - The number of items in the cart.
+ * @param {string} [props.name] - The authentication token to determine user login status.
  * @param {string} [props.token] - The authentication token to determine user login status.
  *
  * @returns {React.ReactElement} The rendered header navigation component.
  */
-function HeaderNav({ itemsInCart = 0, sumInCart, token }) {
+function HeaderNav({ itemsInCart = 0, sumInCart, name, token }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   const iconSize = 25;
   const logoHeight = 65;
@@ -79,7 +80,10 @@ function HeaderNav({ itemsInCart = 0, sumInCart, token }) {
                         {token === undefined ? (
                           <a href="/signIn">Sign in</a>
                         ) : (
-                          <a href="/customerOrders">Hello</a>
+                          <>
+                            <a href="/customerOrders">{'My Orders'}</a> |{' '}
+                            <a href={`/signUp/${token}`}>Update Profile </a>
+                          </>
                         )}
                       </li>
                     </ul>

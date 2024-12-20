@@ -49,18 +49,25 @@ const CartItem = ({
       </td>
       <td>
         <div className="d-flex flex-row justify-content-between">
-          <span onClick={onDecrease}>-</span>
-          <h6>{quantity}</h6>
-          <span onClick={onIncrease}>+</span>
+          <button onClick={onDecrease}
+          className='btn btn-light' title='decrease item'>
+            <i className="fa fa-minus "style={{color:'#f08632' }}></i>
+          </button>
+          <h6 className='mt-2'>{quantity}</h6>
+          <button onClick={onIncrease}
+          className='btn btn-light' title='Add item'>
+            <i className="fa fa-plus"style={{color:'#f08649' }}></i>
+          </button>
         </div>
       </td>
       <td>
         <h6>${total}</h6>
       </td>
       <td>
-        <button onClick={onRemove} className="remove-btn">
-          <i className="fa fa-times text-danger"></i>
-        </button>
+        <button onClick={onRemove}
+        className="btn btn-light" title='Remove item'>
+        <i className="fa fa-trash" style={{color:'red' }} ></i>  
+              </button>
       </td>
     </tr>
   );
