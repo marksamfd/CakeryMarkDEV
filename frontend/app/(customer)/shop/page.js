@@ -34,16 +34,7 @@ function Shop() {
   const [allCategories, setAllCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   useEffect(() => {
-    cookieStore
-      .get('token')
-      .then((cookie) => {
-        console.log(cookie);
-        return fetch(`/api/cakery/user/customer/Shop`, {
-          headers: {
-            Authorization: `Bearer ${cookie.value}`,
-          },
-        });
-      })
+    fetch(`/api/cakery/user/customer/Shop`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -111,7 +102,8 @@ function Shop() {
                   </form>
                 </div>
               </div>
-            </div>          </div>
+            </div>{' '}
+          </div>
           <div className="row">
             <div className="col-lg-3 col-md-6 col-sm-6">
               <Link href="/customizeCake">

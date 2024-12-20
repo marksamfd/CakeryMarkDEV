@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import product3 from '../../img/shop/product3.jpg';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const addBtnStyle = {
   fontsize: '14px',
@@ -22,24 +23,28 @@ export const AddToCart = async (productid, quantity = 1) => {
     quantity: quantity,
   };
 
-  try {
-    const cookie = await cookieStore.get('token');
-    const response = await fetch('/api/cakery/user/customer/Cart/Add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${cookie.value}`,
-      },
-      body: JSON.stringify(product),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      console.log(data);
-    } else {
-      throw data.message;
+  const cookie = await cookieStore.get('token');
+  if (cookie?.value) {
+    try {
+      const response = await fetch('/api/cakery/user/customer/Cart/Add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cookie.value}`,
+        },
+        body: JSON.stringify(product),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data);
+      } else {
+        throw data.message;
+      }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
+  } else {
+    redirect('/signIn');
   }
 };
 /**
