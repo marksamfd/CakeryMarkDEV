@@ -28,6 +28,7 @@ export default async function RootLayout({ children }) {
   let itemsInCart = 0;
   let sumInCart = 0.0;
   let cookie = await cookieStore.get('token');
+  let name = await cookieStore.get('name');
   if (cookie) {
     let cartReq = await fetch(
       `${process.env.backend}/cakery/user/customer/Cart`,
@@ -56,6 +57,7 @@ export default async function RootLayout({ children }) {
         <HeaderNav
           itemsInCart={itemsInCart}
           sumInCart={sumInCart}
+          name={name?.value}
           token={cookie?.value}
         />
         {children}
