@@ -25,7 +25,7 @@ SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.c
 google_oauth = Blueprint('google_oauth', __name__)
 
 # Initiate Google Sign-In and taking permissions from user 
-@google_oauth.route('/App/User/Google-Signin')
+@google_oauth.route('/App/User/Google-Signin', methods=['GET'])
 def google_signin():
     """
     Redirects the user to Google's OAuth consent screen where they will
@@ -48,7 +48,7 @@ def google_signin():
     return redirect(google_oauth_url)
 
 # Google oAuth url for sign in 
-@google_oauth.route('/App/User/Google-Callback')
+@google_oauth.route('/App/User/Google-Callback', methods=['GET'])
 def google_callback():
     """
     Handles the callback from Google after the user authorizes the application. 
