@@ -1,12 +1,11 @@
 'use client';
-import Image from 'next/image';
-import googleIcon from '@/img/icon/googleIcon.svg';
 import Button from '../components/button';
 import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { authenticate } from '@/app/lib/actions';
 import { useSearchParams, redirect } from 'next/navigation';
+import GoogleBtn from '../components/googleBtn';
 
 /**
  * Renders a sign in form with email and password fields, and a button to
@@ -16,7 +15,7 @@ import { useSearchParams, redirect } from 'next/navigation';
  *
  * @returns {JSX.Element} The sign in form component.
  */
-export default function SignIn() {
+export default function SignIn({ providers }) {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   const googleStyle = {
@@ -34,38 +33,40 @@ export default function SignIn() {
     fontSize: '20px',
     gap: '10px',
   };
-  cookieStore
-    .get('token')
-    .then((c) => {
-      if (c) {
-        if (callbackUrl) {
-          redirect(callbackUrl);
+  useEffect(() => {
+    cookieStore
+      .get('token')
+      .then((c) => {
+        if (c) {
+          if (callbackUrl) {
+            redirect(callbackUrl);
+          }
+          return cookieStore.get('role');
         }
-        return cookieStore.get('role');
-      }
-    })
-    .then((role) => {
-      if (role) {
-        switch (role) {
-          case 'baker':
-            redirect('../baker');
-            break;
-          case 'delivary':
-            redirect('../delivary');
-            break;
-          case 'admin':
-            redirect('../admin');
-            break;
-          default:
-            redirect('../');
+      })
+      .then((role) => {
+        if (role) {
+          switch (role) {
+            case 'baker':
+              redirect('../baker');
+              break;
+            case 'delivary':
+              redirect('../delivary');
+              break;
+            case 'admin':
+              redirect('../admin');
+              break;
+            default:
+              redirect('../');
+          }
         }
-      }
-    });
-
+      });
+  });
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,
   );
+  console.log({ providers });
   return (
     <section className="checkout spad">
       <div className="container">
@@ -92,6 +93,12 @@ export default function SignIn() {
                       type="hidden"
                       name="callbackUrl"
                       value={callbackUrl}
+                    />
+                  </div>
+
+                  <div className="col-8 d-flex justify-items-center mx-auto mb-3">
+                    <GoogleBtn
+                      googleCallback={(e) => console.log({ gcallback: e })}
                     />
                   </div>
                 </div>
@@ -123,3 +130,20 @@ export default function SignIn() {
     </section>
   );
 }
+
+SignIn.getInitalProps = async (context) => {
+  const { req, res } = context;
+  const session = await getSession(context);
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token');
+  if (token) {
+    res.writeHead(302, {
+      Location: '/',
+    });
+    res.end();
+    return;
+  }
+  return {
+    providers: await providers(context),
+  };
+};
