@@ -1,5 +1,6 @@
 from app.db import create_app, db
 from app.Controllers.customer_controller import customer_controller
+from app.Controllers.oAuth import google_oauth
 from app.Controllers.baker_controller import baker_controller
 from app.Controllers.auth_controller import auth_controller
 from app.Controllers.delivery_controller import delivery_controller
@@ -57,6 +58,7 @@ app.register_blueprint(baker_controller)
 app.register_blueprint(auth_controller)
 app.register_blueprint(delivery_controller)
 app.register_blueprint(admin_controller)
+app.register_blueprint(google_oauth)
 
 # Initialize Swagger
 swagger = Swagger(app, template=swagger_template)
