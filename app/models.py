@@ -208,7 +208,7 @@ class Rawmaterials(db.Model):
     __tablename__ = "rawmaterials"
 
     item = db.Column(db.String, primary_key=True, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
     category = db.Column(db.String, nullable=False)
 
     def as_dict(self):
