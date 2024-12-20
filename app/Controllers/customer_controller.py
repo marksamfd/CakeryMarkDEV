@@ -10,9 +10,7 @@ customer_service = CustomerService()
 """=================================== Shop ===================================="""  # - checked
 
 
-@customer_controller.route("/cakery/user/customer/Shop",
-                           methods=["GET"])  # (Shop Page)
-@token_required(roles=['customer'])
+@customer_controller.route("/cakery/user/customer/Shop", methods=["GET"])  # (Shop Page)
 def list_products():
     """
     List All Available Products
@@ -81,7 +79,7 @@ def list_products():
 @customer_controller.route(
     "/cakery/user/customer/Product/<int:product_id>", methods=["GET"]
 )  # (Product Detail Page)
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def get_product_details(product_id):
     """
     Get Specific Product Details
@@ -167,9 +165,8 @@ def get_product_details(product_id):
 """=================================== Cart ===================================="""  # - checked
 
 
-@customer_controller.route("/cakery/user/customer/Cart",
-                           methods=["GET"])  # (Cart Page)
-@token_required(roles=['customer'])
+@customer_controller.route("/cakery/user/customer/Cart", methods=["GET"])  # (Cart Page)
+@token_required(roles=["customer"])
 def get_cart():
     """
     Get Customer's Cart
@@ -232,7 +229,7 @@ def get_cart():
               example: "Detailed error message."
     """
     try:
-        customer_email = request.user 
+        customer_email = request.user
         cart = customer_service.view_cart(customer_email)
         return jsonify(cart), 200
     except Exception as e:
@@ -255,7 +252,7 @@ def get_cart():
 @customer_controller.route(
     "/cakery/user/customer/Cart/Add", methods=["POST"]
 )  # (Cart Page)
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def add_to_cart():
     """
     Add Product to Cart
@@ -329,8 +326,7 @@ def add_to_cart():
         )
         return jsonify(response), 200
     except Exception as e:
-        return jsonify(
-            {"error": f" (route) can't add a product to the cart: {e}"}), 400
+        return jsonify({"error": f" (route) can't add a product to the cart: {e}"}), 400
 
 
 # *****************************************************************************************************
@@ -339,7 +335,7 @@ def add_to_cart():
 @customer_controller.route(
     "/cakery/user/customer/Cart/Increment", methods=["PUT"]
 )  # (Cart Page)
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def increment_quantity():
     """
     Update Cart Item Quantity
@@ -412,7 +408,7 @@ def increment_quantity():
 @customer_controller.route(
     "/cakery/user/customer/Cart/Remove", methods=["DELETE"]
 )  # (Cart Page)
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def remove_from_cart():
     """
     Remove Product from Cart
@@ -470,8 +466,7 @@ def remove_from_cart():
         customer_email = request.user
         product_id = data.get("product_id")
 
-        response = customer_service.remove_from_cart(
-            customer_email, product_id)
+        response = customer_service.remove_from_cart(customer_email, product_id)
         return jsonify(response), 200
     except Exception as e:
         return (
@@ -485,9 +480,8 @@ def remove_from_cart():
 """=================================== Customize Cake ===================================="""  # - checked
 
 
-@customer_controller.route("/cakery/user/customer/Customize_Cake",
-                           methods=["GET"])
-@token_required(roles=['customer'])
+@customer_controller.route("/cakery/user/customer/Customize_Cake", methods=["GET"])
+@token_required(roles=["customer"])
 def view_raw_materials():
     """
     View Raw Materials for Cake Customization
@@ -549,7 +543,7 @@ def view_raw_materials():
 @customer_controller.route(
     "/cakery/user/customer/Customize_Cake/Create", methods=["POST"]
 )  # (Customize Cake Page)
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def create_custom_cake():
     """
     Create a Customized Cake and Add to Cart
@@ -652,7 +646,7 @@ def create_custom_cake():
 
 
 @customer_controller.route("/cakery/user/customer/Checkout", methods=["POST"])
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def checkout():
     """
     Checkout Customer's Cart
@@ -730,7 +724,7 @@ def checkout():
 @customer_controller.route(
     "/cakery/user/customer/Orders", methods=["GET"]
 )  # (Customer orders Page)
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def view_orders():
     """
     View Customer's Orders
@@ -809,32 +803,51 @@ def view_orders():
 
 # ----------------------------------------------------------------------------------
 
-'''=================================== Edit Customer Data ====================================''' 
+"""=================================== Edit Customer Data ===================================="""
 
-@customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"]) 
-@token_required(roles=['customer'])
+
+@customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"])
+@token_required(roles=["customer"])
 def get_customer():
-  
+
     try:
         customer_email = request.user
         response, status_code = customer_service.get_user(customer_email)
         return jsonify(response), status_code
     except Exception as e:
-        return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while editing user data.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
 
-@customer_controller.route("/cakery/user/customer/CheckData", methods=["GET"]) 
-@token_required(roles=['customer'])
+
+@customer_controller.route("/cakery/user/customer/CheckData", methods=["GET"])
+@token_required(roles=["customer"])
 def get_customer_data():
-    
+
     try:
         customer_email = request.user
         response, status_code = customer_service.get_data(customer_email)
         return jsonify(response), status_code
     except Exception as e:
-        return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while editing user data.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
 
-@customer_controller.route("/cakery/user/customer/EditData", methods=["PUT"]) 
-@token_required(roles=['customer'])
+
+@customer_controller.route("/cakery/user/customer/EditData", methods=["PUT"])
+@token_required(roles=["customer"])
 def edit_customer_data():
     """
     Edit Customer Data
@@ -912,11 +925,19 @@ def edit_customer_data():
     try:
         customer_email = request.user
         data = request.get_json()
-        response, status_code = customer_service.update_data(
-            customer_email, data)
+        response, status_code = customer_service.update_data(customer_email, data)
         return jsonify(response), status_code
     except Exception as e:
-        return jsonify({"message": "An error occurred while editing user data.", "error": str(e)}), 500
+        return (
+            jsonify(
+                {
+                    "message": "An error occurred while editing user data.",
+                    "error": str(e),
+                }
+            ),
+            500,
+        )
+
 
 # --------------------------
 # ----------------------------------------------------------------------------------
@@ -942,8 +963,8 @@ def forget_pass__check_token():
     response, status_code = customer_service.verify_token(token)
     return jsonify(response), status_code
 
-@customer_controller.route("/cakery/user/customer/ResetPassword",
-                           methods=["PUT"])
+
+@customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"])
 def forget_password():
     data = request.get_json()
     response, status_code = customer_service.new_password(data)
@@ -954,7 +975,7 @@ def forget_password():
 
 
 @customer_controller.route("/cakery/user/customer/VerifyOTP", methods=["POST"])
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def verify_otp():
     """
     Verify OTP Code
@@ -1015,8 +1036,7 @@ def verify_otp():
         data = request.get_json()
         otp_code = data.get("otp_code")
         otp_service = customer_controller.otp_service
-        response, status_code = otp_service.validate_otp(
-            customer_email, otp_code)
+        response, status_code = otp_service.validate_otp(customer_email, otp_code)
         return jsonify(response), status_code
     except Exception as e:
         return jsonify({"error": f"Error validating OTP: {e}"}), 500
@@ -1027,9 +1047,8 @@ def verify_otp():
 """===================================== My Notifications ===================================="""
 
 
-@customer_controller.route("/cakery/user/customer/Notifications",
-                           methods=["GET"])
-@token_required(roles=['customer'])
+@customer_controller.route("/cakery/user/customer/Notifications", methods=["GET"])
+@token_required(roles=["customer"])
 def view_notifications():
     """
     View Customer's Notifications
@@ -1086,7 +1105,7 @@ def view_notifications():
 
 
 @customer_controller.route("/cakery/user/customer/Name", methods=["GET"])
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def get_customer_name():
     """
     Get Customer's Name
@@ -1138,7 +1157,7 @@ def get_customer_name():
 
 
 @customer_controller.route("/cakery/user/customer/Review", methods=["POST"])
-@token_required(roles=['customer'])
+@token_required(roles=["customer"])
 def customer_review():
 
     try:
