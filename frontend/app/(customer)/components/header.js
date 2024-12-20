@@ -77,7 +77,7 @@ function HeaderNav({ itemsInCart = 0, sumInCart, name, token }) {
                   <div className="header__top__left">
                     <ul>
                       <li>
-                        {name === undefined ? (
+                        {token === undefined ? (
                           <a href="/signIn">Sign in</a>
                         ) : (
                           <>

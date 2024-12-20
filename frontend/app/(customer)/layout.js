@@ -43,12 +43,12 @@ export default async function RootLayout({ children }) {
     let cartItems = cartJson.items;
     const calculateTotal = () => {
       let total = 0;
-      for (let i = 0; i < cartItems.length; i++) {
+      for (let i = 0; i < cartItems?.length; i++) {
         total += cartItems[i].price * cartItems[i].quantity;
       }
       return total;
     };
-    itemsInCart = cartItems.length;
+    itemsInCart = cartItems?.length;
     sumInCart = calculateTotal();
   }
   return (

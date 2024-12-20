@@ -21,9 +21,7 @@ import product12 from '../../../img/shop/product12.jpg';
  */
 async function ProductSection() {
   console.log('backend', process.env.BACKEND);
-  const productsReq = await fetch(
-    `${process.env.BACKEND}/cakery/user/customer/Shop`,
-  );
+  const productsReq = await fetch(`api/cakery/user/customer/Shop`);
   const products = await productsReq.json();
 
   return (

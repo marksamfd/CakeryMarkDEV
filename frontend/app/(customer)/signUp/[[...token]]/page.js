@@ -52,8 +52,9 @@ function SignUp() {
   useEffect(() => {
     if (token && state?.edited) {
       redirect('../');
-
-      console.log('no errors');
+    }
+    if (token && state?.registered) {
+      redirect('../login');
     }
   }, [state]);
   return (
