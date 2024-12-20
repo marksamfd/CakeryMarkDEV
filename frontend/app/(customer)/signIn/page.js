@@ -51,7 +51,7 @@ export default function SignIn({ providers }) {
               redirect('../baker');
               break;
             case 'delivary':
-              redirect('../delivary');
+              redirect('../delivery');
               break;
             case 'admin':
               redirect('../admin');
