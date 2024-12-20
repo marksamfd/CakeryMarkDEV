@@ -61,9 +61,9 @@ class AuthRepository:
             # Check if user already exists
             domain = customer_email.split("@")[1]
             if domain in [
-                "cakery_baker.com",
-                "cakery_admin.com",
-                "cakery_delivery.com",
+                "cakerybaker.com",
+                "cakeryadmin.com",
+                "cakerydelivery.com",
             ]:
                 return {"message": "Can't sign up for staff",
                         "status": "error"}, 409
@@ -134,10 +134,10 @@ class AuthRepository:
         user = None
 
         # Define the queries for different user roles
-        if domain == "cakery_admin.com":
+        if domain == "cakeryadmin.com":
             user = Admin.query.filter_by(adminemail=email).first()
             role = "admin"
-        elif domain == "cakery_baker.com":
+        elif domain == "cakerybaker.com":
             user = BakeryUser.query.filter_by(bakeryemail=email).first()
             role = "baker"
             name = user.firstname
@@ -145,7 +145,7 @@ class AuthRepository:
             user = CustomerUser.query.filter_by(customeremail=email).first()
             role = "customer"
             name = user.firstname
-        elif domain == "cakery_delivery.com":
+        elif domain == "cakerydelivery.com":
             user = DeliveryUser.query.filter_by(deliveryemail=email).first()
             role = "delivery"
             name = user.firstname

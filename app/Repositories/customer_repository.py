@@ -440,13 +440,13 @@ class CustomerRepository:
         email = data.get("email")
         domain = email.split("@")[1]
 
-        if domain == "cakery_baker.com":
+        if domain == "cakerybaker.com":
             user = BakeryUser.query.filter_by(bakeryemail=email).first()
             role = "baker"
         elif domain == "gmail.com":
             user = CustomerUser.query.filter_by(customeremail=email).first()
             role = "customer"
-        elif domain == "cakery_delivery.com":
+        elif domain == "cakerydelivery.com":
             user = DeliveryUser.query.filter_by(deliveryemail=email).first()
             role = "delivery"
         else:
