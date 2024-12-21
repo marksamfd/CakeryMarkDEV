@@ -1,51 +1,53 @@
-name: CI/CD Pipeline for Flask Backend
+name: CI/CD Pipeline
 
-on:
-  push:
-    branches:
-      - Development
+trigger:
+  - main
 
-permissions:
-  id-token: write
-  contents: read
+variables:
+  dockerRegistryServiceConnection: 'cakeryregistry.azurecr.io'
+  imageRepository: 'flask-api-image'
+  containerRegistry: 'cakeryregistry.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: 'latest'
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
+stages:
+- stage: Build
+  displayName: Build and Push
+  jobs:
+  - job: Build
+    displayName: Build and Push
+    pool:
+      vmImage: 'ubuntu-latest'
     steps:
-      # ✅ Step 1: Checkout Code
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - task: Docker@2
+      displayName: Login to ACR
+      inputs:
+        command: login
+        containerRegistry: $(containerRegistry)
+      env:
+        DOCKER_PASSWORD: $(AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD)
 
-      # ✅ Step 2: Azure Login
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: "6cef0901-0ae1-4413-9004-491ad43e9e7d"
-          tenant-id: "bded4dcc-cc45-4b9a-bda4-b1430f6c7f6f"
-          subscription-id: "adbc02d4-9ebd-4feb-b958-2d1b9c1130a2"
-          auth-type: SERVICE_PRINCIPAL
+    - task: Docker@2
+      displayName: Build and Push
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(containerRegistry)
+        tags: |
+          $(tag)
 
-      # ✅ Step 3: Azure Container Registry Login
-      - name: Log in to Azure Container Registry
-        run: echo '${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD }}' | docker login cakeryregistry.azurecr.io -u cakeryregistry --password-stdin
-
-      # ✅ Step 4: Build and Push Docker Image
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t cakeryregistry.azurecr.io/flask-api-image:latest .
-          docker push cakeryregistry.azurecr.io/flask-api-image:latest
-
-      # ✅ Step 5: Deploy to Azure App Service
-      - name: Deploy to Azure App Service
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: CakeryBackendApp
-          resource-group-name: CakeryResourceGroup
-          slot-name: production
-          images: cakeryregistry.azurecr.io/flask-api-image:latest
-
-      # ✅ Step 6: Verify Deployment
-      - name: Verify Deployment
-        run: echo "✅ Deployment completed successfully!"
+- stage: Deploy
+  displayName: Deploy to Azure
+  dependsOn: Build
+  jobs:
+  - job: Deploy
+    displayName: Deploy to Azure Web App
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: AzureWebAppContainer@1
+      inputs:
+        azureSubscription: 'adbc02d4-9ebd-4feb-b958-2d1b9c1130a2'
+        appName: 'CakeryBackendApp'
+        containers: $(containerRegistry)/$(imageRepository):$(tag)
