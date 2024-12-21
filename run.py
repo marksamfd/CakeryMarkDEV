@@ -17,6 +17,16 @@ from flask_jwt_extended import JWTManager
 from flasgger import Swagger
 from app.utils.order_status_notifier import FirebaseNotificationObserver
 
+import firebase_admin
+from firebase_admin import credentials
+
+# ------- firebase initialization (push notification -------
+try:
+    firebase_admin.get_app()
+except ValueError:
+    cred = credentials.Certificate('cakery-b599e-firebase-adminsdk-id1z9-f98f481fc3.json')
+    firebase_admin.initialize_app(cred)
+
 
 swagger_template = {
     "swagger": "2.0",
