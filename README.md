@@ -8,19 +8,19 @@ An online bakery platform where customers can browse, customize, and order cakes
 ##  Features
 
 ### 👥 Customer Features:
-- 🛍️ Browse available products and customize cakes.
-- 🛒 Add products to the cart and place orders.
-- 📜 View order history, track order status, and leave reviews.
+- Browse available products and customize cakes.
+- Add products to the cart and place orders.
+- View order history, track order status, and leave reviews.
 
 ### 🛠️ Admin Features:
-- 🧑‍💼 Manage customer and staff data.
-- 📊 Access analytics and view platform performance reports.
+-  Manage customer and staff data.
+-  Access analytics and view platform performance reports.
 
 ### 👩‍🍳 Baker Features:
-- 🧾 View assigned orders and update order status.
+-  View assigned orders and update order status.
 
 ### 🚚 Delivery Features:
--  View assigned orders and update delivery status.
+-  View assigned orders and update the delivery status.
 
 ---
 
@@ -115,7 +115,7 @@ cd Cakery
 
 ---
 
-### 4️⃣ Set Up the Frontend
+### Set Up the Frontend
 1. Navigate to the frontend folder:
    ```bash
    cd frontend
@@ -134,7 +134,7 @@ cd Cakery
 
 ---
 
-### 5️⃣ Open the Application
+### Open the Application
 Once the frontend and backend are running:
 
 - 🌐 Frontend: [http://localhost:3000](http://localhost:3000)
