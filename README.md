@@ -5,7 +5,7 @@ An online bakery platform where customers can browse, customize, and order cakes
 
 ---
 
-## 🌟 Features
+##  Features
 
 ### 👥 Customer Features:
 - 🛍️ Browse available products and customize cakes.
@@ -20,25 +20,25 @@ An online bakery platform where customers can browse, customize, and order cakes
 - 🧾 View assigned orders and update order status.
 
 ### 🚚 Delivery Features:
-- 🚦 View assigned orders and update delivery status.
+-  View assigned orders and update delivery status.
 
 ---
 
 ## 🖥️ Technologies Used
-- **Frontend:** ⚛️ Next.js  
-- **Backend:** 🐍 Flask (Python)  
-- **Database:** 🐘 PostgreSQL  
-- **APIs and Libraries:** 🌐 Gemini API (if applicable)  
+- **Frontend:**  Next.js  
+- **Backend:** Flask (Python)  
+- **Database:** PostgreSQL  
+
 
 ---
 
-## ⚙️ Setup and Installation
+##  Setup and Installation
 
 Follow the steps below to set up the project on your local machine.
 
 ---
 
-### 1️⃣ Clone the Repository
+### Clone the Repository
 Clone the project repository to your local machine:  
 ```bash
 git clone https://github.com/Anas-Ah25/Cakery.git
@@ -51,9 +51,9 @@ cd Cakery
 
 ---
 
-### 2️⃣ Set Up the Database
+###  Set Up the Database
 
-#### 🗃️Load the Database
+#### Load the Database
 1. Ensure PostgreSQL is installed on your system and the `psql` command-line tool is accessible.
 
 2. Create an empty database. For example, to create a database named `cakery`, run:
@@ -81,7 +81,7 @@ cd Cakery
 
 ---
 
-### 3️⃣ Set Up the Backend
+###  Set Up the Backend
 1. Navigate to the backend folder:
    ```bash
    cd app
