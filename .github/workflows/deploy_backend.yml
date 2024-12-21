@@ -16,6 +16,8 @@ variables:
   sqlManagementEndpointUrl: https://management.core.windows.net:8443/
   galleryEndpointUrl: https://gallery.azure.com/
   managementEndpointUrl: https://management.core.windows.net/
+  # Secret Variables (Assuming they are defined in a Variable Group or directly in the pipeline)
+  clientSecret: $(clientSecret)
 
 stages:
   - stage: Setup
@@ -29,7 +31,7 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                echo "${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD }}" | docker login cakeryregistry.azurecr.io -u cakeryregistry --password-stdin
+                echo "${AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD}" | docker login cakeryregistry.azurecr.io -u cakeryregistry --password-stdin
 
   - stage: Deploy
     displayName: 'Deploy Application'
@@ -40,10 +42,11 @@ stages:
         steps:
           - task: AzureCLI@2
             inputs:
-              azureSubscription: 'YourAzureServiceConnection'  # Replace with your Azure service connection name
+              azureSubscription: 'AzureServiceConnection'  # Replace with your Azure service connection name
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az account set --subscription $(subscription)
                 az role assignment list --assignee $(clientId) --output table
-                # Add additional deployment commands here
+                # Example: Deploy resources using ARM templates or other Azure services
+                # az deployment group create --resource-group YourResourceGroup --template-file template.json --parameters parameters.json
