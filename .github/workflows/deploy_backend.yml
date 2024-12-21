@@ -1,4 +1,3 @@
-
 name: CI/CD Pipeline for Flask Backend
 
 on:
@@ -23,13 +22,12 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG }} .
-          docker push ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG }}
+          IMAGE_TAG=${{ secrets.AZURE_BACK_IMAGE_TAG || 'latest' }}
+          docker build -t ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:$IMAGE_TAG .
+          docker push ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:$IMAGE_TAG
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_BACK_WEBAPP_NAME }}
-          resource-group-name: ${{ secrets.AZURE_BACK_RESOURCE_GROUP }}
-          subscription-id: ${{ secrets.AZURE_BACK_SUBSCRIPTION_ID }}
-          images: ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG }}
+          images: ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG || 'latest' }}
