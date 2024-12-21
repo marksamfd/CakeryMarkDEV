@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Log in to Azure Container Registry
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1
         with:
@@ -22,16 +20,15 @@ jobs:
           username: ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_USERNAME }}
           password: ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD }}
 
-      # Build and Push Docker Image
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/flask-api-image:latest .
-          docker push ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/flask-api-image:latest
+          docker build -t ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG }} .
+          docker push ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG }}
 
-      # Deploy to Azure App Service
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_BACK_WEBAPP_NAME }}
-          slot-name: production
-          images: ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/flask-api-image:latest
+          resource-group-name: ${{ secrets.AZURE_BACK_RESOURCE_GROUP }}
+          subscription-id: ${{ secrets.AZURE_BACK_SUBSCRIPTION_ID }}
+          images: ${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_URL }}/${{ secrets.AZURE_BACK_IMAGE_NAME }}:${{ secrets.AZURE_BACK_IMAGE_TAG }}
