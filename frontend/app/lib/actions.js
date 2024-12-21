@@ -10,6 +10,7 @@ export async function authenticate(prevState, formData) {
   try {
     let sign = await signIn('credentials', formData);
     console.log({ dd: formData.get('callbackUrl') });
+    return { loggedIn: true };
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;
@@ -136,9 +137,12 @@ export async function loginWithGoogle(gcback) {
       const cookieStore = await cookies();
       await cookieStore.set('token', response.jwt_access_token);
       await cookieStore.set('role', 'customer');
+      return redirect('/signUp/' + response.jwt_access_token);
     }
   } catch (error) {
-    // return { error };
+    if (isRedirectError(error)) {
+      throw error;
+    }
   }
 }
 

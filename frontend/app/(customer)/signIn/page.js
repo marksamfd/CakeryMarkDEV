@@ -22,28 +22,16 @@ import Link from 'next/link';
  *
  * @returns {JSX.Element} The sign in form component.
  */
-export default function SignIn({ providers }) {
+export default function SignIn() {
   const searchParams = useSearchParams();
   console.log(searchParams?.get('callbackUrl') || '');
   const callbackUrl = searchParams?.get('callbackUrl')
     ? new URL(searchParams?.get('callbackUrl')).pathname
     : '';
-
-  const googleStyle = {
-    width: '500px',
-    height: '60px',
-    marginBottom: '30px',
-    backgroundColor: 'white',
-    color: 'black',
-    padding: '10px 20px',
-    border: '1px solid black',
-    borderRadius: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '20px',
-    gap: '10px',
-  };
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined,
+  );
   useEffect(() => {
     if (searchParams)
       cookieStore
@@ -61,7 +49,7 @@ export default function SignIn({ providers }) {
             ) {
               redirect(callbackUrl);
             } else {
-              // redirect('/');
+              redirect('/');
             }
           }
         })
@@ -82,12 +70,10 @@ export default function SignIn({ providers }) {
             }
           }
         });
-  });
-  const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
-    undefined,
-  );
-  console.log({ providers });
+  }, [errorMessage]);
+
+  if (errorMessage?.loggedIn) redirect('../');
+  console.log(errorMessage?.loggedIn);
   return (
     <section className="checkout spad">
       <div className="container">
