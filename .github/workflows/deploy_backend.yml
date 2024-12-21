@@ -5,6 +5,10 @@ on:
     branches:
       - Development
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -21,6 +25,7 @@ jobs:
           client-id: "6cef0901-0ae1-4413-9004-491ad43e9e7d"
           tenant-id: "bded4dcc-cc45-4b9a-bda4-b1430f6c7f6f"
           subscription-id: "adbc02d4-9ebd-4feb-b958-2d1b9c1130a2"
+          auth-type: SERVICE_PRINCIPAL
 
       # ✅ Step 3: Azure Container Registry Login
       - name: Log in to Azure Container Registry
