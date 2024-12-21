@@ -1,29 +1,27 @@
+'use client';
+import { resetPassswordForm } from '@/app/lib/actions';
 import Button from '../../components/button';
 import CheckoutInputField from '../../components/checkoutInput';
 import Title from '../../components/title';
+import { useParams } from 'next/navigation';
+import { useActionState } from 'react';
 
-async function resetPassword({ params }) {
-  /*  async function resetPassswordForm(fd) {
-    'use server';
-    const order = await (
-      await fetch(`${process.env.backend}/user/baker/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      })
-    ).json();
-  } */
+function resetPassword() {
+  const token = useParams().token;
+
+  const [state, formAction, pending] = useActionState(resetPassswordForm);
+
   return (
     <div className="container">
       <Title>Reset your Password</Title>
-      <from action={resetPassswordForm} className="d-flex flex-column">
+      <h2>{state}</h2>
+      <from action={formAction} className="d-flex flex-column">
         <CheckoutInputField name={'password'} label={'Password'} />
         <CheckoutInputField
           name={'confirmPassword'}
           label={'Confirm Password'}
         />
+        <input type="hidden" defaultValue={token} />
         <Button type={'submit'} classNameProp={'w-100'}>
           Submit
         </Button>

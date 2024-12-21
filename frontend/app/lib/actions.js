@@ -141,3 +141,26 @@ export async function loginWithGoogle(gcback) {
     // return { error };
   }
 }
+
+export async function resetPassswordForm(fd) {
+  const req = await fetch(
+    `${process.env.backend}/cakery/user/customer/ResetPassword`,
+    {
+      headers: {
+        Authorization: `Bearer ${fd.get('token')}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        newpassword: fd.get('password'),
+        newpasswordconfirm: fd.get('confirmPassword'),
+      }),
+    },
+  );
+  const resJson = await req.json();
+  if (req.ok) {
+    return { edited: true };
+  } else {
+    return { message: resJson.message };
+  }
+}
