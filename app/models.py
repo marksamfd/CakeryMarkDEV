@@ -54,6 +54,7 @@ class CustomerUser(db.Model):
     phonenum = db.Column(db.String(15))
     addressgooglemapurl = db.Column(db.Text)
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
+    fcm_token = db.Column(db.String(255))
 
     # Relationships
     carts = db.relationship(
