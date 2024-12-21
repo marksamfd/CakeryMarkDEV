@@ -88,7 +88,7 @@ export default function ShopDetails() {
       });
     console.log(newRating);
   };
-
+  console.log(product);
   if (loading) return <p>Loading product details...</p>;
   if (!product) return <p>No product details found.</p>;
 

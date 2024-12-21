@@ -8,22 +8,47 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 export async function authenticate(prevState, formData) {
   try {
-    let sign = await signIn('credentials', formData);
-    console.log({ dd: formData.get('callbackUrl') });
-    return { loggedIn: true };
+    // let sign = await signIn('credentials', {
+    //   email: formData.get('email'),
+    //   password: formData.get('password'),
+    //   redirect: false,
+    // });
+    // console.log({ dd: formData.get('callbackUrl') });
+    console.log(formData.get('email'));
+    const parsedCredentials = z.object({
+      email: z.string().email(),
+      password: z.string().min(6),
+    });
+    const info = {
+      email: formData.get('email'),
+      password: formData.get('password'),
+    };
+    const result = parsedCredentials.safeParse(info);
+    console.log(result);
+    if (result.success) {
+      const { email, password } = info;
+      console.log({ email, password });
+      const user = await fetch(`${process.env.backend}/cakery/user/SignIn`, {
+        body: JSON.stringify({ email, password }),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      });
+      const res = await user.json();
+      console.error(res);
+      if (res.status !== 'success') return 'Invalid Credentials';
+      const cookieStore = await cookies();
+      await cookieStore.set('token', res.access_token);
+      await cookieStore.set('role', res.role);
+      await cookieStore.set('name', res?.firstname);
+      return { loggedIn: true };
+    } else {
+      return 'Check the Input';
+    }
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-    if (error instanceof AuthError) {
-      console.error(error);
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
+    console.error(error);
   }
 }
 export async function signUp(prevState, formData) {
@@ -45,8 +70,8 @@ export async function signUp(prevState, formData) {
     addressgooglemapurl: z.string().url(),
   });
 
-  parsedCredentials.safeParse(body);
-  if (parsedCredentials.success) {
+  const result = parsedCredentials.safeParse(body);
+  if (result.success) {
     if (body.password !== formData.get('confirmPassword')) {
       return { error: 'Passwords does not Match', prevState };
     }
@@ -59,14 +84,13 @@ export async function signUp(prevState, formData) {
         },
         method: 'post',
       });
-      if (!register.ok)
-        return { error: 'an Error occured in the registeration' };
-      else return { registered: true };
+      if (register.ok) return { registered: true };
+      else return { error: 'an Error occured in the registeration' };
     } catch (error) {
       // return { error };
     }
   } else {
-    return { error: 'Check your inoput' };
+    return { error: JSON.stringify(result) };
   }
   redirect('/signIn');
 }
@@ -131,7 +155,7 @@ export async function loginWithGoogle(gcback) {
         method: 'post',
       },
     );
-    if (!register.ok) return { error: 'an Error occured in the registeration' };
+    if (!register.ok) return redirect('/signIn?googleError=1');
     else {
       let response = await register.json();
       const cookieStore = await cookies();

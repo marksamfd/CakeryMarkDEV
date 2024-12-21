@@ -1,5 +1,6 @@
-.env 
+.env
 test_database.py
+*.env
 app/.env
 # Byte-compiled / optimized / DLL files
 # __pycache__/

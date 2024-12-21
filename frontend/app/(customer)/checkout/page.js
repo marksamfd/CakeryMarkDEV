@@ -1,3 +1,4 @@
+'use client';
 import CheckoutInputField from '../components/checkoutInput';
 import CheckoutSummary from '../components/checkoutSummary';
 /**

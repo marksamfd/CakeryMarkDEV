@@ -1,5 +1,6 @@
-# How to test
-## - open `http://127.0.0.1:5000/apidocs`
+# How to test the API documentation live, with ability to have full interaction with it
+
+## - open `https://cakerybackendapp.azurewebsites.net/apidocs/`
 ## - Get your token you will test with
 ### - go to 'Authorize' icon up on left in the APi documentation
 ### - add token in the following format: 'Bearer eyJhbGciOiJIUzI1NiI....'
