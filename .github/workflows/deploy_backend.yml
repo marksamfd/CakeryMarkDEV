@@ -1,31 +1,46 @@
-trigger:
-  - main
+# .github/workflows/deploy.yml
 
-pool:
-  vmImage: 'windows-latest'
+name: CI/CD Pipeline
 
-variables:
-  vmImageName: 'windows-latest'
-  imageRepository: 'flask-api-image'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  dockerRegistryServiceConnection: 'cakeryregistry-service-connection'
-  tag: 'latest'
+on:
+  push:
+    branches:
+      - main  # Adjust the branch name as needed
 
-stages:
-  - stage: Build
-    displayName: Build and Push Stage
-    jobs:
-      - job: Build
-        displayName: Build Job
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - task: Docker@2
-            displayName: Build and Push an Image to Azure Container Registry
-            inputs:
-              command: buildAndPush
-              repository: $(imageRepository)
-              dockerfile: $(dockerfilePath)
-              containerRegistry: $(dockerRegistryServiceConnection)
-              tags: |
-                $(tag)
+env:
+  subscription: adbc02d4-9ebd-4feb-b958-2d1b9c1130a2
+  tenant: bded4dcc-cc45-4b9a-bda4-b1430f6c7f6f
+  clientId: 6cef0901-0ae1-4413-9004-491ad43e9e7d
+  subscriptionId: adbc02d4-9ebd-4feb-b958-2d1b9c1130a2
+  tenantId: bded4dcc-cc45-4b9a-bda4-b1430f6c7f6f
+  activeDirectoryEndpointUrl: https://login.microsoftonline.com
+  resourceManagerEndpointUrl: https://management.azure.com/
+  activeDirectoryGraphResourceId: https://graph.windows.net/
+  sqlManagementEndpointUrl: https://management.core.windows.net:8443/
+  galleryEndpointUrl: https://gallery.azure.com/
+  managementEndpointUrl: https://management.core.windows.net/
+
+jobs:
+  docker-login:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Docker Login
+        run: echo "${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD }}" | docker login cakeryregistry.azurecr.io -u cakeryregistry --password-stdin
+
+  deploy:
+    needs: docker-login
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure CLI Setup
+        uses: azure/cli@v1
+
+      - name: Set Azure Subscription
+        run: az account set --subscription ${{ env.subscription }}
+
+      - name: List Role Assignments
+        run: az role assignment list --assignee ${{ env.clientId }} --output table
+
+      # Add additional deployment steps here
