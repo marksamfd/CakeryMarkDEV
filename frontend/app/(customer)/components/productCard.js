@@ -61,7 +61,7 @@ export const AddToCart = async (productid, quantity = 1) => {
 const ProductCard = ({
   name,
   productid,
-  image ,
+  image,
   category,
   price,
   rating = 5,
@@ -71,10 +71,11 @@ const ProductCard = ({
       <div className="product__item">
         <div className="product__item__pic">
           <Image
-          // layout="responsive"
+            // layout="responsive"
             // loader={}
+
             src={image}
-            alt={image}
+            alt={name}
             width={250}
             height={220}
             className="product-img"

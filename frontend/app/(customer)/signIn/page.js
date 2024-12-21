@@ -24,7 +24,6 @@ import Link from 'next/link';
  */
 export default function SignIn() {
   const searchParams = useSearchParams();
-  console.log(searchParams?.get('callbackUrl') || '');
   const callbackUrl = searchParams?.get('callbackUrl')
     ? new URL(searchParams?.get('callbackUrl')).pathname
     : '';

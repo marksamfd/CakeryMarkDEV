@@ -17,7 +17,6 @@ export const authConfig = {
       const token = cookieStore.get('token');
       const isLoggedIn = token;
 
-      console.log({ role, token });
       if (isUserPage(nextUrl.pathname)) {
         if (isLoggedIn && role.value === 'customer') return true;
         return false; // Redirect unauthenticated users to login page

@@ -8,7 +8,11 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 export async function authenticate(prevState, formData) {
   try {
-    let sign = await signIn('credentials', formData);
+    let sign = await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirect: false,
+    });
     console.log({ dd: formData.get('callbackUrl') });
     return { loggedIn: true };
   } catch (error) {
