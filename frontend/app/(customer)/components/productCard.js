@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import product3 from '../../img/shop/product3.jpg';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -62,7 +61,7 @@ export const AddToCart = async (productid, quantity = 1) => {
 const ProductCard = ({
   name,
   productid,
-  image = product3,
+  image ,
   category,
   price,
   rating = 5,
@@ -72,11 +71,12 @@ const ProductCard = ({
       <div className="product__item">
         <div className="product__item__pic">
           <Image
+          // layout="responsive"
             // loader={}
             src={image}
-            alt={name}
-            width={300}
-            height={300}
+            alt={image}
+            width={250}
+            height={220}
             className="product-img"
           />
           <div className="product__label">
