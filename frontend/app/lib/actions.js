@@ -45,8 +45,8 @@ export async function signUp(prevState, formData) {
     addressgooglemapurl: z.string().url(),
   });
 
-  parsedCredentials.safeParse(body);
-  if (parsedCredentials.success) {
+  const result = parsedCredentials.safeParse(body);
+  if (result.success) {
     if (body.password !== formData.get('confirmPassword')) {
       return { error: 'Passwords does not Match', prevState };
     }
@@ -59,14 +59,13 @@ export async function signUp(prevState, formData) {
         },
         method: 'post',
       });
-      if (!register.ok)
-        return { error: 'an Error occured in the registeration' };
-      else return { registered: true };
+      if (register.ok) return { registered: true };
+      else return { error: 'an Error occured in the registeration' };
     } catch (error) {
       // return { error };
     }
   } else {
-    return { error: 'Check your inoput' };
+    return { error: JSON.stringify(result) };
   }
   redirect('/signIn');
 }
@@ -143,5 +142,28 @@ export async function loginWithGoogle(gcback) {
     if (isRedirectError(error)) {
       throw error;
     }
+  }
+}
+
+export async function resetPassswordForm(fd) {
+  const req = await fetch(
+    `${process.env.backend}/cakery/user/customer/ResetPassword`,
+    {
+      headers: {
+        Authorization: `Bearer ${fd.get('token')}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        newpassword: fd.get('password'),
+        newpasswordconfirm: fd.get('confirmPassword'),
+      }),
+    },
+  );
+  const resJson = await req.json();
+  if (req.ok) {
+    return { edited: true };
+  } else {
+    return { message: resJson.message };
   }
 }

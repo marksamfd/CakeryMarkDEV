@@ -164,12 +164,14 @@ function Page() {
             <div className="col flex-wrap" style={styles.selectorContainer}>
               {allShapes?.map((shape) => {
                 return (
-                  <div className="form-check form-check-inline">
+                  <div
+                    key={`shape-${shape.item}`}
+                    className="form-check form-check-inline"
+                  >
                     <input
                       className="form-check-input"
                       type="radio"
                       name="cakeShape"
-                      key={`shape-${shape.item}`}
                       id={`shape-${shape.item}`}
                       value={shape.item}
                       checked={cakeShape === shape.item}
@@ -194,12 +196,14 @@ function Page() {
             <div className="col" style={styles.selectorContainer}>
               {allSizes?.map((size) => {
                 return (
-                  <div className="form-check form-check-inline">
+                  <div
+                    key={`size-${size.item}`}
+                    className="form-check form-check-inline"
+                  >
                     <input
                       className="form-check-input"
                       type="radio"
                       name="cakeSizes"
-                      key={`size-${size.item}`}
                       id={`size-${size.item}`}
                       value={size.item}
                       checked={cakeSize === size.item}
@@ -224,7 +228,10 @@ function Page() {
             <div className="col flex-wrap" style={styles.selectorContainer}>
               {allFlavours?.map((flavour) => {
                 return (
-                  <div className="form-check form-check-inline">
+                  <div
+                    key={`flavour-${flavour.item}`}
+                    className="form-check form-check-inline"
+                  >
                     <input
                       className="form-check-input"
                       type="radio"

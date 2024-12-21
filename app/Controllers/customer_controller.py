@@ -79,7 +79,7 @@ def list_products():
 @customer_controller.route(
     "/cakery/user/customer/Product/<int:product_id>", methods=["GET"]
 )  # (Product Detail Page)
-@token_required(roles=["customer"])
+# @token_required(roles=["customer"])
 def get_product_details(product_id):
     """
     Get Specific Product Details
@@ -809,7 +809,68 @@ def view_orders():
 @customer_controller.route("/cakery/user/customer/CheckUser", methods=["GET"])
 @token_required(roles=["customer"])
 def get_customer():
-
+    """
+    Get Customer
+    ---
+    tags:
+      - Customer
+    summary: Retrieve information about the authenticated customer
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Customer information retrieved successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User with firstname John is present in the database with completed data."
+            status:
+              type: string
+              example: "success"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "No user found with email: example@example.com"
+            status:
+              type: string
+              example: "error"
+      422:
+        description: User's data is incomplete
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User's data is incomplete."
+            status:
+              type: string
+              example: "error"
+            missing_fields:
+              type: array
+              items:
+                type: string
+                example: ["firstname", "lastname"]
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while editing user data."
+            error:
+              type: string
+              example: "Detailed error message."
+            status:
+              type: string
+              example: "error"
+    """
     try:
         customer_email = request.user
         response, status_code = customer_service.get_user(customer_email)
@@ -829,7 +890,67 @@ def get_customer():
 @customer_controller.route("/cakery/user/customer/CheckData", methods=["GET"])
 @token_required(roles=["customer"])
 def get_customer_data():
-
+    """
+    Get Customer Data
+    ---
+    tags:
+      - Customer
+    summary: Retrieve detailed personal data of the authenticated customer
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Customer data retrieved successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User data retrieved successfully"
+            status:
+              type: string
+              example: "success"
+            data:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: "John"
+                lastname:
+                  type: string
+                  example: "Doe"
+                phonenum:
+                  type: string
+                  example: "+123456789"
+                addressgooglemapurl:
+                  type: string
+                  example: "https://maps.google.com/?q=123+Main+St"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User not found"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while editing user data."
+            error:
+              type: string
+              example: "Detailed error message."
+            status:
+              type: string
+              example: "error"
+    """
     try:
         customer_email = request.user
         response, status_code = customer_service.get_data(customer_email)
@@ -945,29 +1066,213 @@ def edit_customer_data():
 """=================================== Users | Reset Password ===================================="""
 
 
-@customer_controller.route(
-    "/cakery/user/customer/ResetPassword/email", methods=["POST"]
-)
+@customer_controller.route("/cakery/user/customer/ResetPassword/email", methods=["POST"])
 def forget_pass_email():
+    """
+    Forget Password - Send Email
+    ---
+    tags:
+      - Customer
+    summary: Sends a password reset email to the user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "user@example.com"
+    responses:
+      200:
+        description: Password reset email sent successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Password reset email sent successfully"
+            status:
+              type: string
+              example: "success"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User not found"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Failed to send email"
+            error:
+              type: string
+              example: "Detailed error message"
+            status:
+              type: string
+              example: "error"
+    """
     data = request.get_json()
-    response, status_code = customer_service.send_email(data)
+    response, status_code = customer_service.check_user(data)  # Call check_user to send reset email
     return jsonify(response), status_code
 
 
-@customer_controller.route(
-    "/cakery/user/customer/ResetPassword/CheckToken", methods=["GET"]
-)
-def forget_pass__check_token():
+@customer_controller.route("/cakery/user/customer/ResetPassword/CheckToken", methods=["GET"])
+def forget_pass_check_token():
+    """
+    Forget Password - Check Token
+    ---
+    tags:
+      - Customer
+    summary: Verify the validity of a password reset token
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "reset-token"
+    responses:
+      200:
+        description: Token is valid
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Token is valid"
+            status:
+              type: string
+              example: "success"
+      400:
+        description: Invalid token
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Invalid token"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "An error occurred while verifying token"
+            error:
+              type: string
+              example: "Detailed error message"
+            status:
+              type: string
+              example: "error"
+    """
     data = request.get_json()
     token = data.get("token")
-    response, status_code = customer_service.verify_token(token)
-    return jsonify(response), status_code
+    email = customer_service.verify_reset_token(token)  # Call verify_reset_token to check the token
+    if email:
+        return jsonify({
+            "message": "Token is valid",
+            "status": "success"
+        }), 200
+    else:
+        return jsonify({
+            "message": "Invalid token",
+            "status": "error"
+        }), 400
 
 
 @customer_controller.route("/cakery/user/customer/ResetPassword", methods=["PUT"])
 def forget_password():
+    """
+    Forget Password - Reset Password
+    ---
+    tags:
+      - Customer
+    summary: Reset the user's password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "user@example.com"
+              newpassword:
+                type: string
+                example: "NewSecurePassword123"
+              newpasswordconfirm:
+                type: string
+                example: "NewSecurePassword123"
+    responses:
+      200:
+        description: Password changed successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Password changed successfully"
+            status:
+              type: string
+              example: "success"
+      400:
+        description: Bad request (e.g., passwords do not match)
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Passwords do not match"
+            status:
+              type: string
+              example: "error"
+      404:
+        description: User not found
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User not found"
+            status:
+              type: string
+              example: "error"
+      500:
+        description: Internal Server Error
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Failed to reset password"
+            error:
+              type: string
+              example: "Detailed error message"
+            status:
+              type: string
+              example: "error"
+    """
     data = request.get_json()
-    response, status_code = customer_service.new_password(data)
+    response, status_code = customer_service.change_password(data)  # Call change_password to reset the password
     return jsonify(response), status_code
 
 
@@ -1159,7 +1464,100 @@ def get_customer_name():
 @customer_controller.route("/cakery/user/customer/Review", methods=["POST"])
 @token_required(roles=["customer"])
 def customer_review():
-
+    """
+    Submit a Review for a Product
+    ---
+    tags:
+      - Customer
+    summary: Allows a customer to submit a review with a rating for a product
+    description: This endpoint allows customers to submit a review for a product. If the customer has already reviewed the product, the review is updated.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              rating:
+                type: integer
+                description: The rating for the product (between 1 and 5)
+                example: 4
+              productid:
+                type: string
+                description: The ID of the product being reviewed
+                example: "prod12345"
+    responses:
+      200:
+        description: Review updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User rating updated successfully"
+                status:
+                  type: string
+                  example: "success"
+      201:
+        description: Review added successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User rating added successfully"
+                status:
+                  type: string
+                  example: "success"
+      400:
+        description: Bad request (e.g., invalid rating or missing parameters)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Rating must be between 1 and 5"
+                status:
+                  type: string
+                  example: "error"
+      404:
+        description: Customer or product not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Customer does not exist"
+                status:
+                  type: string
+                  example: "error"
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "An error occurred"
+                error:
+                  type: string
+                  example: "Detailed error message"
+                status:
+                  type: string
+                  example: "error"
+    security:
+      - BearerAuth: []
+    """
     try:
         customer_email = request.user
         data = request.get_json()

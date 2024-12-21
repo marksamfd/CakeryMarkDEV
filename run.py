@@ -62,7 +62,7 @@ app.register_blueprint(google_oauth)
 
 # Initialize Swagger
 swagger = Swagger(app, template=swagger_template)
-
+#mkk
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

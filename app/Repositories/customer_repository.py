@@ -17,7 +17,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 from dotenv import load_dotenv
+from argon2 import PasswordHasher
 
+
+ph = PasswordHasher()
 load_dotenv()
 
 
@@ -30,6 +33,9 @@ class CustomerRepository:
         except Exception as e:
             print(f"(repo) can't get all products: {e}")
             return []
+    
+    def hash_password(self, password):
+        return ph.hash(password)
 
     # ==============================================================================
 

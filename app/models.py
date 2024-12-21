@@ -187,6 +187,7 @@ class Inventory(db.Model):
     price = db.Column(db.Numeric(10, 2))
     category = db.Column(db.String(255))
     createdat = db.Column(db.DateTime, default=db.func.current_timestamp())
+    imgpath = db.Column(db.String(255))
 
     reviews = db.relationship(
         "Review", backref="inventory", cascade="all, delete-orphan"
@@ -200,6 +201,7 @@ class Inventory(db.Model):
             "price": self.price,
             "category": self.category,
             "createdat": self.createdat.isoformat() if self.createdat else None,
+            "image": self.imgpath,
         }
 
 

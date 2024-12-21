@@ -15,22 +15,23 @@ export const authConfig = {
       const cookieStore = await cookies();
       const role = cookieStore.get('role');
       const token = cookieStore.get('token');
-      const isLoggedIn = token !== undefined;
+      const isLoggedIn = token;
 
+      console.log({ role, token });
       if (isUserPage(nextUrl.pathname)) {
-        if (isLoggedIn && role === 'customer') return true;
+        if (isLoggedIn && role.value === 'customer') return true;
         return false; // Redirect unauthenticated users to login page
       }
       if (isBakerPage(nextUrl.pathname)) {
-        if (isLoggedIn && role === 'baker') return true;
+        if (isLoggedIn && role.value === 'baker') return true;
         return false; // Redirect unauthenticated users to login page
       }
       if (isAdminPage(nextUrl.pathname)) {
-        if (isLoggedIn && role === 'admin') return true;
+        if (isLoggedIn && role.value === 'admin') return true;
         return false; // Redirect unauthenticated users to login page
       }
       if (isDeliveryPage(nextUrl.pathname)) {
-        if (isLoggedIn && role === 'delivery') return true;
+        if (isLoggedIn && role.value === 'delivery') return true;
         return false; // Redirect unauthenticated users to login page
       }
       return true;

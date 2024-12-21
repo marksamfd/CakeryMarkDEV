@@ -23,13 +23,13 @@ function GoogleBtn({ googleCallback }) {
     }
   }, []);
   return (
-    <div className="w-100">
+    <>
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="beforeInteractive"
       />
       <div id="google-signin-button" className="w-100"></div>
-    </div>
+    </>
   );
 }
 
