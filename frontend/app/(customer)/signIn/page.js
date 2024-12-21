@@ -12,6 +12,7 @@ import {
   isDeliveryPage,
   isUserPage,
 } from '@/authUtils';
+import Link from 'next/link';
 
 /**
  * Renders a sign in form with email and password fields, and a button to
@@ -134,11 +135,11 @@ export default function SignIn({ providers }) {
                       textTransform: 'uppercase',
                     }}
                   >
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                   </p>
-                  <a href="/signUp" className="text-primary ">
+                  <Link href="/signUp" className="text-primary ">
                     SIGN UP
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

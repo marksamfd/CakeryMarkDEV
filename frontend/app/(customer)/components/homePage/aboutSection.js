@@ -17,9 +17,9 @@ function AboutSection() {
                 <h2>Cakes and bakes from the house of Queens!</h2>
               </div>
               <p>
-                The "Cake Shop" is a Jordanian Brand that started as a small
-                family business. The owners are Dr. Iyad Sultan and Dr. Sereen
-                Sharabati, supported by a staff of 80 employees.
+                The &quot;Cake Shop&quot; is a Jordanian Brand that started as a
+                small family business. The owners are Dr. Iyad Sultan and Dr.
+                Sereen Sharabati, supported by a staff of 80 employees.
               </p>
             </div>
           </div>
