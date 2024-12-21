@@ -2,7 +2,6 @@
 import Image from 'next/image';
 import { AddToCart } from './productCard';
 import Rating from 'react-rating';
-
 import { useState } from 'react';
 const starStyle = { fontSize: 50, color: '#ffd700' };
 
@@ -45,15 +44,16 @@ export default function ProductDetails({
                   <a href={image} className="your-popup-class">
                     <Image
                       className="big_img"
+                      layout="responsive"
                       width={100}
                       height={300}
-                      src={image}
+                      src={product.image}
                       alt="Product Image"
                     />
                   </a>
                 </div>
                 <div className="product__details__thumb">
-                  {[image, image, image].map(
+                  {[product.image, product.image, product.image].map(
                     (image, index) => (
                       <div
                         key={index}
@@ -62,7 +62,8 @@ export default function ProductDetails({
                       >
                         <a href="#" className="your-popup-class">
                           <Image
-                            src={image}
+                            src={product.image }
+                            layout='responsive'
                             width={100}
                             height={100}
                             alt={`Thumbnail ${index + 1}`}

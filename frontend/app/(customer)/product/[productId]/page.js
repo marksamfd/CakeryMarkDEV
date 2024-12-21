@@ -16,7 +16,7 @@ import Breadcrumb from '../../components/breadcrumb';
 export default function ShopDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState();
+  const [image, setimage] = useState();
   const [quantity, setQuantity] = useState(1);
   const [stars, setStars] = useState(1);
   const productId = window.location.pathname.split('/')[2];
@@ -44,7 +44,7 @@ export default function ShopDetails() {
   }, [productId]);
 
   const handleThumbnailClick = (image) => {
-    setSelectedImage(image);
+    setimage(image);
   };
 
   /**
@@ -97,13 +97,14 @@ export default function ShopDetails() {
       <Breadcrumb title="Product Details" />
       <ProductDetails
         product={product}
-        selectedImage={selectedImage}
+        image={image}
         handleThumbnailClick={handleThumbnailClick}
         quantity={quantity}
         handleQuantityChange={handleQuantityChange}
         rating={stars}
         handleRatingChange={ratingChanged}
       />
+      <br />  
     </>
   );
 }

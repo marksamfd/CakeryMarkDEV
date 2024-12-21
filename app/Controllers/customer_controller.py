@@ -79,7 +79,7 @@ def list_products():
 @customer_controller.route(
     "/cakery/user/customer/Product/<int:product_id>", methods=["GET"]
 )  # (Product Detail Page)
-@token_required(roles=["customer"])
+# @token_required(roles=["customer"])
 def get_product_details(product_id):
     """
     Get Specific Product Details
