@@ -130,7 +130,7 @@ export async function loginWithGoogle(gcback) {
         method: 'post',
       },
     );
-    if (!register.ok) return { error: 'an Error occured in the registeration' };
+    if (!register.ok) return redirect('/signIn?googleError=1');
     else {
       let response = await register.json();
       const cookieStore = await cookies();
