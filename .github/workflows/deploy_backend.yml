@@ -1,13 +1,10 @@
-# .github/workflows/deploy.yml
+# azure-pipelines.yml
 
-name: CI/CD Pipeline
+trigger:
+  - main  # Adjust the branch name as needed
 
-on:
-  push:
-    branches:
-      - main  # Adjust the branch name as needed
-
-env:
+variables:
+  # Hardcoded Values
   subscription: adbc02d4-9ebd-4feb-b958-2d1b9c1130a2
   tenant: bded4dcc-cc45-4b9a-bda4-b1430f6c7f6f
   clientId: 6cef0901-0ae1-4413-9004-491ad43e9e7d
@@ -20,27 +17,33 @@ env:
   galleryEndpointUrl: https://gallery.azure.com/
   managementEndpointUrl: https://management.core.windows.net/
 
-jobs:
-  docker-login:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+stages:
+  - stage: Setup
+    displayName: 'Setup Environment'
+    jobs:
+      - job: DockerLogin
+        displayName: 'Docker Login to Azure Container Registry'
+        steps:
+          - task: Bash@3
+            displayName: 'Docker Login'
+            inputs:
+              targetType: 'inline'
+              script: |
+                echo "${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD }}" | docker login cakeryregistry.azurecr.io -u cakeryregistry --password-stdin
 
-      - name: Docker Login
-        run: echo "${{ secrets.AZURE_BACK_DOCKER_REGISTRY_SERVER_PASSWORD }}" | docker login cakeryregistry.azurecr.io -u cakeryregistry --password-stdin
-
-  deploy:
-    needs: docker-login
-    runs-on: ubuntu-latest
-    steps:
-      - name: Azure CLI Setup
-        uses: azure/cli@v1
-
-      - name: Set Azure Subscription
-        run: az account set --subscription ${{ env.subscription }}
-
-      - name: List Role Assignments
-        run: az role assignment list --assignee ${{ env.clientId }} --output table
-
-      # Add additional deployment steps here
+  - stage: Deploy
+    displayName: 'Deploy Application'
+    dependsOn: Setup
+    jobs:
+      - job: DeployJob
+        displayName: 'Deploy to Azure'
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'YourAzureServiceConnection'  # Replace with your Azure service connection name
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az account set --subscription $(subscription)
+                az role assignment list --assignee $(clientId) --output table
+                # Add additional deployment commands here
