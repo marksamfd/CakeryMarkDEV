@@ -4,6 +4,7 @@ import logo from '@/img/logo.png';
 import heart from '@/img/icon/heart.png';
 import cart from '@/img/icon/cart.png';
 import search from '@/img/icon/search.png';
+import bell from '@/img/icon/bell.svg';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -48,6 +49,19 @@ function HeaderNav({ itemsInCart = 0, sumInCart, name, token }) {
                   alt=""
                 />{' '}
                 <span>{itemsInCart}</span>
+              </Link>
+            </div>
+          </div>
+             <div className="offcanvas__cart">
+            <div className="offcanvas__cart__item">
+              <Link href="/notifications">
+                <Image
+                  width={iconSize - 2}
+                  height={iconSize + 2}
+                  src={bell}
+                  alt=""
+                />{' '}
+                <span></span>
               </Link>
             </div>
           </div>
@@ -102,6 +116,14 @@ function HeaderNav({ itemsInCart = 0, sumInCart, name, token }) {
                   </div>
                   <div className="header__top__right">
                     <div className="header__top__right__cart">
+                    <Link href="/notifications">
+                          <Image
+                           width={iconSize - 2}
+                             height={iconSize + 2}
+                            src={bell}
+                             alt=""
+                         />
+                      </Link>
                       <Link href="/cart">
                         <Image
                           width={iconSize - 2}
@@ -114,6 +136,7 @@ function HeaderNav({ itemsInCart = 0, sumInCart, name, token }) {
                       <div className="cart__price">
                         Cart: <span>${sumInCart}</span>
                       </div>
+                      
                     </div>
                   </div>
                 </div>
