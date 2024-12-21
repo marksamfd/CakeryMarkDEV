@@ -18,7 +18,7 @@ export default async function Page({ params }) {
     <>
       <h1>
         <div className="d-flex flex-row">
-          <span>{order.customer.name}'s Order</span>
+          <span>{order.customer.name}&apos;s Order</span>
           <select className="nice-select ">
             <option value={'preparing'} selected>
               Preparing
@@ -34,14 +34,14 @@ export default async function Page({ params }) {
             <th scope="col">Qty</th>
           </tr>
           {order.items.map((item, i) => {
-            <tr>
+            <tr key={`orderItem${i}`}>
               <td>{item.productName}</td>
               <td>{item.quantity}</td>
             </tr>;
           })}
-          {order?.customCake.map((cake, i) => {
+          {order?.customCake.map((cake, ci) => {
             return (
-              <tr key={'custom-' + i}>
+              <tr key={'custom-' + ci}>
                 <tr>
                   <td>{cake.cakeshape}</td>
                   <td>{cake.cakesize}</td>
@@ -50,7 +50,7 @@ export default async function Page({ params }) {
                 </tr>
                 {cake.layers.map((layer, i) => {
                   return (
-                    <tr>
+                    <tr key={`layer${ci}${i}`}>
                       <td>{'layer ' + i + 1}</td>
                       <td>{layer.innerFillings}</td>
                       <td>{layer.innerToppings}</td>

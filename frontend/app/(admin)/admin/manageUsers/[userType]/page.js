@@ -3,6 +3,7 @@ import Title from '@/app/(customer)/components/title';
 import { cookies } from 'next/headers';
 import DeleteButton from '@/app/(customer)/components/deleteButton';
 import Link from 'next/link';
+import Image from 'next/image';
 
 async function ManageUsers({ params }) {
   const { userType } = params;

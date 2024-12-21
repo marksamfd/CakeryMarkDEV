@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 /**
@@ -25,7 +26,7 @@ function Breadcrumb({ title }) {
           </div>
           <div className="col-lg-6 col-md-6 col-sm-6">
             <div className="breadcrumb__links">
-              <a href="/">Home</a>
+              <Link href="/">Home</Link>
               <span>{title}</span>
             </div>
           </div>
