@@ -8,6 +8,7 @@ import ProductSection from './components/homePage/productSection';
 import ClassSection from './components/homePage/classSection';
 import TeamSection from './components/homePage/teamSection';
 import TestmonialSection from './components/homePage/testmonialSection';
+import useFcmToken from '@/utils/hooks/useFcmToken';
 
 export default function Home() {
   const testimonialsFetched = [
@@ -30,6 +31,9 @@ export default function Home() {
       rating: 5,
     },
   ];
+  const { fcmToken, notificationPermissionStatus } = useFcmToken();
+  // Use the token as needed
+  fcmToken && console.log('FCM token: ', fcmToken);
   return (
     <>
       <HeroSection />
