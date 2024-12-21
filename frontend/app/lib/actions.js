@@ -8,26 +8,47 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 export async function authenticate(prevState, formData) {
   try {
-    let sign = await signIn('credentials', {
+    // let sign = await signIn('credentials', {
+    //   email: formData.get('email'),
+    //   password: formData.get('password'),
+    //   redirect: false,
+    // });
+    // console.log({ dd: formData.get('callbackUrl') });
+    console.log(formData.get('email'));
+    const parsedCredentials = z.object({
+      email: z.string().email(),
+      password: z.string().min(6),
+    });
+    const info = {
       email: formData.get('email'),
       password: formData.get('password'),
-      redirect: false,
-    });
-    console.log({ dd: formData.get('callbackUrl') });
-    return { loggedIn: true };
+    };
+    const result = parsedCredentials.safeParse(info);
+    console.log(result);
+    if (result.success) {
+      const { email, password } = info;
+      console.log({ email, password });
+      const user = await fetch(`${process.env.backend}/cakery/user/SignIn`, {
+        body: JSON.stringify({ email, password }),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      });
+      const res = await user.json();
+      console.error(res);
+      if (res.status !== 'success') return 'Invalid Credentials';
+      const cookieStore = await cookies();
+      await cookieStore.set('token', res.access_token);
+      await cookieStore.set('role', res.role);
+      await cookieStore.set('name', res?.firstname);
+      return { loggedIn: true };
+    } else {
+      return 'Check the Input';
+    }
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-    if (error instanceof AuthError) {
-      console.error(error);
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
+    console.error(error);
   }
 }
 export async function signUp(prevState, formData) {
