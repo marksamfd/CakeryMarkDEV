@@ -28,6 +28,8 @@ export default function SignIn() {
   const callbackUrl = searchParams?.get('callbackUrl')
     ? new URL(searchParams?.get('callbackUrl')).pathname
     : '';
+  const googleError = searchParams?.get('googleError');
+
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,
@@ -119,7 +121,9 @@ export default function SignIn() {
                   <div className="d-flex justify-items-center mx-auto mb-3">
                     <GoogleBtn googleCallback={loginWithGoogle} />
                   </div>
-                  {errorMessage}
+                  {errorMessage || googleError
+                    ? 'An error occured Sign in with Google, Try again Later or Sign up'
+                    : ''}
                   {/*   <button type="button" style={googleStyle}>
                     <Image width={20} height={20} src={googleIcon} alt="" />
                     Continue with Google {isPending}
