@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import baker1 from '../../../img/team/team-1.jpg';
 import baker2 from '../../../img/team/team-2.jpg';
 import baker3 from '../../../img/team/team-3.jpg';
@@ -13,12 +13,12 @@ import TeamMember from '../teamMember';
  * @return {ReactElement} The team section component.
  */
 function TeamSection() {
-  const bakers = [
+  const [bakers, setBakers] = useState([
     { bakerName: 'Randy Butler', positionBaker: 'Decorater', img: baker1 },
     { bakerName: 'Randy Butler', positionBaker: 'Decorater', img: baker2 },
     { bakerName: 'Randy Butler', positionBaker: 'Decorater', img: baker3 },
     { bakerName: 'Randy Butler', positionBaker: 'Decorater', img: baker4 },
-  ];
+  ]);
   return (
     <section className="team spad">
       <div className="container">

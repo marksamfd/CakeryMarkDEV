@@ -25,9 +25,9 @@ function SignUp() {
   const params = useParams();
 
   const callbackUrl = searchParams.get('callbackUrl') || '/';
-  const router = useRouter();
   const token = params.token;
-  console.log(token, router);
+
+  console.log(token ? 'editData' : 'register');
   let [state, formAction, isPending] = useActionState(
     token ? editData : register,
     {

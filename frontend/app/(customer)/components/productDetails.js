@@ -1,11 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { AddToCart } from './productCard';
-import productbig1 from '../../img/shop/details/productbig1.jpg';
-import productbig2 from '../../img/shop/details/productbig2.jpg';
 import Rating from 'react-rating';
-
-import productbig3 from '../../img/shop/details/productbig3.jpg';
 import { useState } from 'react';
 const starStyle = { fontSize: 50, color: '#ffd700' };
 
@@ -30,7 +26,7 @@ export const addBtn = {
  */
 export default function ProductDetails({
   product,
-  selectedImage,
+  image,
   handleThumbnailClick,
   quantity,
   handleQuantityChange,
@@ -45,18 +41,19 @@ export default function ProductDetails({
             <div className="col-lg-6">
               <div className="product__details__img">
                 <div className="product__details__big__img">
-                  <a href={selectedImage} className="your-popup-class">
+                  <a href={image} className="your-popup-class">
                     <Image
                       className="big_img"
+                      layout="responsive"
                       width={100}
                       height={300}
-                      src={selectedImage}
+                      src={product.image}
                       alt="Product Image"
                     />
                   </a>
                 </div>
                 <div className="product__details__thumb">
-                  {[productbig1, productbig2, productbig3].map(
+                  {[product.image, product.image, product.image].map(
                     (image, index) => (
                       <div
                         key={index}
@@ -65,7 +62,8 @@ export default function ProductDetails({
                       >
                         <a href="#" className="your-popup-class">
                           <Image
-                            src={image}
+                            src={product.image }
+                            layout='responsive'
                             width={100}
                             height={100}
                             alt={`Thumbnail ${index + 1}`}

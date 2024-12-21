@@ -12,6 +12,7 @@ import {
   isDeliveryPage,
   isUserPage,
 } from '@/authUtils';
+import Link from 'next/link';
 
 /**
  * Renders a sign in form with email and password fields, and a button to
@@ -21,28 +22,16 @@ import {
  *
  * @returns {JSX.Element} The sign in form component.
  */
-export default function SignIn({ providers }) {
+export default function SignIn() {
   const searchParams = useSearchParams();
   console.log(searchParams?.get('callbackUrl') || '');
   const callbackUrl = searchParams?.get('callbackUrl')
     ? new URL(searchParams?.get('callbackUrl')).pathname
     : '';
-
-  const googleStyle = {
-    width: '500px',
-    height: '60px',
-    marginBottom: '30px',
-    backgroundColor: 'white',
-    color: 'black',
-    padding: '10px 20px',
-    border: '1px solid black',
-    borderRadius: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '20px',
-    gap: '10px',
-  };
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined,
+  );
   useEffect(() => {
     if (searchParams)
       cookieStore
@@ -60,7 +49,7 @@ export default function SignIn({ providers }) {
             ) {
               redirect(callbackUrl);
             } else {
-              // redirect('/');
+              redirect('/');
             }
           }
         })
@@ -81,12 +70,10 @@ export default function SignIn({ providers }) {
             }
           }
         });
-  });
-  const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
-    undefined,
-  );
-  console.log({ providers });
+  }, [errorMessage]);
+
+  if (errorMessage?.loggedIn) redirect('../');
+  console.log(errorMessage?.loggedIn);
   return (
     <section className="checkout spad">
       <div className="container">
@@ -109,19 +96,29 @@ export default function SignIn({ providers }) {
                       name="password"
                       label="Password"
                     />
+                    <p
+                      style={{
+                        fontFamily: 'Montserrat',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Forgot your Password?{' '}
+                      <Link href="/forgotPassword" className="text-primary ">
+                        Click Here
+                      </Link>
+                    </p>
                     <input
                       type="hidden"
                       name="callbackUrl"
                       value={callbackUrl}
                     />
                   </div>
-
-                  <div className="col-8 d-flex justify-items-center mx-auto mb-3">
-                    <GoogleBtn googleCallback={loginWithGoogle} />
-                  </div>
                 </div>
                 <div className="d-flex flex-column align-items-center mt-4">
                   <Button type="submit">Log In</Button>
+                  <div className="d-flex justify-items-center mx-auto mb-3">
+                    <GoogleBtn googleCallback={loginWithGoogle} />
+                  </div>
                   {errorMessage}
                   {/*   <button type="button" style={googleStyle}>
                     <Image width={20} height={20} src={googleIcon} alt="" />
@@ -134,11 +131,11 @@ export default function SignIn({ providers }) {
                       textTransform: 'uppercase',
                     }}
                   >
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                   </p>
-                  <a href="/signUp" className="text-primary ">
+                  <Link href="/signUp" className="text-primary ">
                     SIGN UP
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -6,18 +6,6 @@ import ProductCard from '../components/productCard';
 import Breadcrumb from '../components/breadcrumb';
 // imgs :
 import customize from '../../img/shop/customize.png';
-import product1 from '../../img/shop/product1.jpg';
-import product2 from '../../img/shop/product2.jpg';
-import product3 from '../../img/shop/product3.jpg';
-import product4 from '../../img/shop/product4.jpg';
-import product5 from '../../img/shop/product5.jpg';
-import product6 from '../../img/shop/product6.jpg';
-import product7 from '../../img/shop/product7.jpg';
-import product8 from '../../img/shop/product8.jpg';
-import product9 from '../../img/shop/product9.jpg';
-import product10 from '../../img/shop/product10.jpg';
-import product11 from '../../img/shop/product11.jpg';
-import product12 from '../../img/shop/product12.jpg';
 
 /**
  * Shop component fetches product data from an API and displays a list of products.
@@ -112,7 +100,8 @@ function Shop() {
                     className="product__item__pic set-bg"
                     style={{
                       backgroundImage: `url(${customize.src})`,
-                      height: '250px',
+                      height: '220px',
+                      width: '250px',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                     }}
@@ -120,12 +109,10 @@ function Shop() {
                   <div className="product__item__text">
                     <h6
                       style={{
-                        color: '#F08632',
-                        fontSize: '25px',
+                        color: '#f08632',
+                        fontSize: '30px',
                         fontFamily: 'Montserrat',
                         fontWeight: '800',
-                        textTransform: 'uppercase',
-                        lineHeight: '19.20px',
                         wordWrap: 'break-word',
                         textAlign: 'center',
                       }}
