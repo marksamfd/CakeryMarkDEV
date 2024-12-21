@@ -15,6 +15,8 @@ from app.Services.otp_service import OTPService
 from app.Services.delivery_service import DeliveryService
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger
+from app.utils.order_status_notifier import FirebaseNotificationObserver
+
 
 swagger_template = {
     "swagger": "2.0",
@@ -51,6 +53,9 @@ delivery_service = DeliveryService(notifier)
 # Inject shared dependencies into controllers
 delivery_controller.delivery_service = delivery_service
 customer_controller.otp_service = otp_service
+
+# Register Firebase Observer
+notifier.register_observer(FirebaseNotificationObserver())
 
 # Register Blueprints
 app.register_blueprint(customer_controller)
