@@ -1,11 +1,9 @@
 import Button from '../../components/button';
 import CheckoutInputField from '../../components/checkoutInput';
 import Title from '../../components/title';
-import { useParams } from 'next/navigation';
 
 async function resetPassword({ params }) {
-  import { useParams } from 'next/navigation';
-  async function resetPassswordForm(fd) {
+  /*  async function resetPassswordForm(fd) {
     'use server';
     const order = await (
       await fetch(`${process.env.backend}/user/baker/orders`, {
@@ -16,7 +14,7 @@ async function resetPassword({ params }) {
         },
       })
     ).json();
-  }
+  } */
   return (
     <div className="container">
       <Title>Reset your Password</Title>

@@ -82,7 +82,9 @@ function HeaderNav({ itemsInCart = 0, sumInCart, name, token }) {
                         ) : (
                           <>
                             <Link href="/customerOrders">{'My Orders'}</Link> |{' '}
-                            <Link href={`/signUp/${token}`}>Update Profile </>
+                            <Link href={`/signUp/${token}`}>
+                              Update Profile{' '}
+                            </Link>
                           </>
                         )}
                       </li>
