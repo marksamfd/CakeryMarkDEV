@@ -29,6 +29,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: CakeryBackendApp
-          resource-group: CakeryResourceGroup
+          resource-group-name: CakeryResourceGroup
           slot-name: production
           images: cakeryregistry.azurecr.io/flask-api-image:latest
