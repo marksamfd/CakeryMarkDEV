@@ -11,7 +11,7 @@ const CheckoutInputField = React.forwardRef((props, ref) => {
       </p>
       <input
         required={requiredField}
-        name={`${props?.name}`}
+        name={`${props?.name ? props?.name : 'inputddd'}`}
         type={inputType}
         ref={ref}
         {...props}

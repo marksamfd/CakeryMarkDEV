@@ -1,9 +1,10 @@
 import Button from '../../components/button';
 import CheckoutInputField from '../../components/checkoutInput';
 import Title from '../../components/title';
+import { useParams } from 'next/navigation';
 
 async function resetPassword({ params }) {
-  const token = (await params).token;
+  import { useParams } from 'next/navigation';
   async function resetPassswordForm(fd) {
     'use server';
     const order = await (
