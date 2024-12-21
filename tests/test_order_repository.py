@@ -1,8 +1,17 @@
+
+import sys
+import os
+
+# Add the parent directory of 'app' to the sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
 import pytest
 from datetime import datetime, timedelta
 from app.db import create_app, db
 from app.Repositories.order_repository import OrderRepository
 from app.models import Orders, OrderItems, Inventory, Voucher, Cart, CustomerUser, DeliveryAssignments
+from app.models import DeliveryUser
 
 @pytest.fixture(scope="function")
 def test_app():
@@ -67,7 +76,19 @@ def populate_test_data():
     # Add a cart for the customer
     cart = Cart(customeremail="customer1@example.com")
     db.session.add(cart)
+
+    # Add delivery user
+    delivery_user = DeliveryUser(
+        deliveryemail="delivery1@example.com",
+        password="password123",
+        firstname="Test",
+        lastname="Delivery",
+        phonenum="123456789"
+    )
+    db.session.add(delivery_user)
+
     db.session.commit()
+
 
 def test_create_order_success(order_repo, test_app):
     """
@@ -88,8 +109,9 @@ def test_create_order_success(order_repo, test_app):
         )
 
         assert "order_id" in response
-        assert response["total_price"] == 63.0  # 20*2 + 5*4 = 70; 10% discount = 63
+        assert response["total_price"] == 63.0  # (20*2 + 5*4) = 70; 10% discount = 63.0
         assert len(response["items"]) == 2
+
 
 def test_create_order_invalid_voucher(order_repo, test_app):
     """

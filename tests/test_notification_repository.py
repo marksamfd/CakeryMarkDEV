@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add the parent directory of 'app' to the sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pytest
 from app.db import create_app, db
 from app.Repositories.notification_repository import NotificationRepository
@@ -76,7 +82,8 @@ def test_save_notification_invalid_customer(notification_repo, test_app):
         )
 
         assert "error" in response
-        assert "Error saving notification" in response["error"]
+        assert "Customer with email invalid_customer@example.com does not exist." in response["error"]
+
 
         # Ensure no notification is saved in the database
         notification = Notification.query.filter_by(customer_email="invalid_customer@example.com").first()

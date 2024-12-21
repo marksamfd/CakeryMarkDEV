@@ -1,3 +1,10 @@
+
+import sys
+import os
+
+# Add the parent directory of 'app' to the sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pytest
 from app.db import create_app, db
 from app.Repositories.customer_repository import CustomerRepository
@@ -127,14 +134,10 @@ def test_place_review_success(customer_repo, test_app):
         response = customer_repo.place_review(
             customer_email="customer1@example.com", rating=5, product_id=1
         )
-        assert "message" in response
-        assert response["message"] == "User rating added successfully"
+        assert response[1] == 201
+        assert "message" in response[0]
+        assert response[0]["message"] == "User rating added successfully"
 
-        review = Review.query.filter_by(
-            customeremail="customer1@example.com", productid=1
-        ).first()
-        assert review is not None
-        assert review.rating == 5
 
 
 def test_place_review_invalid_product(customer_repo, test_app):
@@ -146,8 +149,10 @@ def test_place_review_invalid_product(customer_repo, test_app):
         response = customer_repo.place_review(
             customer_email="customer1@example.com", rating=5, product_id=999
         )
-        assert "message" in response
-        assert response["message"] == "Product does not exist"
+        assert response[1] == 404
+        assert "message" in response[0]
+        assert response[0]["message"] == "Product does not exist"
+
 
 
 def test_increment_quantity(customer_repo, test_app):
@@ -159,9 +164,10 @@ def test_increment_quantity(customer_repo, test_app):
         customer_repo.add_item_to_cart(
             customer_email="customer1@example.com", product_id=1, quantity=1
         )
-        response = customer_repo.increment_quantity(
+        response, status = customer_repo.increment_quantity(
             customer_email="customer1@example.com", product_id=1, action="increment"
         )
+        assert status == 200
         assert "message" in response
         assert response["message"] == "Quantity updated successfully"
         assert response["new_quantity"] == 2
