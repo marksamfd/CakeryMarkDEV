@@ -110,19 +110,29 @@ export default function SignIn({ providers }) {
                       name="password"
                       label="Password"
                     />
+                    <p
+                      style={{
+                        fontFamily: 'Montserrat',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Forgot your Password?{' '}
+                      <Link href="/forgotPassword" className="text-primary ">
+                        Click Here
+                      </Link>
+                    </p>
                     <input
                       type="hidden"
                       name="callbackUrl"
                       value={callbackUrl}
                     />
                   </div>
-
-                  <div className="col-8 d-flex justify-items-center mx-auto mb-3">
-                    <GoogleBtn googleCallback={loginWithGoogle} />
-                  </div>
                 </div>
                 <div className="d-flex flex-column align-items-center mt-4">
                   <Button type="submit">Log In</Button>
+                  <div className="d-flex justify-items-center mx-auto mb-3">
+                    <GoogleBtn googleCallback={loginWithGoogle} />
+                  </div>
                   {errorMessage}
                   {/*   <button type="button" style={googleStyle}>
                     <Image width={20} height={20} src={googleIcon} alt="" />
