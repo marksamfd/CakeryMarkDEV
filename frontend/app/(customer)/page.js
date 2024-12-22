@@ -40,6 +40,11 @@ export default function Home() {
         console.log('FCM token: ', fcmToken);
         fetch(`api/cakery/user/customer/NotificationToken`, {
           method: 'post',
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({ fcm_token: fcmToken }),
         })
           .then((res) => res.json())

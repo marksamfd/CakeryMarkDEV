@@ -1,12 +1,12 @@
 import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_apiKey,
-  authDomain: process.env.NEXT_PUBLIC_authDomain,
-  projectId: process.env.NEXT_PUBLIC_projectId,
-  storageBucket: process.env.NEXT_PUBLIC_storageBucket,
-  messagingSenderId: process.env.NEXT_PUBLIC_messagingSenderId,
-  appId: process.env.NEXT_PUBLIC_appId,
+  apiKey: 'AIzaSyBq1Y0gIa0QiEY84oUZ1RJBcu8tgzWAOIs',
+  authDomain: 'cakery-b599e.firebaseapp.com',
+  projectId: 'cakery-b599e',
+  storageBucket: 'cakery-b599e.firebasestorage.app',
+  messagingSenderId: '318553962335',
+  appId: '1:318553962335:web:6e13759233f512f862a8ea',
 };
 
 // Initialize Firebase
