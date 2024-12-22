@@ -32,8 +32,23 @@ export default function Home() {
     },
   ];
   const { fcmToken, notificationPermissionStatus } = useFcmToken();
-  // Use the token as needed
-  fcmToken && console.log('FCM token: ', fcmToken);
+
+  useEffect(() => {
+    cookieStore.get('token').then((token) => {
+      if (token && fcm) {
+        console.log('FCM token: ', fcmToken);
+        fetch(`api/cakery/user/customer/NotificationToken`, {
+          method: 'post',
+          body: JSON.stringify({ fcm_token: fcmToken }),
+        })
+          .then((res) => res.json())
+          .then((data) => {})
+          .catch(console.error);
+      }
+    });
+  }, [fcmToken]);
+
+  //
   return (
     <>
       <HeroSection />
