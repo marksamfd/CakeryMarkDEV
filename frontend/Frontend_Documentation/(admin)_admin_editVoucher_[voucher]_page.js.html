@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (admin)/admin/editVoucher/[voucher]/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (admin)/admin/editVoucher/[voucher]/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React from 'react';
+import Title from '@/app/(customer)/components/title';
+import CheckoutInputField from '@/app/(customer)/components/checkoutInput';
+import Button from '@/app/(customer)/components/button';
+import { useRouter, usePathname } from 'next/navigation';
+
+/**
+ * Renders a form to edit a voucher.
+ *
+ * The form includes a field to update the discount percentage.
+ *
+ * When the form is submitted, the voucher data is sent to the server to be updated.
+ *
+ * @returns {JSX.Element} The edit voucher form component.
+ */
+function EditVoucher() {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const slug = decodeURIComponent(pathname);
+    const voucher = slug.split('/editVoucher/').pop();
+    console.log('Extracted Voucher ID:', voucher);
+
+    const handleEditVoucher = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const newDiscount = parseFloat(formData.get('discountPercentage'));
+
+        try {
+            const cookie = await cookieStore.get('token');
+            const token = cookie?.value;
+
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
+            const response = await fetch(`/api/cakery/user/admin/Vouchers/Edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    voucher_code: voucher,
+                    discount : newDiscount
+                }),
+            });
+
+            if (response.ok) {
+                console.log('Voucher updated successfully.');
+                router.push('/admin/viewVouchers');
+            } else {
+                console.error('Update failed:', await response.json());
+            }
+        } catch (error) {
+            console.error('Error updating the voucher:', error);
+        }
+    };
+
+    return (
+        &lt;section className="sign-up spad">
+            &lt;div className="container">
+                &lt;div className="d-flex align-items-center justify-content-between mb-3">
+                    &lt;Title>Edit Voucher&lt;/Title>
+                    &lt;a className="primary-btn" href="/admin/viewVouchers">
+                        Go Back
+                    &lt;/a>
+                &lt;/div>
+                &lt;div className="sign-up__form">
+                    &lt;form onSubmit={handleEditVoucher}>
+                        &lt;div className="row justify-content-center">
+                            &lt;div className="col-lg-11 col-md-12">
+                                &lt;div className="row">
+                                    &lt;div className="col-md-6 mb-4">
+                                    &lt;p>Voucher to be edited: {voucher}&lt;/p>
+                                        &lt;CheckoutInputField
+                                            type="number"
+                                            label="Change Discount Percentage"
+                                            name="discountPercentage"
+                                            placeholder="Enter the New Percentage"
+                                            required
+                                        />
+                                    &lt;/div>
+                                &lt;/div>
+                                &lt;div className="d-flex justify-content-center mt-4">
+                                    &lt;Button type="submit" className="btn-black">
+                                        Update Voucher
+                                    &lt;/Button>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/form>
+                &lt;/div>
+            &lt;/div>
+        &lt;/section>
+    );
+}
+
+export default EditVoucher;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

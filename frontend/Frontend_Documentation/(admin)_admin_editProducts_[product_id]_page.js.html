@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (admin)/admin/editProducts/[product_id]/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (admin)/admin/editProducts/[product_id]/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React from 'react';
+import Title from '@/app/(customer)/components/title';
+import CheckoutInputField from '@/app/(customer)/components/checkoutInput';
+import Button from '@/app/(customer)/components/button';
+import { useRouter, usePathname } from 'next/navigation';
+
+/**
+ * EditProduct component allows for editing the details of a specific product.
+ * 
+ * It retrieves the product identifier from the URL, provides a form for updating
+ * the product's price, and performs the update via an API call.
+ * 
+ * Utilizes a secure token for authentication. Upon successful update, the user
+ * is redirected to the product view page.
+ * 
+ * @returns {JSX.Element} A section containing a form to edit the product details.
+ */
+
+function EditProduct() {
+    const router = useRouter();
+
+    const pathname = usePathname();
+    const decoded = decodeURIComponent(pathname);
+    console.log(decoded);
+    const slug = decoded.split('/editProducts/').pop();
+    console.log(slug);
+    
+
+    const handleEditProduct = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        const price = parseFloat(formData.get('Price'));
+
+        const updatedProduct = {
+            price,
+            product_id: slug || 0, 
+            rawItem: slug || '',
+        };
+
+        try {
+            const cookie = await cookieStore.get('token');
+            const token = cookie?.value;
+
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
+
+            const response = await fetch(`/api/cakery/user/admin/Products/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(updatedProduct),
+            });
+
+            if (response.ok) {
+                router.push('/admin/viewProducts');
+            } else {
+                console.error(' update failed', await response.json());
+            }
+        } catch (error) {
+            console.error('error updating the product:', error);
+        }
+    };
+
+    return (
+        &lt;section className="sign-up spad">
+            &lt;div className="container">
+                &lt;div className="d-flex align-items-center justify-content-between mb-3">
+                    &lt;Title>Edit Item&lt;/Title>
+                    &lt;a className="primary-btn" href="/admin/viewProducts">
+                        Go Back
+                    &lt;/a>
+                &lt;/div>
+                &lt;div className="sign-up__form">
+                    &lt;form onSubmit={handleEditProduct}>
+                        &lt;div className="row justify-content-center">
+                            &lt;div className="col-lg-11 col-md-12">
+                                &lt;div className="row">
+                                    &lt;div className="col-md-12 mt-4 mb-4">
+                                        &lt;p>Item to be edited: {slug}&lt;/p>
+                                        &lt;CheckoutInputField
+                                            name="Price"
+                                            type="number"
+                                            step="0.01"
+                                            label="New Price"
+                                            placeholder="Enter new price"
+                                            required
+                                        />
+                                    &lt;/div>
+                                    
+                                &lt;/div>
+
+                                &lt;div className="d-flex justify-content-center mt-4">
+                                    &lt;Button type="submit" className="btn-black" >
+                                        Update
+                                    &lt;/Button>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/form>
+                &lt;/div>
+            &lt;/div>
+        &lt;/section>
+    );
+}
+
+export default EditProduct;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (delivery)/delivery/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (delivery)/delivery/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React, { useState, useEffect } from 'react';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+
+/**
+ * Displays the orders assigned to the delivery person and allows them to
+ * update the status of the orders to "out_for_delivery" or "delivered".
+ *
+ * @returns {JSX.Element} The DeliveryOrders component.
+ */
+function DeliveryOrders() {
+  const [orderItems, setOrderItems] = useState([]);
+  const [deliveryName, setDeliveryName] = useState('');
+
+  useEffect(() => {
+    cookieStore
+    .get('token')
+      .then((cookie) => {
+        return fetch(`/api/cakery/user/delivery/name`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        });
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setDeliveryName(data.name);
+      })
+      .catch((err) => {
+        console.error('Error fetching name:', err);
+      });
+  }, []);
+
+  useEffect(() => {
+    cookieStore
+      .get('token')
+      .then((cookie) => {
+        return fetch(`/api/cakery/user/delivery/orders`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        });
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Fetched orders:', data); 
+        setOrderItems(data.orders);
+      })
+      .catch((err) => {
+        console.error('Error fetching orders:', err);
+      });
+  }, []);
+  
+
+ 
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'out_for_delivery': return 'blue';
+      case 'delivered': return 'green';
+      
+      default: return '#f08632';
+    }
+  };
+  const handleChangeOrderStatus = async (orderId, newStatus) => {
+    try {
+      const token = await cookieStore.get('token');
+      const response = await fetch(`/api/cakery/user/delivery/orders/change_status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify({ order_id: orderId, status: newStatus }),
+      });
+      setOrderItems((prevState) =>
+        prevState.map((item) =>
+          item.order_id === orderId ? { ...item, status: newStatus } : item
+        )
+      );
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
+  };
+  
+  
+  return (
+    &lt;>
+      &lt;div className="breadcrumb-option">
+        &lt;div className="container">
+          &lt;div className="row">
+            &lt;div className="col-lg-6 col-md-6 col-sm-6">
+              &lt;div className="breadcrumb__text font-size">
+                &lt;h2> Welcome, {deliveryName}&lt;/h2>
+                &lt;br />
+                &lt;h2>Your Orders to Deliver :&lt;/h2>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+      &lt;section className="shopping-cart spad">
+        &lt;div
+          className="container-fluid"
+          style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}
+        >
+          &lt;div style={{ width: '100%', maxWidth: '1200px'}}>
+            &lt;table
+              className="order-table"
+              style={{
+                width: '100%',
+                textAlign: 'center',
+              }}
+            >
+              &lt;thead>
+                &lt;tr>
+                  &lt;th>Order&lt;/th>
+                  &lt;th>Number of Items&lt;/th>
+                  &lt;th>Customer Name&lt;/th>
+                  &lt;th>Phone&lt;/th>
+                  &lt;th>Location&lt;/th>
+                  &lt;th>Total Price&lt;/th>
+                  &lt;th>Status&lt;/th>
+                &lt;/tr>
+              &lt;/thead>
+              &lt;tbody>
+              {orderItems.map((item, index) => (
+  &lt;tr key={`${item.customerName}-${index}`}>
+    &lt;td>{index + 1}&lt;/td>
+    &lt;td>{item.numberOfItems}&lt;/td>
+    &lt;td>{item.customerName}&lt;/td>
+    &lt;td>&lt;a href={`tel:${item.phone}`}>{item.phone}&lt;/a>&lt;/td>
+    &lt;td>
+      &lt;a href={item.location} target="_blank" rel="noopener noreferrer">
+        View Location
+      &lt;/a>
+    &lt;/td>
+    &lt;td>${item.price}&lt;/td>
+    &lt;td>
+      &lt;NavDropdown
+        title={&lt;span style={{ color: getStatusColor(item.status) }}>{item.status}&lt;/span>}
+        id={`status-dropdown-${index}`}
+      >
+        &lt;NavDropdown.Item onClick={() => handleChangeOrderStatus(item.order_id, 'out_for_delivery')}>
+          Out for Delivery
+        &lt;/NavDropdown.Item>
+        &lt;NavDropdown.Item onClick={() => handleChangeOrderStatus(item.order_id, 'delivered')}>
+          Delivered
+        &lt;/NavDropdown.Item>
+      &lt;/NavDropdown>
+    &lt;/td>
+  &lt;/tr>
+))}
+              &lt;/tbody>
+            &lt;/table>
+          &lt;/div>
+        &lt;/div>
+      &lt;/section>
+    &lt;/>
+  );
+}
+
+export default DeliveryOrders;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (customer)/cart/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (customer)/cart/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import { useState, useEffect } from 'react';
+import Breadcrumb from '../components/breadcrumb';
+import CartItem from '../components/cartItem';
+
+
+/**
+ * Displays the customer's cart and allows them to modify its contents.
+ * Retrieves the customer's cart from the server and displays the items in a
+ * table. The customer can remove items from the cart, increase or decrease the
+ * quantity of an item, or proceed to checkout.
+ *
+ * @returns {JSX.Element} The Shopping Cart page.
+ */
+
+export default function Cart() {
+  const [cartItems, setCartItems] = useState([]);
+  
+  useEffect(() => {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api/cakery/user/customer/Cart`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        }),
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.items);
+        setCartItems(data.items);
+      })
+      .catch((error) => console.error('Error fetching cart:', error));
+  }, []);
+
+  function incOrDec(productId, action, pos) {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api/cakery/user/customer/Cart/Increment`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie.value}`,
+          },
+          body: JSON.stringify({
+            action,
+            product_id: productId,
+          }),
+        }),
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        let tmpCart = [...cartItems];
+        tmpCart[pos].quantity = data[0].new_quantity * 1;
+        setCartItems(tmpCart);
+      })
+      .catch((error) => console.error('Error fetching cart:', error));
+  }
+
+  async function RemoveItem(productid, quantity) {
+    try {
+      const cookie = await cookieStore.get('token');
+      const response = await fetch('/api/cakery/user/customer/Cart/Remove', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cookie.value}`,
+        },
+        body: JSON.stringify({
+          product_id: productid,
+          quantity: quantity,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setCartItems(prevItems => prevItems.filter(item => item.productid !== productid));
+      } else {
+        console.error('Failed to delete item');
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  }
+  
+/**
+   * Calculates the total price of items in the cart.
+   *
+   * Iterates through each item in the cart and multiplies the price
+   * by the quantity for each item, accumulating the result in the total.
+   *
+   * @returns {number} The total price of all items in the cart.
+   */  
+  const calculateTotal = () => {
+    let total = 0;
+    for (let i = 0; i &lt; cartItems.length; i++) {
+      total += cartItems[i].price * cartItems[i].quantity;
+    }
+    return total;
+  };
+  return (
+    &lt;>
+      &lt;Breadcrumb title="Shopping Cart" />
+      &lt;section className="shopping-cart spad">
+        &lt;div className="container">
+          &lt;div className="row">
+            &lt;div className="col-lg-8">
+              &lt;div className="shopping__cart__table">
+                &lt;table>
+                  &lt;thead>
+                    &lt;tr>
+                      &lt;th>Product&lt;/th>
+                      &lt;th>Price&lt;/th>
+                      &lt;th>Quantity&lt;/th>
+                      &lt;th>Total&lt;/th>
+                      &lt;th>&lt;/th>
+                    &lt;/tr>
+                  &lt;/thead>
+                  &lt;tbody>
+                    {Array.isArray(cartItems) &amp;&amp;
+                      cartItems.map((item, pos) => (
+                        &lt;CartItem
+                          key={item.productid}
+                          productname={item.productname}
+                          productId={item.productid}
+                          customCakeId={item.customcakeid}
+                          price={item.price}
+                          quantity={item.quantity}
+                          total={item.price * item.quantity}
+                          onRemove={() => 
+                            RemoveItem(item.productid, item.quantity)}
+                          onIncrease={() =>
+                             incOrDec(item.productid, 'increment', pos)}
+                          onDecrease={() => 
+                            incOrDec(item.productid, 'decrement', pos)}
+                        />
+                      ))}
+                  &lt;/tbody>
+                &lt;/table>
+              &lt;/div>
+              &lt;div className="row">
+                &lt;div className="col-lg-6 col-md-6 col-sm-6">
+                  &lt;div className="continue__btn">
+                    &lt;a href="/shop">Continue Shopping&lt;/a>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="col-lg-4">
+              &lt;div className="cart__total">
+                &lt;h6>Cart total&lt;/h6>
+                &lt;ul>
+                  &lt;li>
+                    Subtotal &lt;span>${calculateTotal()}&lt;/span>
+                  &lt;/li>
+                  &lt;li>
+                    Total &lt;span>${calculateTotal()}&lt;/span>
+                  &lt;/li>
+                &lt;/ul>
+                &lt;a href="/checkout" className="primary-btn">
+                  Proceed to checkout
+                &lt;/a>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/section>
+    &lt;/>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

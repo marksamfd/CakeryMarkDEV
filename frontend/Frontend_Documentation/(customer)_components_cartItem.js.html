@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (customer)/components/cartItem.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (customer)/components/cartItem.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React from 'react';
+import Image from 'next/image';
+import cart1 from '../../img/shop/cart/cart1.jpg';
+
+/**
+ * A component that displays a single row in the cart table, including the product name,
+ * price, quantity, total, and a remove button.
+ *
+ * @param {number} cartid - The ID of the cart item.
+ * @param {number} productid - The ID of the product.
+ * @param {string} productname - The name of the product.
+ * @param {number} cartitemid - The ID of the cart item.
+ * @param {number} customcakeid - The ID of the custom cake.
+ * @param {number} quantity - The quantity of the item in the cart.
+ * @param {number} price - The price of the item.
+ * @param {number} total - The total price of the item in the cart.
+ * @param {Function} onRemove - A function to call when the remove button is clicked.
+ */
+const CartItem = ({
+  cartid,
+  productId,
+  productname,
+  cartitemid,
+  customcakeid,
+  quantity,
+  price,
+  total,
+  onRemove,
+  onIncrease,
+  onDecrease,
+}) => {
+  return (
+    &lt;tr className="cart-item-row">
+      &lt;td>
+        &lt;h6 className="cart-item__name">
+          &lt;Image
+            src={cart1}
+            alt={`Image of ${productname}`}
+            className="cart-item__image"
+          />
+          &lt;span className="cart-item__name-text">
+            {productname ? productname : 'Custom Cake'}
+          &lt;/span>
+        &lt;/h6>
+      &lt;/td>
+      &lt;td>
+        &lt;h6>${price}&lt;/h6>
+      &lt;/td>
+      &lt;td>
+        &lt;div className="d-flex flex-row justify-content-between">
+          &lt;button onClick={onDecrease}
+          className='btn btn-light' title='decrease item'>
+            &lt;i className="fa fa-minus "style={{color:'#f08632' }}>&lt;/i>
+          &lt;/button>
+          &lt;h6 className='mt-2'>{quantity}&lt;/h6>
+          &lt;button onClick={onIncrease}
+          className='btn btn-light' title='Add item'>
+            &lt;i className="fa fa-plus"style={{color:'#f08649' }}>&lt;/i>
+          &lt;/button>
+        &lt;/div>
+      &lt;/td>
+      &lt;td>
+        &lt;h6>${total}&lt;/h6>
+      &lt;/td>
+      &lt;td>
+        &lt;button onClick={onRemove}
+        className="btn btn-light" title='Remove item'>
+        &lt;i className="fa fa-trash" style={{color:'red' }} >&lt;/i>  
+              &lt;/button>
+      &lt;/td>
+    &lt;/tr>
+  );
+};
+
+export default CartItem;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

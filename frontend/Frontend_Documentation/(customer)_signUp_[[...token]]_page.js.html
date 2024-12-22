@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (customer)/signUp/[[...token]]/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (customer)/signUp/[[...token]]/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import Button from '../../components/button';
+import CheckoutInputField from '../../components/checkoutInput';
+import Title from '../../components/title';
+import { useActionState, useEffect, useState } from 'react';
+import {
+  useSearchParams,
+  useRouter,
+  useParams,
+  redirect,
+} from 'next/navigation';
+// import { useRouter } from 'next/router';
+import { signUp as register, editData } from '@/app/lib/actions';
+
+/**
+ * Renders a form to sign up a new user.
+ *
+ * The form includes fields for first name, last name, email, phone, password, confirm password, and location.
+ *
+ * @returns {JSX.Element} The sign up form component.
+ */
+function SignUp() {
+  const [userData, setUserData] = useState({});
+  const searchParams = useSearchParams();
+  const params = useParams();
+
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const token = params.token;
+
+  console.log(token ? 'editData' : 'register');
+  let [state, formAction, isPending] = useActionState(
+    token ? editData : register,
+    {
+      callbackUrl,
+    },
+  );
+
+  useEffect(() => {
+    if (token) {
+      fetch(`/api/cakery/user/customer/CheckData`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          setUserData(json.data);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token &amp;&amp; state?.edited) {
+      redirect('../');
+    }
+    if (token &amp;&amp; state?.registered) {
+      redirect('../login');
+    }
+  }, [state]);
+  return (
+    &lt;section className="sign-up spad">
+      &lt;div className="container">
+        &lt;Title>Create an Account&lt;/Title>
+        &lt;div> {state?.error}&lt;/div>
+        &lt;div className="sign-up__form">
+          &lt;form action={formAction}>
+            &lt;div className="row justify-content-center">
+              &lt;div className="col-lg-11 col-md-6">
+                &lt;div className="row ">
+                  &lt;div className="col-md-6 mb-3">
+                    &lt;CheckoutInputField
+                      name="FirstName"
+                      type="text"
+                      label="First Name"
+                      defaultValue={token ? userData.firstname : ''}
+                    />
+                  &lt;/div>
+                  &lt;div className="col-md-6 mb-3">
+                    &lt;CheckoutInputField
+                      type="text"
+                      label="Last Name"
+                      name="LastName"
+                      defaultValue={token ? userData.lastname : ''}
+                    />
+                  &lt;/div>
+                  {!token &amp;&amp; (
+                    &lt;div className="col-md-6 mb-3">
+                      &lt;CheckoutInputField
+                        type="email"
+                        label="Email"
+                        name="Email"
+                      />
+                    &lt;/div>
+                  )}
+                  &lt;div className="col-md-6 mb-3">
+                    &lt;CheckoutInputField
+                      type="tel"
+                      label="Phone"
+                      name="Phone"
+                      defaultValue={token ? userData.phonenum : ''}
+                    />
+                  &lt;/div>
+                  {!token &amp;&amp; (
+                    &lt;>
+                      &lt;div className="col-md-6 mb-3">
+                        &lt;CheckoutInputField
+                          type="password"
+                          label="Password"
+                          name="password"
+                        />
+                      &lt;/div>
+                      &lt;div className="col-md-6 mb-3">
+                        &lt;CheckoutInputField
+                          type="password"
+                          label="Confirm Password"
+                          name="confirmPassword"
+                        />
+                      &lt;/div>
+                    &lt;/>
+                  )}
+                  &lt;div className="col-md-12 mb-3">
+                    &lt;CheckoutInputField
+                      type="text"
+                      label="Location (Google Maps link)"
+                      name="Location"
+                      defaultValue={token ? userData.addressgooglemapurl : ''}
+                    />
+                  &lt;/div>
+                &lt;/div>
+                &lt;div className="d-flex flex-column align-items-center mt-4">
+                  &lt;Button type="submit" className="btn-black">
+                    {token ? 'Save Changes' : 'Sign Up'}
+                  &lt;/Button>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+          &lt;/form>
+        &lt;/div>
+      &lt;/div>
+    &lt;/section>
+  );
+}
+export default SignUp;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (customer)/customerOrders/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (customer)/customerOrders/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React, { useState, useEffect } from 'react';
+import Breadcrumb from '../components/breadcrumb';
+import OrderItem from '../components/orderItem';
+import { useRouter } from 'next/navigation';
+import CheckoutInputField from '../components/checkoutInput';
+import Button from '../components/button';
+
+/**
+ * Displays the customer's orders and allows them to confirm the delivery of
+ * delivered orders by providing an OTP.
+ *
+ * @returns {JSX.Element} The My Orders page.
+ */
+function CustomerOrders() {
+  const [orderItems, setOrderItems] = useState([]);
+  const [otp, setOtp] = useState('');
+  const [verifyingOrder, setVerifyingOrder] = useState(null);
+  const [token, setToken] = useState(null);
+  const router = useRouter();
+  useEffect(() => {
+    cookieStore
+      .get('token')
+      .then((cookie) =>
+        fetch(`/api/cakery/user/customer/Orders`, {
+          headers: {
+            Authorization: `Bearer ${cookie.value}`,
+          },
+        })
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setOrderItems(data);
+      })
+      .catch((error) => console.error('Error fetching orders:', error));
+  }, []);
+
+  console.log(orderItems);
+  const handleVerifyOTP = async (orderId) => {
+    setVerifyingOrder(orderId);
+    try {
+      if (!token) {
+        throw new Error('Token not found');
+      }
+      const response = await fetch(`/api/cakery/user/customer/VerifyOTP`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          otp_code: otp,
+        }),
+      });
+
+      if (!response.ok) {
+        const message = await response.json();
+        throw new Error(message.error);
+      }
+      const data = await response.json();
+      console.log(data);
+      setOrderItems((prev) =>
+        prev.map((item) =>
+          item.orderID === orderId ? { ...item, status: 'confirmed' } : item
+        )
+      );
+      setOtp('');
+      router.refresh();
+    } catch (error) {
+      console.log('Error verifying OTP:', error);
+    } finally {
+      setVerifyingOrder(null);
+    }
+  };
+
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
+  };
+
+  return (
+    &lt;>
+      &lt;Breadcrumb title="My Orders" />
+      &lt;section className="shopping-cart spad">
+        &lt;div className="container">
+          &lt;div className="row">
+            &lt;div className="col-lg-8">
+              &lt;div className="shopping_cart_table">
+                &lt;table className="order-table">
+                  &lt;thead>
+                    &lt;tr>
+                      &lt;th>Order&lt;/th>
+                      &lt;th>Status&lt;/th>
+                      &lt;th>Total&lt;/th>
+                      &lt;th>    &lt;/th>
+                      &lt;th>   &lt;/th>
+                    &lt;/tr>
+                  &lt;/thead>
+                  &lt;tbody>
+                    {Array.isArray(orderItems) ? (
+                      orderItems?.map((item) => (
+                        &lt;tr key={item.orderID}>
+                          &lt;td>
+                            &lt;OrderItem
+                              productName={item.items[0].productName}
+                              orderId={item.orderID}
+                              quantity={item.items[0].quantity}
+                              totalPrice={item.totalPrice}
+                              orderDate={item.orderDate}
+                            />
+                          &lt;/td>
+                          &lt;td>{item.status}&lt;/td>
+                          &lt;td>${item.totalPrice}&lt;/td>
+                          &lt;td> &lt;/td>
+                          &lt;td>
+                            {item.status === 'delivered' &amp;&amp;
+                              (verifyingOrder === item.orderID ? (
+                                &lt;Button disabled>verifying...&lt;/Button>
+                              ) : (
+                                &lt;>
+                                  &lt;CheckoutInputField
+                                    type="text"
+                                    label="OTP"
+                                    name="otp"
+                                    value={otp}
+                                    onChange={handleOtpChange}
+                                  />
+                                  &lt;Button
+                                    onClick={() =>
+                                      handleVerifyOTP(item.orderID)
+                                    }
+                                  >
+                                    Confirm with OTP
+                                  &lt;/Button>
+                                &lt;/>
+                              ))}
+                          &lt;/td>
+                        &lt;/tr>
+                      ))
+                    ) : (
+                      &lt;tr>
+                        &lt;td colSpan="4">{orderItems.message}&lt;/td>
+                      &lt;/tr>
+                    )}
+                  &lt;/tbody>
+                &lt;/table>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/section>
+    &lt;/>
+  );
+}
+export default CustomerOrders;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

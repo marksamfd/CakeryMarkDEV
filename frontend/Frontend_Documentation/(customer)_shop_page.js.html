@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: (customer)/shop/page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: (customer)/shop/page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import ProductCard from '../components/productCard';
+import Breadcrumb from '../components/breadcrumb';
+// imgs :
+import customize from '../../img/shop/customize.png';
+
+/**
+ * Shop component fetches product data from an API and displays a list of products.
+ *
+ * The component:
+ * - Fetches an authentication token from cookies and uses it to request product data from the `/api/customer/shop` endpoint.
+ * - Stores the fetched product data in the state and maps over it to render individual `ProductCard` components.
+ * - Displays a search form and sorting options for filtering products.
+ * - Provides a UI to navigate through different categories and customize cakes.
+ * - Includes pagination controls for navigating through product pages.
+ */
+function Shop() {
+  const [allProducts, setAllProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  useEffect(() => {
+    fetch(`/api/cakery/user/customer/Shop`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setAllProducts(data);
+        setFilteredProducts(data);
+        setAllCategories(new Set(data.map((e) => e.category)));
+      })
+      .catch(console.error);
+  }, []);
+  return (
+    &lt;>
+      &lt;Breadcrumb title="Shop" />
+      &lt;section className="shop spad">
+        &lt;div className="container">
+          &lt;div className="shop__option">
+            &lt;div className="row">
+              &lt;div className="col-lg-7 col-md-7">
+                &lt;div className="shop__option__search">
+                  &lt;form action="#">
+                    &lt;input
+                      type="text"
+                      placeholder="Search"
+                      onInput={(event) => {
+                        console.log(event.target.value.length);
+                        if (event.target.value.length > 0) {
+                          setFilteredProducts(
+                            allProducts.filter((e) =>
+                              e.name.toLowerCase().includes(event.target.value),
+                            ),
+                          );
+                        } else {
+                          setFilteredProducts(allProducts);
+                        }
+                      }}
+                    />
+                  &lt;/form>
+                &lt;/div>
+              &lt;/div>
+              &lt;div className="col-lg-5 col-md-5">
+                &lt;div className="shop__option__filter">
+                  &lt;form action="#">
+                    &lt;select
+                      onChange={(event) => {
+                        console.log(event.target.value.length);
+                        if (event.target.value.length > 0) {
+                          setFilteredProducts(
+                            allProducts.filter((e) =>
+                              e.category
+                                .toLowerCase()
+                                .includes(event.target.value.toLowerCase()),
+                            ),
+                          );
+                        } else {
+                          setFilteredProducts(allProducts);
+                        }
+                      }}
+                    >
+                      &lt;option value="">Categories&lt;/option>
+                      {[...allCategories.values()].map((e, i) => (
+                        &lt;option key={`kat-${i}`} value={e}>
+                          {e}
+                        &lt;/option>
+                      ))}
+                    &lt;/select>
+                  &lt;/form>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>{' '}
+          &lt;/div>
+          &lt;div className="row">
+            &lt;div className="col-lg-3 col-md-6 col-sm-6">
+              &lt;Link href="/customizeCake">
+                &lt;div className="product__item">
+                  &lt;div
+                    className="product__item__pic set-bg"
+                    style={{
+                      backgroundImage: `url(${customize.src})`,
+                      height: '220px',
+                      width: '250px',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >&lt;/div>
+                  &lt;div className="product__item__text">
+                    &lt;h6
+                      style={{
+                        color: '#f08632',
+                        fontSize: '30px',
+                        fontFamily: 'Montserrat',
+                        fontWeight: '800',
+                        wordWrap: 'break-word',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Customize Your
+                      &lt;br />
+                      Cake!
+                    &lt;/h6>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/Link>
+            &lt;/div>
+            {filteredProducts.map((products, index) => (
+              &lt;ProductCard key={index} {...products} />
+            ))}
+          &lt;/div>
+
+          {/* &lt;div className="shop__last__option">
+            &lt;div className="row">
+              &lt;div className="col-lg-6 col-md-6 col-sm-6">
+                &lt;div className="shop__pagination">
+                  &lt;a href="#">1&lt;/a>
+                  &lt;a href="#">2&lt;/a>
+                  &lt;a href="#">3&lt;/a>
+                  &lt;a href="#">
+                    &lt;span className="arrow_carrot-right" />
+                  &lt;/a>
+                &lt;/div>
+              &lt;/div>
+              &lt;div className="col-lg-6 col-md-6 col-sm-6">
+
+              &lt;/div>
+            &lt;/div>
+          &lt;/div> */}
+        &lt;/div>
+      &lt;/section>
+    &lt;/>
+  );
+}
+
+export default Shop;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AboutSection">AboutSection</a></li><li><a href="global.html#AddToCart">AddToCart</a></li><li><a href="global.html#AddUser">AddUser</a></li><li><a href="global.html#AddVoucher">AddVoucher</a></li><li><a href="global.html#AdminHeader">AdminHeader</a></li><li><a href="global.html#AllProducts">AllProducts</a></li><li><a href="global.html#BakerHeader">BakerHeader</a></li><li><a href="global.html#Breadcrumb">Breadcrumb</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CartItem">CartItem</a></li><li><a href="global.html#CategoriesSection">CategoriesSection</a></li><li><a href="global.html#CheckoutSummary">CheckoutSummary</a></li><li><a href="global.html#ClassSection">ClassSection</a></li><li><a href="global.html#ContactPage">ContactPage</a></li><li><a href="global.html#CustomerOrders">CustomerOrders</a></li><li><a href="global.html#DeliveryHeader">DeliveryHeader</a></li><li><a href="global.html#DeliveryOrders">DeliveryOrders</a></li><li><a href="global.html#EditProduct">EditProduct</a></li><li><a href="global.html#EditVoucher">EditVoucher</a></li><li><a href="global.html#FooterNav">FooterNav</a></li><li><a href="global.html#ForgotPassword">ForgotPassword</a></li><li><a href="global.html#GoogleBtn">GoogleBtn</a></li><li><a href="global.html#HeaderNav">HeaderNav</a></li><li><a href="global.html#HeroSection">HeroSection</a></li><li><a href="global.html#LineChart">LineChart</a></li><li><a href="global.html#ManageUsers">ManageUsers</a></li><li><a href="global.html#NotificationsPage">NotificationsPage</a></li><li><a href="global.html#OrderItem">OrderItem</a></li><li><a href="global.html#Page">Page</a></li><li><a href="global.html#ProductCard">ProductCard</a></li><li><a href="global.html#ProductSection">ProductSection</a></li><li><a href="global.html#RootLayout">RootLayout</a></li><li><a href="global.html#Shop">Shop</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#SmallFooter">SmallFooter</a></li><li><a href="global.html#StepperIndicatior">StepperIndicatior</a></li><li><a href="global.html#TeamMember">TeamMember</a></li><li><a href="global.html#TeamSection">TeamSection</a></li><li><a href="global.html#Testimonial">Testimonial</a></li><li><a href="global.html#TestmonialSection">TestmonialSection</a></li><li><a href="global.html#Title">Title</a></li><li><a href="global.html#handleDeleteClick">handleDeleteClick</a></li><li><a href="global.html#resetPassword">resetPassword</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 22 2024 03:46:12 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
