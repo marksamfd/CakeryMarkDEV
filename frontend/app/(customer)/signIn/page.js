@@ -37,7 +37,7 @@ export default function SignIn() {
     if (errorMessage?.loggedIn)
       cookieStore.get('role').then((role) => {
         if (role?.value) {
-          redirect(`../${role.value}`);
+          redirect(`../${role.value == 'customer' ? '' : role.value}`);
         }
       });
   }, [errorMessage]);
