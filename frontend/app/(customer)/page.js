@@ -34,16 +34,18 @@ export default function Home() {
   const { fcmToken, notificationPermissionStatus } = useFcmToken();
 
   useEffect(() => {
-    if (fcm) {
-      console.log('FCM token: ', fcmToken);
-      fetch(`api/cakery/user/customer/NotificationToken`, {
-        method: 'post',
-        body: JSON.stringify({ fcm_token: fcmToken }),
-      })
-        .then((res) => res.json())
-        .then((data) => {})
-        .catch(console.error);
-    }
+    cookieStore.get('token').then((token) => {
+      if (token && fcm) {
+        console.log('FCM token: ', fcmToken);
+        fetch(`api/cakery/user/customer/NotificationToken`, {
+          method: 'post',
+          body: JSON.stringify({ fcm_token: fcmToken }),
+        })
+          .then((res) => res.json())
+          .then((data) => {})
+          .catch(console.error);
+      }
+    });
   }, [fcmToken]);
 
   //
