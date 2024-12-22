@@ -5,6 +5,15 @@ import CheckoutInputField from '@/app/(customer)/components/checkoutInput';
 import Button from '@/app/(customer)/components/button';
 import { useRouter, usePathname } from 'next/navigation';
 
+/**
+ * Renders a form to edit a voucher.
+ *
+ * The form includes a field to update the discount percentage.
+ *
+ * When the form is submitted, the voucher data is sent to the server to be updated.
+ *
+ * @returns {JSX.Element} The edit voucher form component.
+ */
 function EditVoucher() {
     const router = useRouter();
     const pathname = usePathname();

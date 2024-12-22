@@ -2,6 +2,15 @@ import Link from 'next/link';
 import React from 'react';
 import { cookies } from 'next/headers';
 
+/**
+ * Page component.
+ *
+ * This component is responsible for displaying the baker's orders.
+ * It fetches the orders from the server using a token for authentication,
+ * and allows the user to view the orders.
+ *
+ * @returns {ReactElement} The Page component.
+ */
 async function Page() {
   const cookieStore = await cookies();
   const token = await cookieStore.get('token');

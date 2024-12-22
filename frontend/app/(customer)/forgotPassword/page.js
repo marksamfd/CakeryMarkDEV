@@ -5,6 +5,11 @@ import CheckoutInputField from '../components/checkoutInput';
 import Title from '../components/title';
 import { redirect } from 'next/navigation';
 
+/**
+ * Component for the forgot password page.
+ *
+ * @returns {JSX.Element} The Forgot Password page.
+ */
 function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');

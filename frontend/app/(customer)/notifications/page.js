@@ -2,6 +2,13 @@ import React from 'react';
 import Breadcrumb from '@/app/(customer)/components/breadcrumb';
 import { cookies } from 'next/headers';
 
+/**
+ * NotificationsPage component.
+ *
+ * This component is used to display the notifications history of the customer.
+ *
+ * @returns {ReactElement} The NotificationsPage component.
+ */
 async function NotificationsPage() {
   const cookieStore = cookies();
   const token = cookieStore.get('token')?.value;

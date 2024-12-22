@@ -16,6 +16,12 @@ export const addBtnStyle = {
   position: 'relative',
 };
 
+/**
+ * Adds a product to the cart.
+ * @param {number} productid The identifier of the product to add.
+ * @param {number} [quantity=1] The quantity of the product to add.
+ * @throws {Error} If the server returns an error.
+ */
 export const AddToCart = async (productid, quantity = 1) => {
   const product = {
     product_id: productid,

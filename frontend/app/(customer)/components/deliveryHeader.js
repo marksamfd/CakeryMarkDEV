@@ -1,3 +1,14 @@
+/**
+ * DeliveryHeader component
+ *
+ * This component renders a navigation bar specifically designed for the
+ * delivery dashboard. The navbar uses a distinct background color to
+ * differentiate it from other sections and contains a brand link displaying
+ * the "Delivery Dashboard" title.
+ *
+ * @returns {JSX.Element} The delivery header navigation bar.
+ */
+
 function DeliveryHeader() {
     return (
       <nav

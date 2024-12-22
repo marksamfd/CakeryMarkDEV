@@ -11,6 +11,14 @@ import '../../styles/nice-select.css';
 import '../../styles/slicknav.min.css';
 import '../../styles/style.css';
 
+/**
+ * RootLayout component
+ *
+ * This component renders the layout for the pages of the baker application.
+ *
+ * @param {JSX.Element} children The children components to render inside the layout.
+ * @returns {JSX.Element} The layout component.
+ */
 function RootLayout({ children }) {
   return (
     <html lang="en">

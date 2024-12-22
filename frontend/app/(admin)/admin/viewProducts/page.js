@@ -2,6 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import Title from '@/app/(customer)/components/title';
 
+/**
+ * ViewProducts component fetches and displays a list of products for admin.
+ * 
+ * This component:
+ * - Retrieves an authentication token from cookies to fetch product data from the admin API.
+ * - Handles error states and displays an error message if fetching fails.
+ * - Maps over the fetched product data to render a table of product items with options to edit.
+ *
+ * @returns {JSX.Element} A JSX element representing the product list view for admin users.
+ */
+
 export default function ViewProducts() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);

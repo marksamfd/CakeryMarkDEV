@@ -5,6 +5,16 @@ import CheckoutInputField from '@/app/(customer)/components/checkoutInput';
 import Button from '@/app/(customer)/components/button';
 import { useRouter } from 'next/navigation';
 
+/**
+ * Renders a form to add a new voucher.
+ *
+ * The form includes fields for voucher code and discount percentage.
+ *
+ * When the form is submitted, the voucher data is sent to the server to be added as a new voucher.
+ *
+ * @returns {JSX.Element} The add voucher form component.
+ */
+
 function AddVoucher() {
     const router = useRouter();
     const handleAddVoucher = async (event) => {

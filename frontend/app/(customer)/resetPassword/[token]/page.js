@@ -6,6 +6,17 @@ import Title from '../../components/title';
 import { useParams } from 'next/navigation';
 import { useActionState } from 'react';
 
+/**
+ * Renders a form to reset a user's password with a provided token.
+ *
+ * The form is a column of fields, with the token passed in as a hidden field.
+ *
+ * On form submission, the `resetPassswordForm` action is called with the form data.
+ *
+ * The component will display any response from the server as a heading above the form.
+ *
+ * @returns {JSX.Element} The reset password form component.
+ */
 function resetPassword() {
   const token = useParams().token;
 

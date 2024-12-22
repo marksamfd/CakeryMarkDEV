@@ -3,6 +3,14 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 
+/**
+ * SmallFooter component
+ *
+ * This component renders the footer section of the website with the
+ * copyright information.
+ *
+ * @returns {JSX.Element} The footer component
+ */
 function SmallFooter() {
   return (
     <>

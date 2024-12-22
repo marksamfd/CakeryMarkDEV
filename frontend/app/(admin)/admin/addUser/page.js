@@ -6,6 +6,15 @@ import Button from '@/app/(customer)/components/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+/**
+ * Renders a form to add a new user.
+ *
+ * The form includes fields for first name, last name, email, phone, user role, and password.
+ *
+ * When the form is submitted, the user data is sent to the server to be added as a new user.
+ *
+ * @returns {JSX.Element} The add user form component.
+ */
 function AddUser() {
   const router = useRouter();
 

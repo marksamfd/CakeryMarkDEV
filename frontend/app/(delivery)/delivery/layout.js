@@ -12,6 +12,17 @@ import '../../styles/nice-select.css';
 import '../../styles/slicknav.min.css';
 import '../../styles/style.css';
 
+/**
+ * RootLayout component
+ *
+ * This component serves as the main layout for the delivery pages.
+ * It includes a header and footer specific to the delivery dashboard,
+ * creating a cohesive and consistent UI for delivery-related pages.
+ *
+ * @param {JSX.Element} children The children components to render inside the main layout.
+ * @returns {JSX.Element} The complete layout component with a delivery header, content, and footer.
+ */
+
 function RootLayout({ children }) {
   return (
     <html lang="en">

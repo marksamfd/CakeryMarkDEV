@@ -2,6 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
+/**
+ * Displays the orders assigned to the delivery person and allows them to
+ * update the status of the orders to "out_for_delivery" or "delivered".
+ *
+ * @returns {JSX.Element} The DeliveryOrders component.
+ */
 function DeliveryOrders() {
   const [orderItems, setOrderItems] = useState([]);
   const [deliveryName, setDeliveryName] = useState('');

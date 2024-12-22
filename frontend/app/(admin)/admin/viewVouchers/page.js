@@ -2,6 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import Title from '@/app/(customer)/components/title';
 
+/**
+ * Component to view all vouchers in the system.
+ *
+ * This component fetches all vouchers from the server and displays them in a
+ * table. It also provides a button to add a new voucher and a button to delete
+ * an existing voucher. If an error occurs while fetching the vouchers, an
+ * error message is displayed.
+ *
+ * @return {JSX.Element} The JSX element representing the ViewVouchers component.
+ */
 export default function ViewVouchers() {
   const [vouchers, setVouchers] = useState({});
   const [error, setError] = useState(null);

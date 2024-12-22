@@ -1,3 +1,12 @@
+/**
+ * Displays the order details of the given order ID, including the customer
+ * name, product names and quantities, custom cake details, and the status of
+ * the order (preparing or prepared).
+ *
+ * @param {Object} params - The URL parameters, containing the order ID.
+ *
+ * @returns {JSX.Element} The order details page.
+ */
 export default async function Page({ params }) {
   const cookieStore = await cookies();
   const token = await cookieStore.get('token');

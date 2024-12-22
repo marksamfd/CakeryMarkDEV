@@ -5,6 +5,18 @@ import CheckoutInputField from '@/app/(customer)/components/checkoutInput';
 import Button from '@/app/(customer)/components/button';
 import { useRouter, usePathname } from 'next/navigation';
 
+/**
+ * EditProduct component allows for editing the details of a specific product.
+ * 
+ * It retrieves the product identifier from the URL, provides a form for updating
+ * the product's price, and performs the update via an API call.
+ * 
+ * Utilizes a secure token for authentication. Upon successful update, the user
+ * is redirected to the product view page.
+ * 
+ * @returns {JSX.Element} A section containing a form to edit the product details.
+ */
+
 function EditProduct() {
     const router = useRouter();
 

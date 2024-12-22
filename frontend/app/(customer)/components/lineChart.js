@@ -1,6 +1,12 @@
 'use client';
 import { ResponsiveLine } from '@nivo/line';
 
+/**
+ * A component that renders a responsive line chart with a given data set.
+ * See https://nivo.rocks/line for more information on the props.
+ * @param {object} data - The data to be rendered, see https://nivo.rocks/line#data
+ * @returns {React.ReactElement} - A React element representing the line chart.
+ */
 const LineChart = ({ data /* see data tab */ }) => (
   <ResponsiveLine
     data={data}

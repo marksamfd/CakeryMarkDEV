@@ -5,6 +5,20 @@ import DeleteButton from '@/app/(customer)/components/deleteButton';
 import Link from 'next/link';
 import Image from 'next/image';
 
+/**
+ * ManageUsers is a Next.js server-side rendered page that displays a list of users in a table.
+ * The page fetches the list of users from the backend API based on the userType parameter in the URL.
+ * If the userType parameter is 'customer', the page fetches the list of customers from the backend API.
+ * If the userType parameter is not 'customer', the page fetches the list of staff from the backend API.
+ * The page renders a table with columns for name, phone, and role (if userType is not 'customer').
+ * The page also renders a button to add a new user if userType is not 'customer'.
+ * The page uses the DeleteButton component to render a delete button for each user in the table.
+ * The page uses the generatePlaceholderImageUrl function to generate a placeholder image URL for each user in the table.
+ * The page uses the Title component to render the title of the page.
+ * The page uses the Link component to render a link to the add user page if userType is not 'customer'.
+ * @param {Object} params - The parameters passed to the page, including the userType parameter.
+ * @param {string} params.userType - The type of user to display in the table, either 'customer' or 'staff'.
+ */
 async function ManageUsers({ params }) {
   const { userType } = params;
   const cookieStore = cookies();

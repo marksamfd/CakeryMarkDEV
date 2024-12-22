@@ -3,6 +3,23 @@ import Image from 'next/image';
 import contactImage from '@/img/class/class-4.jpg'; 
 import Title from '../components/title';
 
+/**
+ * Renders the Contact page of the website.
+ * 
+ * This component displays the contact details including email, phone, and address.
+ * It also includes a welcoming message encouraging visitors to reach out with questions
+ * or cravings. An image related to the contact theme is displayed alongside the details.
+ *
+ * The contact information provided includes:
+ * - Email: admin@cakery_admin.com
+ * - Phone: +201010203073
+ * - Address: ZewailCity, 6th of October City, Egypt
+ *
+ * Uses:
+ * - Image component from 'next/image' for displaying the contact-related image.
+ * - Title component for rendering the header.
+ */
+
 const ContactPage = () => {
   return (
       <div className="container mt-5">

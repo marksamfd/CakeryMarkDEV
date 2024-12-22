@@ -2,6 +2,16 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 
+/**
+ * A Next.js component that renders a Google Sign-In button.
+ *
+ * @param {{ googleCallback: (credential: string) => void }} props
+ *   The callback function that will be called with the credential
+ *   string when the user selects a Google account.
+ *
+ * @returns {JSX.Element} A `<div>` element that contains the Google
+ *   Sign-In button.
+ */
 function GoogleBtn({ googleCallback }) {
   console.log({ client: process.env.NEXT_PUBLIC_CLIENT_ID });
 

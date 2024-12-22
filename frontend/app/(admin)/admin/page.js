@@ -5,55 +5,55 @@ import React from 'react';
 
 const data = [
   {
-    id: 'japan',
+    id: 'Cakes',
     color: 'hsl(172, 70%, 50%)',
     data: [
       {
-        x: 'plane',
+        x: 'Tarts',
         y: 109,
       },
       {
-        x: 'helicopter',
+        x: 'Sugar',
         y: 11,
       },
       {
-        x: 'boat',
+        x: 'Cupcakes',
         y: 69,
       },
       {
-        x: 'train',
+        x: 'Pastries',
         y: 80,
       },
       {
-        x: 'subway',
+        x: 'sugar',
         y: 216,
       },
       {
-        x: 'bus',
+        x: 'others',
         y: 172,
       },
       {
-        x: 'car',
+        x: 'red-velvet',
         y: 239,
       },
       {
-        x: 'moto',
+        x: 'chocolate',
         y: 18,
       },
       {
-        x: 'bicycle',
+        x: 'vanilla',
         y: 266,
       },
       {
-        x: 'horse',
+        x: 'strawberry',
         y: 298,
       },
       {
-        x: 'skateboard',
+        x: 'mango',
         y: 219,
       },
       {
-        x: 'others',
+        x: 'blueberry',
         y: 204,
       },
     ],
@@ -62,32 +62,32 @@ const data = [
 
 const pie = [
   {
-    id: 'css',
-    label: 'css',
+    id: 'cakes',
+    label: 'Cakes',
     value: 151,
     color: 'hsl(70, 70%, 50%)',
   },
   {
-    id: 'java',
-    label: 'java',
+    id: 'tarts',
+    label: 'Tarts',
     value: 103,
     color: 'hsl(94, 70%, 50%)',
   },
   {
-    id: 'haskell',
-    label: 'haskell',
+    id: 'cupcakes',
+    label: 'Cupcakes',
     value: 160,
     color: 'hsl(111, 70%, 50%)',
   },
   {
-    id: 'rust',
-    label: 'rust',
+    id: 'pastries',
+    label: 'Pastries',
     value: 231,
     color: 'hsl(319, 70%, 50%)',
   },
   {
-    id: 'php',
-    label: 'php',
+    id: 'sugar',
+    label: 'Sugar',
     value: 291,
     color: 'hsl(290, 70%, 50%)',
   },
@@ -134,6 +134,20 @@ async function Page() {
               </tr>
             </thead>
             <tbody>
+              {/* {orders.map((el) => { */}
+              <tr>
+                {/* <th scope="row">1</th> */}
+                <td>{'Cupcake'}</td>
+                <td>500</td>
+                <td>15$</td>
+              </tr>
+              <tr>
+                {/* <th scope="row">1</th> */}
+                <td>{'Tart'}</td>
+                <td>500</td>
+                <td>15$</td>
+              </tr>
+              {/* })} */}
               {orders.map((el) => {
                 <tr>
                   <th scope="row">{el.itemName}</th>

@@ -12,6 +12,14 @@ import '@/app/styles/nice-select.css';
 import '@/app/styles/slicknav.min.css';
 import '@/app/styles/style.css';
 
+/**
+ * RootLayout component
+ *
+ * This component renders the layout for the admin pages.
+ *
+ * @param {JSX.Element} children The children components to render inside the layout.
+ * @returns {JSX.Element} The layout component.
+ */
 function RootLayout({ children }) {
   return (
     <html lang="en">
