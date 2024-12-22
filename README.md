@@ -28,8 +28,10 @@ An online bakery platform where customers can browse, customize, and order cakes
 - **Frontend:**  Next.js  
 - **Backend:** Flask (Python)  
 - **Database:** PostgreSQL  
-
-
+---
+# Direct Access
+- 🌐 Frontend: https://wonderful-bush-03583ae10.4.azurestaticapps.net/
+- 🌐 Backend:  https://cakerybackendapp.azurewebsites.net/apidocs/ 
 ---
 
 ##  Setup and Installation
