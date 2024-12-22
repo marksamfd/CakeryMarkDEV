@@ -1,5 +1,6 @@
 import PieChart from '@/app/(customer)/components/PieChart';
 import LineChart from '@/componenets/lineChart';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import React from 'react';
 
