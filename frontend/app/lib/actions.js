@@ -8,12 +8,6 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 export async function authenticate(prevState, formData) {
   try {
-    // let sign = await signIn('credentials', {
-    //   email: formData.get('email'),
-    //   password: formData.get('password'),
-    //   redirect: false,
-    // });
-    // console.log({ dd: formData.get('callbackUrl') });
     console.log(formData.get('email'));
     const parsedCredentials = z.object({
       email: z.string().email(),
@@ -38,14 +32,17 @@ export async function authenticate(prevState, formData) {
       });
       const res = await user.json();
       console.error(res);
-      if (res.status !== 'success') return 'Invalid Credentials';
+      if (res.status !== 'success') return { message: 'Invalid Credentials' };
       const cookieStore = await cookies();
       await cookieStore.set('token', res.access_token);
       await cookieStore.set('role', res.role);
       await cookieStore.set('name', res?.firstname);
-      return { loggedIn: true };
+      return {
+        loggedIn: true,
+        message: 'Please wait while we redirect you :)',
+      };
     } else {
-      return 'Check the Input';
+      return { message: 'Check the Input' };
     }
   } catch (error) {
     console.error(error);
