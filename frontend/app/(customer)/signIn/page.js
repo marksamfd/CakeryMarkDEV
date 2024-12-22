@@ -24,9 +24,9 @@ import Link from 'next/link';
  */
 export default function SignIn() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams?.get('callbackUrl')
-    ? new URL(searchParams?.get('callbackUrl')).pathname
-    : '';
+  // const callbackUrl = searchParams?.get('callbackUrl')
+  //   ? new URL(searchParams?.get('callbackUrl')).pathname
+  //   : undefined;
   const googleError = searchParams?.get('googleError');
 
   const [errorMessage, formAction, isPending] = useActionState(
@@ -34,47 +34,14 @@ export default function SignIn() {
     undefined,
   );
   useEffect(() => {
-    if (searchParams)
-      cookieStore
-        .get('token')
-        .then((c) => {
-          if (c) {
-            if (
-              (isAdminPage(callbackUrl) &&
-                cookieStore.get('role') == 'admin') ||
-              (isDeliveryPage(callbackUrl) &&
-                cookieStore.get('role') == 'delivery') ||
-              (isBakerPage(callbackUrl) &&
-                cookieStore.get('role') == 'baker') ||
-              (isUserPage(callbackUrl) && cookieStore.get('role') == 'customer')
-            ) {
-              redirect(callbackUrl);
-            } else {
-              redirect('/');
-            }
-          }
-        })
-        .then((role) => {
-          if (role) {
-            switch (role) {
-              case 'baker':
-                redirect('../baker');
-                break;
-              case 'delivary':
-                redirect('../delivery');
-                break;
-              case 'admin':
-                redirect('../admin');
-                break;
-              default:
-                redirect('../');
-            }
-          }
-        });
+    if (errorMessage?.loggedIn)
+      cookieStore.get('role').then((role) => {
+        if (role?.value) {
+          redirect(`../${role.value}`);
+        }
+      });
   }, [errorMessage]);
 
-  if (errorMessage?.loggedIn) redirect('../');
-  console.log(errorMessage?.loggedIn);
   return (
     <section className="checkout spad">
       <div className="container">
@@ -108,11 +75,11 @@ export default function SignIn() {
                         Click Here
                       </Link>
                     </p>
-                    <input
+                    {/* <input
                       type="hidden"
                       name="callbackUrl"
                       value={callbackUrl}
-                    />
+                    /> */}
                   </div>
                 </div>
                 <div className="d-flex flex-column align-items-center mt-4">
@@ -120,7 +87,7 @@ export default function SignIn() {
                   <div className="d-flex justify-items-center mx-auto mb-3">
                     <GoogleBtn googleCallback={loginWithGoogle} />
                   </div>
-                  {errorMessage}
+                  {errorMessage?.message}
                   {/* 
                   {errorMessage || googleError
                     ? 'An error occured Sign in with Google, Try again Later or Sign up'
