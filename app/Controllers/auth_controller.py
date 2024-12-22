@@ -1,7 +1,11 @@
 from flask import Blueprint, jsonify, request
 from app.Services.auth_service import AuthService
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models import CustomerUser
+from app.db import db
 from app.Middlewares.auth_middleware import token_required
+from firebase_admin import messaging
+
 
 auth_controller = Blueprint("auth_controller", __name__)
 auth_service = AuthService()
@@ -246,3 +250,62 @@ def get_profile():
     """
     return jsonify(
         {"message": f"Welcome {request.user}, your role is {request.role}"})
+
+
+'''=================================== Customer - Notification ==================================='''
+@auth_controller.route("/cakery/user/customer/NotificationToken", methods=["POST"])
+@jwt_required()
+def update_fcm_token():
+    """
+    Update Customer's FCM Token
+    ---
+    tags:
+      - Customer
+    summary: Update the customer's Firebase Cloud Messaging token
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        description: Customer FCM token
+        required: true
+        schema:
+          type: object
+          properties:
+            fcm_token:
+              type: string
+              example: "your_fcm_token"
+    responses:
+      200:
+        description: Token updated successfully
+      400:
+        description: Missing token or invalid input
+      500:
+        description: Internal Server Error
+    """
+    try:
+        customer_email = get_jwt_identity()
+        data = request.get_json()
+        fcm_token = data.get("fcm_token")
+
+        if not fcm_token:
+            return jsonify({"error": "FCM token is required"}), 400
+
+        customer = CustomerUser.query.filter_by(customeremail=customer_email).first()
+        if not customer:
+            return jsonify({"error": "Customer not found"}), 404
+
+        customer.fcm_token = fcm_token
+        db.session.commit()
+        return jsonify({"message": "FCM token updated successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Error updating FCM token: {e}"}), 500
+
+
+

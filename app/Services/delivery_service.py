@@ -15,31 +15,26 @@ class DeliveryService:
         if "error" in result:
             return result
 
-        # ----------- send notification to customer ------------
-        if new_status == "delivered":  # has to verify OTP so we need to generate OTP
-            customer_email = self.order_repo.get_customerEmail_by_order_id(
-                order_id
-            )  # get customer email
-            otp_code = self.otp_service.generate_and_save_otp(customer_email, order_id)  # message sent to customer
+        # ---- Send notifications based on status ---- 
+        customer_email = self.order_repo.get_customerEmail_by_order_id(order_id)
+        if new_status == "delivered":
+            otp_code = self.otp_service.generate_and_save_otp(customer_email, order_id)
             if not otp_code:
                 return {"error": "Error generating OTP"}
             return "Order status updated successfully"
 
-        elif new_status == "out_for_delivery":  # just message to customer
-            customer_email = self.order_repo.get_customerEmail_by_order_id(
-                order_id)
+        elif new_status == "out_for_delivery":
             message = "Your order is out for delivery"
             self.notifier.notify_observers(customer_email, message)
             return "Order status updated successfully"
-        else:
-            error = (
-                f"Order status cant' be updated to this status , status: {new_status}"
-            )
-            return {"error": error}
+
+        return {"error": f"Cannot update to status: {new_status}"}
+
 
     def view_assigned_orders(self, delivery_email):
         return self.delivery_repo.get_assigned_orders(delivery_email)
 
     def get_deliveryman_name(self, delivery_email):
         return self.delivery_repo.get_deliveryman_name(delivery_email)
+
 

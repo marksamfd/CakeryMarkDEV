@@ -15,6 +15,18 @@ from app.Services.otp_service import OTPService
 from app.Services.delivery_service import DeliveryService
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger
+from app.utils.order_status_notifier import FirebaseNotificationObserver
+
+import firebase_admin
+from firebase_admin import credentials
+
+# ------- firebase initialization (push notification -------
+try:
+    firebase_admin.get_app()
+except ValueError:
+    cred = credentials.Certificate('cakery-b599e-firebase-adminsdk-id1z9-f98f481fc3.json')
+    firebase_admin.initialize_app(cred)
+
 
 swagger_template = {
     "swagger": "2.0",
@@ -51,6 +63,9 @@ delivery_service = DeliveryService(notifier)
 # Inject shared dependencies into controllers
 delivery_controller.delivery_service = delivery_service
 customer_controller.otp_service = otp_service
+
+# Register Firebase Observer
+notifier.register_observer(FirebaseNotificationObserver())
 
 # Register Blueprints
 app.register_blueprint(customer_controller)
