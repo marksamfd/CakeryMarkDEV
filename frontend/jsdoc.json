@@ -1,0 +1,11 @@
+{
+  "source": {
+    "include": ["app"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "./Frontend_Documentation",
+    "recurse": true
+  }
+}
