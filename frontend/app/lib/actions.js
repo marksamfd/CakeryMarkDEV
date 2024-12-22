@@ -37,7 +37,10 @@ export async function authenticate(prevState, formData) {
       await cookieStore.set('token', res.access_token);
       await cookieStore.set('role', res.role);
       await cookieStore.set('name', res?.firstname);
-      return { loggedIn: true };
+      return {
+        loggedIn: true,
+        message: 'Please wait while we redirect you :)',
+      };
     } else {
       return { message: 'Check the Input' };
     }
