@@ -18,7 +18,7 @@ jobs:
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: ./frontend
       - name: Build Project Artifacts
-        working-directory: ./frontend
+        working-directory: ./
         env:
           BACKEND: ${{ secrets.BACKEND }}
           NEXT_PUBLIC_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_CLIENT_ID }}
